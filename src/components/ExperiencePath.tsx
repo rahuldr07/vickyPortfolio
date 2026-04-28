@@ -124,7 +124,7 @@ export default function ExperiencePath() {
       <div className="relative">
         {/* Track line */}
         <div
-          className="absolute left-6 md:left-1/2 md:-translate-x-1/2 top-0 bottom-0 w-[2px] bg-white/5"
+          className="absolute left-6 md:left-1/2 md:-translate-x-1/2 top-0 bottom-0 w-[2px] bg-white/10"
         />
 
         {/* GSAP-driven fill line */}
@@ -167,7 +167,7 @@ export default function ExperiencePath() {
                 />
 
                 {/* Card */}
-                <div className={`exp-card flex-1 pl-16 md:pl-0 w-full ${isEven ? "md:text-right" : "md:text-left"}`}>
+                <div className={`exp-card flex-1 pl-10 md:pl-0 w-full ${isEven ? "md:text-right" : "md:text-left"}`}>
                   <div className={`p-8 rounded-3xl bg-[var(--color-surface)]/40 border border-white/5 backdrop-blur-md hover:border-[var(--color-accent)]/40 transition-all duration-500 relative group overflow-hidden ${isEven ? "md:ml-12" : "md:mr-12"}`}>
                     <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-accent)]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                     <span className="font-mono text-xs text-[var(--color-soft)] uppercase tracking-widest">{exp.duration}</span>

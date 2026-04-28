@@ -25,7 +25,7 @@ export default function Home() {
         </div>
         <a
           href="mailto:geethakrishna.designer@gmail.com"
-          className="hidden md:flex px-5 py-2 rounded-full bg-[var(--color-accent)] text-[#1a1814] font-sans font-bold text-xs tracking-wider uppercase hover:shadow-[0_0_20px_rgba(232,124,62,0.3)] transition-shadow duration-300"
+          className="hidden md:flex px-5 py-2 rounded-full bg-[var(--color-accent)] text-white font-sans font-bold text-xs tracking-wider uppercase hover:shadow-[0_0_20px_rgba(139,92,246,0.5)] transition-shadow duration-300"
         >
           Hire Me
         </a>

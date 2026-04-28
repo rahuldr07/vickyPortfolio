@@ -83,7 +83,7 @@ export default function CharacterSheet() {
   }, { scope: sectionRef });
 
   return (
-    <section ref={sectionRef} className="relative py-40 px-6 md:px-20 max-w-7xl mx-auto bg-black" id="about">
+    <section ref={sectionRef} className="relative py-32 px-6 md:px-20 max-w-7xl mx-auto bg-[#0B0B0F]" id="about">
       <div className="mb-32 flex flex-col items-center text-center">
         <p className="font-mono text-[var(--color-accent)] text-[10px] font-bold tracking-[0.6em] uppercase mb-6">Subject / Profile 01</p>
         <h2 ref={headingRef} className="text-6xl md:text-9xl font-serif font-black text-white tracking-tighter">
@@ -96,14 +96,14 @@ export default function CharacterSheet() {
         <div ref={leftRef} className="lg:col-span-5 space-y-12">
           <div 
             ref={imgWrapperRef}
-            className="relative rounded-2xl overflow-hidden aspect-[4/5] bg-[#000] border border-white/5 group shadow-2xl"
+            className="relative rounded-2xl overflow-hidden aspect-[4/5] bg-[#0B0B0F] border border-white/5 group shadow-2xl"
           >
             <div className="dossier-img absolute inset-0 w-[115%] h-[115%] -left-[7.5%] -top-[7.5%]">
               {/* B&W Base */}
               <img 
                 src="/blackwhite.jpeg" 
                 alt="B&W" 
-                className="absolute inset-0 w-full h-full object-cover opacity-30 grayscale" 
+                className="absolute inset-0 w-full h-full object-cover opacity-55 grayscale" 
               />
               {/* Flashlight Color Reveal */}
               <img 
@@ -115,7 +115,7 @@ export default function CharacterSheet() {
               />
             </div>
             
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/10 to-transparent opacity-90" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0B0B0F] via-[#0B0B0F]/20 to-transparent opacity-90" />
             
             <div className="absolute bottom-0 left-0 right-0 p-10 z-20 pointer-events-none">
                <div className="flex justify-between items-end border-t border-white/10 pt-6">
@@ -131,7 +131,7 @@ export default function CharacterSheet() {
              <div className="flex items-center gap-4 text-[10px] font-mono text-[var(--color-accent)] uppercase tracking-widest font-bold">
                 <ChevronRight className="w-3 h-3" /> Origin Summary
              </div>
-             <p className="text-white/40 font-serif text-xl leading-relaxed">
+             <p className="text-white/60 font-serif text-xl leading-relaxed">
                 A creative engineer merging the precision of <span className="text-white">Instructional Design</span> with the soul of cinematic storytelling.
              </p>
           </div>

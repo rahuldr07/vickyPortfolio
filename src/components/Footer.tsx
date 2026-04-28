@@ -36,10 +36,10 @@ export default function Footer() {
           viewport={{ once: true }}
           transition={{ type: "spring", stiffness: 200, damping: 20 }}
           href="mailto:geethakrishna.designer@gmail.com" 
-          className="group relative px-10 py-5 rounded-full bg-[var(--color-accent)] text-black font-sans font-medium text-lg flex items-center gap-3 overflow-hidden"
+          className="group relative px-8 py-5 rounded-full bg-[var(--color-accent)] text-[#0B0B0F] font-sans font-medium text-sm md:text-lg flex items-center gap-3 overflow-hidden max-w-full"
         >
-          <span className="relative z-10">geethakrishna.designer@gmail.com</span>
-          <ArrowUpRight className="w-5 h-5 relative z-10 group-hover:rotate-45 transition-transform duration-300" />
+          <span className="relative z-10 truncate">geethakrishna.designer@gmail.com</span>
+          <ArrowUpRight className="w-5 h-5 relative z-10 flex-shrink-0 group-hover:rotate-45 transition-transform duration-300" />
           <div className="absolute inset-0 bg-white translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-in-out" />
         </motion.a>
 

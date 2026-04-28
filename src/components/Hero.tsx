@@ -104,7 +104,7 @@ export default function Hero() {
   }, { scope: sectionRef });
 
   return (
-    <section ref={sectionRef} className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#0A0A0A]">
+    <section ref={sectionRef} className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#0B0B0F]">
       <div className="absolute inset-0 -z-10">
         <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-[var(--color-accent)]/5 blur-[120px] rounded-full animate-pulse" />
         <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: "radial-gradient(circle at 2px 2px, white 1px, transparent 0)", backgroundSize: "40px 40px" }} />
@@ -137,7 +137,7 @@ export default function Hero() {
              <a href="#work" className="px-10 py-4 rounded-2xl bg-white text-black font-sans font-black text-xs tracking-[0.2em] uppercase hover:bg-[var(--color-accent)] hover:text-white transition-all shadow-2xl shadow-white/5">
                 Explore Work
              </a>
-             <a href="#contact" className="px-10 py-4 rounded-2xl border border-white/10 text-white/40 font-sans font-bold text-xs tracking-[0.2em] uppercase hover:bg-white/5 hover:text-white transition-all">
+             <a href="#contact" className="px-10 py-4 rounded-2xl border border-white/20 text-white/70 font-sans font-bold text-xs tracking-[0.2em] uppercase hover:bg-white/5 hover:text-white transition-all">
                 Contact
              </a>
           </div>
@@ -147,7 +147,7 @@ export default function Hero() {
         <div ref={cardRef} className="hidden lg:block relative w-full max-w-md aspect-[3/4] group">
            <div 
              ref={imgWrapperRef}
-             className="absolute inset-0 rounded-[40px] overflow-hidden border border-white/5 bg-[#000] shadow-2xl"
+             className="absolute inset-0 rounded-[40px] overflow-hidden border border-white/5 bg-[#0B0B0F] shadow-2xl"
            >
               {/* Technical Overlays */}
               <div className="absolute top-8 left-10 z-20 font-mono text-[8px] text-white/20 uppercase tracking-[0.4em] pointer-events-none">
@@ -163,7 +163,7 @@ export default function Hero() {
                 <img 
                   src="/blackwhite.jpeg" 
                   alt="Base" 
-                  className="absolute inset-0 w-full h-full object-cover opacity-40 grayscale" 
+                  className="absolute inset-0 w-full h-full object-cover opacity-60 grayscale" 
                 />
                 {/* Color Reveal (Masked) */}
                 <img 
@@ -175,7 +175,7 @@ export default function Hero() {
                 />
               </div>
               
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-transparent to-transparent opacity-80" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0B0B0F] via-transparent to-transparent opacity-80" />
               
               <div className="absolute bottom-0 left-0 right-0 p-10 flex justify-between items-end z-20 pointer-events-none">
                  <div>
