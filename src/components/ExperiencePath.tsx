@@ -4,161 +4,150 @@ import { useRef } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { Ship } from "lucide-react";
+import { EXPERIENCE_ENTRIES } from "@/content/portfolio";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const experiences = [
-  {
-    role: "Graphic Designer (Intern)",
-    company: "Pixel scoop studios",
-    duration: "2021 Jan – 2021 Dec",
-    description: "Started as a Graphic Design intern focusing on Adobe Photoshop and Illustrator. Also took care of editing short videos and album videos.",
-  },
-  {
-    role: "Graphic Designer & Content Creator",
-    company: "GreenMonk Energy Drink",
-    duration: "2022 Jan – 2023 Feb",
-    description: "Worked on product posters, creative thumbnails, and UI screens. Video editing for music videos, product concept shorts, and YouTube content.",
-  },
-  {
-    role: "Graphic & Web Designer",
-    company: "Buddha-CEO Quantum Foundation",
-    duration: "2023 March – Present",
-    description: "Designing flyers, brochures, standees, magazines, and books. Also taking care of daily website updates and web design handling.",
-  },
-];
-
 export default function ExperiencePath() {
-  const sectionRef  = useRef<HTMLElement>(null);
-  const lineFill    = useRef<HTMLDivElement>(null);
-  const cardsRef    = useRef<HTMLDivElement>(null);
-  const shipRef     = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  const lineFill = useRef<HTMLDivElement>(null);
+  const cardsRef = useRef<HTMLDivElement>(null);
+  const shipRef = useRef<HTMLDivElement>(null);
 
-  useGSAP(() => {
-    const ctx = gsap.context(() => {
+  useGSAP(
+    () => {
+      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-      // ── 1. Scrubbed line — draws 1:1 with scroll progress
-      gsap.fromTo(
-        lineFill.current,
-        { scaleY: 0 },
-        {
-          scaleY: 1,
-          ease: "none",
-          transformOrigin: "top center",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top center",
-            end: "bottom center",
-            scrub: 0.5,
-          },
-        }
-      );
-
-      // ── 2. Ship follows the line
-      gsap.fromTo(
-        shipRef.current,
-        { y: 0, opacity: 0 },
-        {
-          y: () => sectionRef.current?.offsetHeight || 0,
-          opacity: 1,
-          ease: "none",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top center",
-            end: "bottom center",
-            scrub: 0.5,
-          },
-        }
-      );
-
-      // ── 3. Timeline nodes pulse in when the ship/scroll reaches them
-      const nodes = sectionRef.current?.querySelectorAll(".timeline-node");
-      nodes?.forEach((node) => {
+      const ctx = gsap.context(() => {
         gsap.fromTo(
-          node,
-          { scale: 0, opacity: 0 },
+          lineFill.current,
+          { scaleY: 0 },
           {
-            scale: 1,
-            opacity: 1,
-            duration: 0.4,
-            ease: "back.out(2)",
+            scaleY: 1,
+            ease: "none",
+            transformOrigin: "top center",
             scrollTrigger: {
-              trigger: node,
-              start: "top 65%",
-              once: true,
+              trigger: sectionRef.current,
+              start: "top center",
+              end: "bottom center",
+              scrub: reduced ? false : 0.5,
             },
           }
         );
-      });
 
-      // ── 4. Cards stagger in from alternating sides
-      const cards = cardsRef.current?.querySelectorAll(".exp-card");
-      cards?.forEach((card, i) => {
-        const fromX = i % 2 === 0 ? -60 : 60;
-        gsap.from(card, {
-          x: fromX,
-          opacity: 0,
-          duration: 0.8,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: card,
-            start: "top 80%",
-            once: true,
-          },
+        gsap.fromTo(
+          shipRef.current,
+          { y: 0, opacity: 0 },
+          {
+            y: () => sectionRef.current?.offsetHeight || 0,
+            opacity: 1,
+            ease: "none",
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top center",
+              end: "bottom center",
+              scrub: reduced ? false : 0.5,
+            },
+          }
+        );
+
+        const nodes = sectionRef.current?.querySelectorAll(".timeline-node");
+        nodes?.forEach((node) => {
+          gsap.fromTo(
+            node,
+            { scale: 0, opacity: 0 },
+            {
+              scale: 1,
+              opacity: 1,
+              duration: reduced ? 0.2 : 0.4,
+              ease: "back.out(2)",
+              scrollTrigger: {
+                trigger: node,
+                start: "top 65%",
+                once: true,
+              },
+            }
+          );
         });
-      });
 
-    }, sectionRef);
+        const cards = cardsRef.current?.querySelectorAll(".exp-card");
+        cards?.forEach((card) => {
+          gsap.from(card, {
+            y: reduced ? 0 : 24,
+            opacity: 0,
+            duration: reduced ? 0.25 : 0.8,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: card,
+              start: "top 80%",
+              once: true,
+            },
+          });
+        });
+      }, sectionRef);
 
-    return () => ctx.revert();
-  }, { scope: sectionRef });
+      return () => ctx.revert();
+    },
+    { scope: sectionRef }
+  );
 
   return (
-    <section ref={sectionRef} className="relative py-32 px-6 md:px-20 max-w-5xl mx-auto" id="experience">
-      <div className="mb-24 relative z-10">
-        <h2 className="text-4xl md:text-6xl font-serif text-glow">The Journey</h2>
-        <p className="font-mono text-[var(--color-soft)] mt-2 uppercase tracking-widest text-sm">Experience & Evolution</p>
-      </div>
+    <section
+      ref={sectionRef}
+      id="experience"
+      aria-labelledby="experience-heading"
+      className="relative mx-auto max-w-[1400px] scroll-mt-28 px-6 py-20 md:px-12 md:py-24"
+    >
+      <div className="flex flex-col items-start gap-12 lg:flex-row lg:gap-12">
+        <header className="z-20 w-full flex-shrink-0 space-y-4 text-left lg:sticky lg:top-32 lg:w-[280px]">
+          <h2
+            id="experience-heading"
+            className="text-glow text-4xl font-serif md:text-5xl"
+          >
+            The Journey
+          </h2>
+          <p className="mt-2 max-w-sm font-mono text-sm uppercase tracking-widest text-[var(--color-soft)]">
+            Experience & Evolution
+          </p>
+          <p className="mt-5 max-w-sm text-sm leading-relaxed text-white/72">
+            A timeline of growth across design, content, and digital execution — with
+            impact and ownership at each stage.
+          </p>
+        </header>
 
-      <div className="relative">
-        {/* Track line */}
-        <div
-          className="absolute left-6 md:left-1/2 md:-translate-x-1/2 top-0 bottom-0 w-[2px] bg-white/10"
-        />
+        <div className="relative w-full flex-1">
+          <div className="absolute bottom-0 left-2 top-0 w-[2px] bg-white/10" />
 
-        {/* GSAP-driven fill line */}
-        <div
-          ref={lineFill}
-          className="absolute left-6 md:left-1/2 md:-translate-x-1/2 top-0 bottom-0 w-[2px] origin-top z-10"
-          style={{
-            background: "linear-gradient(to bottom, var(--color-accent), var(--color-soft))",
-            boxShadow: "0 0 15px var(--color-accent)",
-          }}
-        />
+          <div
+            ref={lineFill}
+            className="absolute bottom-0 left-2 top-0 z-10 w-[2px] origin-top"
+            style={{
+              background:
+                "linear-gradient(to bottom, var(--color-accent), var(--color-soft))",
+              boxShadow: "0 0 15px var(--color-accent)",
+            }}
+          />
 
-        {/* THE SHIP — follows scroll */}
-        <div
-          ref={shipRef}
-          className="absolute left-6 md:left-1/2 md:-translate-x-1/2 -ml-3 md:-ml-0 z-30 pointer-events-none"
-          style={{ top: 0, transform: "translateX(-50%)" }}
-        >
-          <div className="relative">
-            <Ship className="w-8 h-8 text-[var(--color-accent)] filter drop-shadow-[0_0_8px_var(--color-accent)]" />
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-[var(--color-accent)]/20 blur-xl rounded-full animate-pulse" />
+          <div
+            ref={shipRef}
+            className="pointer-events-none absolute left-2 z-30 flex justify-center"
+            style={{ top: 0, transform: "translateX(-50%)" }}
+          >
+          <div className="relative flex items-center justify-center">
+            <div className="h-3 w-3 rotate-45 border border-white/50 bg-[var(--color-accent)] shadow-[0_0_15px_var(--color-accent)]" />
+            <div className="motion-safe:animate-pulse absolute left-1/2 top-1/2 h-12 w-12 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[var(--color-accent)]/20 blur-xl" />
           </div>
         </div>
 
-        <div ref={cardsRef} className="flex flex-col gap-32">
-          {experiences.map((exp, index) => {
-            const isEven = index % 2 === 0;
-            return (
-              <div key={index} className={`relative flex flex-col md:flex-row items-center ${isEven ? "" : "md:flex-row-reverse"} gap-8 md:gap-16`}>
-
-                {/* Animated node */}
-                <div className="absolute left-6 md:left-1/2 md:-translate-x-1/2 w-5 h-5 rounded-full bg-[var(--color-background)] border-2 border-white/10 z-20" />
+          <div ref={cardsRef} className="flex flex-col gap-14">
+            {EXPERIENCE_ENTRIES.map((experience) => (
+              <div
+                key={`${experience.company}-${experience.duration}`}
+                className="relative pl-10"
+              >
+                <div className="absolute left-2 top-8 z-20 h-5 w-5 -translate-x-1/2 rounded-full border-2 border-white/10 bg-[var(--color-background)]" />
                 <div
-                  className="timeline-node absolute left-6 md:left-1/2 md:-translate-x-1/2 w-5 h-5 rounded-full z-20"
+                  className="timeline-node absolute left-2 top-8 z-20 h-5 w-5 -translate-x-1/2 rounded-full"
                   style={{
                     background: "var(--color-accent)",
                     boxShadow: "0 0 20px var(--color-accent)",
@@ -166,22 +155,27 @@ export default function ExperiencePath() {
                   }}
                 />
 
-                {/* Card */}
-                <div className={`exp-card flex-1 pl-10 md:pl-0 w-full ${isEven ? "md:text-right" : "md:text-left"}`}>
-                  <div className={`p-8 rounded-3xl bg-[var(--color-surface)]/40 border border-white/5 backdrop-blur-md hover:border-[var(--color-accent)]/40 transition-all duration-500 relative group overflow-hidden ${isEven ? "md:ml-12" : "md:mr-12"}`}>
-                    <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-accent)]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                    <span className="font-mono text-xs text-[var(--color-soft)] uppercase tracking-widest">{exp.duration}</span>
-                    <h3 className="text-2xl font-serif mt-2 mb-1 text-white">{exp.role}</h3>
-                    <h4 className="text-lg font-sans text-[var(--color-soft)] mb-4">{exp.company}</h4>
-                    <p className="text-[var(--color-muted)] font-sans leading-relaxed text-sm">{exp.description}</p>
-                  </div>
+                <div className="exp-card group relative overflow-hidden rounded-3xl border border-white/5 bg-[var(--color-surface)]/40 p-8 backdrop-blur-md transition-all duration-500 hover:border-[var(--color-accent)]/40">
+                  <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-accent)]/10 to-transparent opacity-0 transition-opacity duration-700 group-hover:opacity-100" />
+                  <span className="font-mono text-xs uppercase tracking-widest text-[var(--color-soft)]">
+                    {experience.duration}
+                  </span>
+                  <h3 className="mt-2 font-serif text-2xl text-white">
+                    {experience.role}
+                  </h3>
+                  <h4 className="mb-4 text-lg text-[var(--color-soft)]">
+                    {experience.company}
+                  </h4>
+                  <p className="font-sans text-sm leading-relaxed text-white/72">
+                    {experience.description}
+                  </p>
+                  <p className="mt-4 inline-flex rounded-full border border-white/15 bg-white/5 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.16em] text-white/78">
+                    {experience.highlight}
+                  </p>
                 </div>
-
-                {/* Spacer */}
-                <div className="hidden md:block flex-1" />
               </div>
-            );
-          })}
+            ))}
+          </div>
         </div>
       </div>
     </section>

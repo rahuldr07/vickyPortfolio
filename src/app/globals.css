@@ -22,11 +22,118 @@
 }
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
     background-color: var(--background);
     color: var(--foreground);
     /* Subtle purple haze at the top */
     background-image: radial-gradient(circle at 50% 0%, rgba(139, 92, 246, 0.06) 0%, transparent 70%);
+  }
+
+  a:focus-visible,
+  button:focus-visible,
+  [role="button"]:focus-visible,
+  [tabindex]:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--color-accent), 0 0 0 4px #0B0B0F;
+    border-radius: 0.75rem;
+  }
+
+  /* Ambient page drift */
+  .ambient-overlay {
+    position: fixed;
+    inset: -20% -20% -20% -20%;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.3;
+    filter: blur(40px);
+  }
+
+  .ambient-overlay::before,
+  .ambient-overlay::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 18% 20%, rgba(139, 92, 246, 0.15), transparent 46%),
+      radial-gradient(circle at 82% 18%, rgba(99, 102, 241, 0.12), transparent 44%),
+      radial-gradient(circle at 50% 82%, rgba(168, 85, 247, 0.1), transparent 50%);
+    animation: ambientDrift 32s linear infinite;
+    transform: translate3d(0, 0, 0);
+  }
+
+  .ambient-overlay::after {
+    opacity: 0.5;
+    animation: ambientFloat 44s ease-in-out infinite;
+  }
+
+  /* Stardust Animation */
+  .dust-particle {
+    animation-name: floatDust;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+  }
+
+  @keyframes floatDust {
+    0%, 100% {
+      transform: translate(0, 0);
+      opacity: var(--base-opacity);
+    }
+    33% {
+      transform: translate(var(--move-x), var(--move-y));
+      opacity: calc(var(--base-opacity) * 1.5);
+    }
+    66% {
+      transform: translate(calc(var(--move-x) * -0.5), calc(var(--move-y) * 1.2));
+      opacity: calc(var(--base-opacity) * 0.5);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+
+    .ambient-overlay::before,
+    .ambient-overlay::after,
+    .dust-particle {
+      animation: none;
+    }
+  }
+
+  @keyframes ambientDrift {
+    0% {
+      transform: translate3d(-2%, -1%, 0) scale(1.02);
+    }
+    50% {
+      transform: translate3d(2%, 1%, 0) scale(1.05);
+    }
+    100% {
+      transform: translate3d(-2%, -1%, 0) scale(1.02);
+    }
+  }
+
+  @keyframes ambientFloat {
+    0% {
+      transform: translate3d(1%, -2%, 0) scale(1.03);
+    }
+    50% {
+      transform: translate3d(-2%, 2%, 0) scale(1.01);
+    }
+    100% {
+      transform: translate3d(1%, -2%, 0) scale(1.03);
+    }
   }
 
   /* Scrollbar */
@@ -58,5 +165,13 @@
     border: 1px solid rgba(255, 255, 255, 0.1);
     background: rgba(255, 255, 255, 0.03);
     backdrop-filter: blur(10px);
+  }
+
+  .hide-scrollbar {
+    scrollbar-width: none;
+  }
+
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
   }
 }

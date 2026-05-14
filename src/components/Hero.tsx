@@ -4,19 +4,19 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-
-const roles = [
-  "Graphic Designer",
-  "Video Editor",
-  "Visual Storyteller",
-  "Brand Architect",
-];
+import { HERO_PROOF_POINTS, HERO_ROLES } from "@/content/portfolio";
 
 const scrambleChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$#@%&*";
 
+const heroPillars = [
+  "Brand Identity Systems",
+  "Cinematic Video Editing",
+  "UI/UX Storytelling",
+] as const;
+
 export default function Hero() {
   const [roleIndex, setRoleIndex] = useState(0);
-  const [displayRole, setDisplayRole] = useState(roles[0]);
+  const [displayRole, setDisplayRole] = useState<string>(HERO_ROLES[0]);
 
   const sectionRef = useRef<HTMLElement>(null);
   const bgZoomRef = useRef<HTMLDivElement>(null);
@@ -28,22 +28,20 @@ export default function Hero() {
   const ctaRef = useRef<HTMLDivElement>(null);
   const portraitWrapRef = useRef<HTMLDivElement>(null);
   const colorRevealRef = useRef<HTMLDivElement>(null);
-  const trailRevealRef = useRef<HTMLDivElement>(null);
-  const revealGlowRef = useRef<HTMLDivElement>(null);
   const chipsRef = useRef<HTMLDivElement>(null);
-  const previousRoleRef = useRef(roles[0]);
+  const previousRoleRef = useRef<string>(HERO_ROLES[0]);
 
   useEffect(() => {
     const timer = window.setInterval(() => {
-      setRoleIndex((prev) => (prev + 1) % roles.length);
-    }, 2600);
+      setRoleIndex((prev) => (prev + 1) % HERO_ROLES.length);
+    }, 4500); // Increased interval to allow text to stay longer
 
     return () => window.clearInterval(timer);
   }, []);
 
   useEffect(() => {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const target = roles[roleIndex];
+    const target = HERO_ROLES[roleIndex];
 
     if (reduced) {
       previousRoleRef.current = target;
@@ -75,7 +73,7 @@ export default function Hero() {
         setDisplayRole(target);
         window.clearInterval(scramble);
       }
-    }, 30);
+    }, 60); // Slowed down from 30ms to 60ms
 
     return () => window.clearInterval(scramble);
   }, [roleIndex]);
@@ -136,9 +134,7 @@ export default function Hero() {
   useEffect(() => {
     const wrap = portraitWrapRef.current;
     const reveal = colorRevealRef.current;
-    const trail = trailRevealRef.current;
-    const glow = revealGlowRef.current;
-    if (!wrap || !reveal || !trail || !glow) return;
+    if (!wrap || !reveal) return;
 
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const coarse = window.matchMedia("(pointer: coarse)").matches;
@@ -154,54 +150,53 @@ export default function Hero() {
       ease: "power3.out",
     });
     const revealOpacityTo = gsap.quickTo(reveal, "opacity", {
-      duration: 0.22,
-      ease: "power2.out",
-    });
-    const trailOpacityTo = gsap.quickTo(trail, "opacity", {
       duration: 0.3,
       ease: "power2.out",
     });
-    const glowOpacityTo = gsap.quickTo(glow, "opacity", {
-      duration: 0.25,
-      ease: "power2.out",
-    });
 
-    gsap.to(reveal, {
-      "--driftX": "10px",
-      "--driftY": "-8px",
-      duration: 2.4,
+    gsap.set(reveal, { opacity: 0.55 });
+
+    let rect = wrap.getBoundingClientRect();
+    let centerX = rect.width / 2;
+    let centerY = rect.height / 2;
+    let radius = Math.min(rect.width, rect.height) * 0.24;
+
+    const updateRect = () => {
+      rect = wrap.getBoundingClientRect();
+      centerX = rect.width / 2;
+      centerY = rect.height / 2;
+      radius = Math.min(rect.width, rect.height) * 0.24;
+    };
+
+    const orbit = { angle: 0 };
+    const updateOrbit = () => {
+      const x = centerX + Math.cos(orbit.angle) * radius;
+      const y = centerY + Math.sin(orbit.angle) * radius * 0.9;
+      reveal.style.setProperty("--mx", `${x}px`);
+      reveal.style.setProperty("--my", `${y}px`);
+    };
+
+    updateOrbit();
+
+    const orbitTween = gsap.to(orbit, {
+      angle: Math.PI * 2,
+      duration: 12,
       repeat: -1,
-      yoyo: true,
-      ease: "sine.inOut",
+      ease: "none",
+      onUpdate: updateOrbit,
     });
 
     let raf = 0;
     let pendingX = 0;
     let pendingY = 0;
-    let trailX = 0;
-    let trailY = 0;
 
     const flush = () => {
       raf = 0;
-      trailX += (pendingX - trailX) * 0.22;
-      trailY += (pendingY - trailY) * 0.22;
-
       reveal.style.setProperty("--mx", `${pendingX}px`);
       reveal.style.setProperty("--my", `${pendingY}px`);
-
-      trail.style.setProperty("--tx", `${trailX}px`);
-      trail.style.setProperty("--ty", `${trailY}px`);
-
-      glow.style.setProperty("--mx", `${pendingX}px`);
-      glow.style.setProperty("--my", `${pendingY}px`);
-
-      if (Math.abs(pendingX - trailX) > 0.6 || Math.abs(pendingY - trailY) > 0.6) {
-        raf = requestAnimationFrame(flush);
-      }
     };
 
     const onMove = (e: MouseEvent) => {
-      const rect = wrap.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
       const px = x / rect.width - 0.5;
@@ -217,38 +212,38 @@ export default function Hero() {
     };
 
     const onEnter = (e: MouseEvent) => {
-      const rect = wrap.getBoundingClientRect();
-      pendingX = e.clientX - rect.left;
-      pendingY = e.clientY - rect.top;
-      trailX = pendingX;
-      trailY = pendingY;
+      updateRect();
+      orbitTween.pause();
+
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      pendingX = x;
+      pendingY = y;
 
       reveal.style.setProperty("--mx", `${pendingX}px`);
       reveal.style.setProperty("--my", `${pendingY}px`);
-      trail.style.setProperty("--tx", `${trailX}px`);
-      trail.style.setProperty("--ty", `${trailY}px`);
-
       revealOpacityTo(1);
-      trailOpacityTo(0.55);
-      glowOpacityTo(1);
     };
 
     const onLeave = () => {
       rotateXTo(0);
       rotateYTo(0);
-      revealOpacityTo(0);
-      trailOpacityTo(0);
-      glowOpacityTo(0);
+      revealOpacityTo(0.55);
+      orbitTween.play();
     };
 
+    window.addEventListener("resize", updateRect);
     wrap.addEventListener("mouseenter", onEnter as EventListener);
     wrap.addEventListener("mousemove", onMove);
     wrap.addEventListener("mouseleave", onLeave);
 
     return () => {
+      window.removeEventListener("resize", updateRect);
       wrap.removeEventListener("mouseenter", onEnter as EventListener);
       wrap.removeEventListener("mousemove", onMove);
       wrap.removeEventListener("mouseleave", onLeave);
+      orbitTween.kill();
       if (raf) cancelAnimationFrame(raf);
     };
   }, []);
@@ -256,20 +251,14 @@ export default function Hero() {
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-screen overflow-hidden bg-[#0B0B0F] pt-28"
+      className="relative min-h-screen overflow-hidden bg-transparent pt-28"
       aria-label="Hero intro"
     >
-      <div ref={bgZoomRef} className="absolute inset-0 will-change-transform">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_15%,rgba(139,92,246,0.30),transparent_38%),radial-gradient(circle_at_80%_20%,rgba(59,130,246,0.14),transparent_36%),radial-gradient(circle_at_50%_80%,rgba(168,85,247,0.12),transparent_42%)]" />
-        <div
-          className="absolute inset-0 opacity-[0.05]"
-          style={{
-            backgroundImage:
-              "linear-gradient(rgba(255,255,255,0.18)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.18)_1px,transparent_1px)",
-            backgroundSize: "44px 44px",
-          }}
-        />
-        <div className="absolute -top-60 left-1/2 h-[980px] w-[980px] -translate-x-1/2 rounded-full border border-white/10" />
+      <div
+        ref={bgZoomRef}
+        className="pointer-events-none absolute inset-0 will-change-transform"
+      >
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(139,92,246,0.04),transparent_65%)]" />
       </div>
 
       <div className="relative z-10 mx-auto grid min-h-[calc(100vh-7rem)] max-w-7xl grid-cols-1 items-center gap-10 px-6 pb-16 md:gap-12 md:px-12 lg:grid-cols-12 lg:gap-6">
@@ -309,37 +298,67 @@ export default function Hero() {
             >
               ▌
             </span>
-            <span className="sr-only" aria-live="polite">{roles[roleIndex]}</span>
+            <span className="sr-only" aria-live="polite">{HERO_ROLES[roleIndex]}</span>
           </p>
 
           <p
             ref={bodyRef}
-            className="mt-5 max-w-[66ch] text-base leading-relaxed text-white/72 md:text-lg"
+            className="mt-5 max-w-[66ch] text-base leading-relaxed text-white/80 md:text-lg"
           >
-            I design modern brand systems and cinematic visuals that look bold,
-            feel intentional, and move audiences to act.
+            I help brands and founders turn ideas into high-impact visuals — from
+            identity systems to cinematic edits and digital experiences that
+            audiences remember.
           </p>
 
           <div ref={ctaRef} className="mt-10 flex flex-wrap items-center gap-4">
             <a
               href="#work"
-              className="inline-flex min-h-11 items-center rounded-full bg-[var(--color-accent)] px-8 py-3 font-sans text-xs font-extrabold uppercase tracking-[0.22em] text-white transition-all duration-300 hover:brightness-110 hover:shadow-[0_0_30px_rgba(139,92,246,0.45)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0B0B0F]"
+              className="group relative inline-flex min-h-11 items-center overflow-hidden rounded-full bg-[var(--color-accent)] px-8 py-3 font-sans text-xs font-extrabold uppercase tracking-[0.22em] text-white transition-all duration-300 hover:shadow-[0_0_30px_rgba(139,92,246,0.45)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0B0B0F]"
             >
-              View Projects
+              <span className="relative z-10 transition-colors duration-300 group-hover:text-[#0B0B0F]">View Projects</span>
+              <div className="absolute inset-0 translate-y-full bg-white transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-y-0" />
             </a>
             <a
               href="#contact"
-              className="inline-flex min-h-11 items-center rounded-full border border-white/25 px-8 py-3 font-sans text-xs font-bold uppercase tracking-[0.22em] text-white/92 transition-all duration-300 hover:border-white/65 hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0B0B0F]"
+              className="group relative inline-flex min-h-11 items-center overflow-hidden rounded-full border border-white/25 px-8 py-3 font-sans text-xs font-bold uppercase tracking-[0.22em] text-white/92 transition-all duration-300 hover:border-white/65 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0B0B0F]"
             >
-              Let&apos;s Work Together
+              <span className="relative z-10 transition-colors duration-300 group-hover:text-[#0B0B0F]">Let&apos;s Work Together</span>
+              <div className="absolute inset-0 translate-y-full bg-white transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-y-0" />
             </a>
           </div>
+
+          <ul className="mt-8 flex flex-wrap gap-3" aria-label="Core services">
+            {heroPillars.map((pillar) => (
+              <li
+                key={pillar}
+                className="inline-flex min-h-10 items-center rounded-full border border-white/15 bg-white/5 px-4 py-2 font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-white/85"
+              >
+                {pillar}
+              </li>
+            ))}
+          </ul>
+
+          <dl className="mt-8 grid gap-3 sm:grid-cols-3" aria-label="Portfolio proof points">
+            {HERO_PROOF_POINTS.map((item) => (
+              <div
+                key={item.label}
+                className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-4"
+              >
+                <dt className="font-mono text-[10px] uppercase tracking-[0.16em] text-white/65">
+                  {item.label}
+                </dt>
+                <dd className="mt-2 font-serif text-2xl font-black text-white">
+                  {item.value}
+                </dd>
+              </div>
+            ))}
+          </dl>
         </div>
 
         <div className="lg:col-span-5 lg:justify-self-end">
           <div
             ref={portraitWrapRef}
-            className="relative mx-auto aspect-[4/5] w-full max-w-[30rem] overflow-hidden rounded-[2rem] border border-white/15 bg-[#11111A] shadow-[0_25px_100px_rgba(0,0,0,0.7)] lg:mx-0 lg:ml-auto"
+            className="relative mx-auto aspect-[4/5] w-full max-w-[34rem] overflow-hidden rounded-[2.25rem] border border-white/15 bg-[#11111A] shadow-[0_30px_120px_rgba(0,0,0,0.7)] lg:mx-0 lg:ml-auto"
           >
             <Image
               src="/blackwhite.jpeg"
@@ -347,7 +366,7 @@ export default function Hero() {
               fill
               priority
               sizes="(max-width: 1024px) 80vw, 33vw"
-              className="object-cover"
+              className="object-cover opacity-60 grayscale"
             />
 
             <div
@@ -355,9 +374,9 @@ export default function Hero() {
               className="pointer-events-none absolute inset-0 opacity-0"
               style={{
                 WebkitMaskImage:
-                  "radial-gradient(150px 122px at calc(var(--mx,50%) + var(--driftX,0px)) calc(var(--my,50%) + var(--driftY,0px)), #000 0%, #000 53%, transparent 76%), radial-gradient(106px 86px at calc(var(--mx,50%) + 46px - var(--driftX,0px)) calc(var(--my,50%) - 28px + var(--driftY,0px)), #000 0%, #000 49%, transparent 74%), radial-gradient(94px 80px at calc(var(--mx,50%) - 40px + var(--driftX,0px)) calc(var(--my,50%) + 34px - var(--driftY,0px)), #000 0%, #000 46%, transparent 73%), radial-gradient(66px 58px at calc(var(--mx,50%) - 72px) calc(var(--my,50%) - 12px), #000 0%, #000 42%, transparent 71%)",
+                  "radial-gradient(circle 180px at var(--mx,50%) var(--my,50%), #000 0%, transparent 100%)",
                 maskImage:
-                  "radial-gradient(150px 122px at calc(var(--mx,50%) + var(--driftX,0px)) calc(var(--my,50%) + var(--driftY,0px)), #000 0%, #000 53%, transparent 76%), radial-gradient(106px 86px at calc(var(--mx,50%) + 46px - var(--driftX,0px)) calc(var(--my,50%) - 28px + var(--driftY,0px)), #000 0%, #000 49%, transparent 74%), radial-gradient(94px 80px at calc(var(--mx,50%) - 40px + var(--driftX,0px)) calc(var(--my,50%) + 34px - var(--driftY,0px)), #000 0%, #000 46%, transparent 73%), radial-gradient(66px 58px at calc(var(--mx,50%) - 72px) calc(var(--my,50%) - 12px), #000 0%, #000 42%, transparent 71%)",
+                  "radial-gradient(circle 180px at var(--mx,50%) var(--my,50%), #000 0%, transparent 100%)",
                 WebkitMaskRepeat: "no-repeat",
                 maskRepeat: "no-repeat",
               }}
@@ -371,51 +390,9 @@ export default function Hero() {
               />
             </div>
 
-            <div
-              ref={trailRevealRef}
-              className="pointer-events-none absolute inset-0 opacity-0"
-              style={{
-                mixBlendMode: "screen",
-                WebkitMaskImage:
-                  "radial-gradient(190px 152px at var(--tx,50%) var(--ty,50%), #000 0%, #000 38%, transparent 82%)",
-                maskImage:
-                  "radial-gradient(190px 152px at var(--tx,50%) var(--ty,50%), #000 0%, #000 38%, transparent 82%)",
-                WebkitMaskRepeat: "no-repeat",
-                maskRepeat: "no-repeat",
-              }}
-            >
-              <Image
-                src="/color.jpeg"
-                alt="Geetha Krishna portrait color trail"
-                fill
-                sizes="(max-width: 1024px) 80vw, 33vw"
-                className="object-cover saturate-110 blur-[1.5px]"
-              />
-            </div>
 
-            <div
-              ref={revealGlowRef}
-              className="pointer-events-none absolute inset-0 opacity-0"
+            <div className="absolute inset-0 bg-[linear-gradient(to-t,rgba(11,11,15,0.90)_0%,rgba(11,11,15,0.22)_48%,transparent_100%)]" />
 
-              style={{
-                background:
-                  "radial-gradient(240px 190px at var(--mx,50%) var(--my,50%), rgba(139,92,246,0.34), rgba(139,92,246,0.10) 48%, transparent 74%)",
-                mixBlendMode: "screen",
-              }}
-            />
-
-            <div className="absolute inset-0 opacity-[0.06] mix-blend-soft-light" style={{ backgroundImage: "url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22320%22 height=%22320%22 viewBox=%220 0 320 320%22%3E%3Cfilter id=%22n%22 x=%220%22 y=%220%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.95%22 numOctaves=%222%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22320%22 height=%22320%22 filter=%22url(%23n)%22 opacity=%220.62%22/%3E%3C/svg%3E')" }} />
-            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(11,11,15,0.06)_0%,rgba(11,11,15,0.84)_100%)]" />
-
-            <div className="absolute left-7 top-7 rounded-full border border-white/20 bg-black/25 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.22em] text-white/75 backdrop-blur">
-              Hover to reveal
-            </div>
-            <div className="absolute bottom-8 left-8 right-8">
-              <p className="font-mono text-[10px] uppercase tracking-[0.32em] text-[var(--color-soft)]">
-                Visual Identity Director
-              </p>
-              <p className="mt-2 text-3xl font-serif font-bold text-white">Geetha Krishna</p>
-            </div>
           </div>
 
           <div ref={chipsRef} className="mt-6 grid grid-cols-2 gap-3">

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion, useMotionValue, useTransform, AnimatePresence } from "framer-motion";
+import { motion, useMotionValue, useTransform, AnimatePresence, PanInfo } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 
 const projects = [
@@ -48,7 +48,7 @@ export default function ProjectStack() {
   const rotate = useTransform(x, [-200, 200], [-10, 10]);
   const opacity = useTransform(x, [-200, -100, 0, 100, 200], [0, 1, 1, 1, 0]);
 
-  const handleDragEnd = (e: any, info: any) => {
+  const handleDragEnd = (_event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
     const threshold = 100;
     if (Math.abs(info.offset.x) > threshold) {
       // Swipe away
@@ -83,7 +83,6 @@ export default function ProjectStack() {
         <AnimatePresence>
           {cards.map((card, index) => {
             const isTop = index === 0;
-            const isSecond = index === 1;
             
             return (
               <motion.div
@@ -115,7 +114,7 @@ export default function ProjectStack() {
                     <span className="px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/10 font-mono text-xs uppercase tracking-widest">
                       {card.category}
                     </span>
-                    <button className="w-12 h-12 rounded-full bg-white/10 hover:bg-[var(--color-accent)]/80 hover:text-black transition-colors border border-white/20 flex items-center justify-center backdrop-blur-md">
+                    <button aria-label={`Open ${card.title}`} className="w-12 h-12 rounded-full bg-white/10 hover:bg-[var(--color-accent)]/80 hover:text-black transition-colors border border-white/20 flex items-center justify-center backdrop-blur-md">
                       <ArrowUpRight className="w-5 h-5" />
                     </button>
                   </div>

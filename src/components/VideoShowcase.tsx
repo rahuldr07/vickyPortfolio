@@ -1,286 +1,353 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Play, ArrowUpRight } from "lucide-react";
-
-const projects = [
-  {
-    id: 1,
-    title: "Brand Identity Genesis",
-    category: "Graphic Design",
-    gradient: "from-violet-500/20 via-purple-500/5 to-transparent",
-    accent: "#8B5CF6",
-    tags: ["Logo Design", "Branding", "Print"],
-    type: "image" as const,
-  },
-  {
-    id: 2,
-    title: "Cinematic Showreel",
-    category: "Video Editing",
-    gradient: "from-indigo-500/20 via-blue-500/5 to-transparent",
-    accent: "#6366F1",
-    tags: ["Premiere Pro", "After Effects", "Color Grade"],
-    type: "video" as const,
-  },
-  {
-    id: 3,
-    title: "E-Learning Platform UI",
-    category: "Web & UX Design",
-    gradient: "from-fuchsia-500/20 via-pink-500/5 to-transparent",
-    accent: "#D946EF",
-    tags: ["Figma", "Wireframes", "Prototyping"],
-    type: "image" as const,
-  },
-  {
-    id: 4,
-    title: "Product Motion Graphics",
-    category: "Motion Design",
-    gradient: "from-cyan-500/20 via-teal-500/5 to-transparent",
-    accent: "#06B6D4",
-    tags: ["After Effects", "Motion", "Social Media"],
-    type: "video" as const,
-  },
-  {
-    id: 5,
-    title: "Magazine & Editorial",
-    category: "Print Design",
-    gradient: "from-rose-500/20 via-orange-500/5 to-transparent",
-    accent: "#F43F5E",
-    tags: ["InDesign", "Layout", "Typography"],
-    type: "image" as const,
-  },
-];
-
-// CLEAN SLIDE — No more bounce
-const cardVariants: any = {
-  enter: (dir: number) => ({
-    y: dir > 0 ? 100 : -100,
-    opacity: 0,
-    scale: 0.98,
-  }),
-  center: {
-    y: 0,
-    opacity: 1,
-    scale: 1,
-    transition: {
-      y: { type: "tween", duration: 0.8, ease: [0.22, 1, 0.36, 1] }, // Clean ease-out
-      opacity: { duration: 0.4 },
-      scale: { duration: 0.8, ease: [0.22, 1, 0.36, 1] },
-    },
-  },
-  exit: (dir: number) => ({
-    y: dir > 0 ? -100 : 100,
-    opacity: 0,
-    scale: 0.98,
-    transition: {
-      y: { type: "tween", duration: 0.6, ease: [0.22, 1, 0.36, 1] },
-      opacity: { duration: 0.3 },
-    },
-  }),
-};
-
-const labelVariants: any = {
-  enter: (dir: number) => ({ y: 10, opacity: 0 }),
-  center: {
-    y: 0,
-    opacity: 1,
-    transition: { duration: 0.6, ease: "easeOut", delay: 0.1 },
-  },
-  exit: { opacity: 0, transition: { duration: 0.2 } },
-};
+import { useEffect, useMemo, useState } from "react";
+import Image from "next/image";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { Play, ArrowUpRight, Image as ImageIcon, Video, X } from "lucide-react";
+import {
+  CONTACT,
+  PROJECT_CATEGORIES,
+  SHOWCASE_PROJECTS,
+  type ProjectCategory,
+  type ShowcaseProject,
+} from "@/content/portfolio";
+import {
+  filterProjectsByCategory,
+  getProjectCountByCategory,
+} from "@/lib/projects";
+import SmartVideoPreview from "@/components/SmartVideoPreview";
 
 export default function VideoShowcase() {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [direction, setDirection] = useState<1 | -1>(1);
+  const [activeCategory, setActiveCategory] =
+    useState<ProjectCategory>("All Works");
+  const [selectedProject, setSelectedProject] = useState<ShowcaseProject | null>(
+    null
+  );
+  const shouldReduceMotion = useReducedMotion();
 
-  const wrapperRef   = useRef<HTMLDivElement>(null);
-  const sectionRef   = useRef<HTMLElement>(null);
-  const isInside     = useRef(false);
-  const isMoving     = useRef(false);
-  const indexRef     = useRef(0);
-  const lastWheel    = useRef(0);
+  const filteredProjects = useMemo(
+    () => filterProjectsByCategory(SHOWCASE_PROJECTS, activeCategory),
+    [activeCategory]
+  );
 
-  useEffect(() => { indexRef.current = activeIndex; }, [activeIndex]);
+  const closeModal = () => setSelectedProject(null);
 
-  const scrollToSlot = useCallback((i: number) => {
-    if (!wrapperRef.current) return;
-    window.scrollTo({ top: wrapperRef.current.offsetTop + i * window.innerHeight, behavior: "smooth" });
-  }, []);
+  const getProjectInquiryHref = (projectTitle: string) => {
+    const subject = encodeURIComponent(`Project inquiry: ${projectTitle}`);
+    const body = encodeURIComponent(
+      "Hi Geetha,\n\nI saw your portfolio and would love to discuss this project direction."
+    );
 
-  const navigate = useCallback((next: number) => {
-    if (isMoving.current || next < 0 || next >= projects.length) return;
-    isMoving.current = true;
-    setDirection(next > indexRef.current ? 1 : -1);
-    setActiveIndex(next);
-    scrollToSlot(next);
-    setTimeout(() => { isMoving.current = false; }, 800);
-  }, [scrollToSlot]);
+    return `mailto:${CONTACT.email}?subject=${subject}&body=${body}`;
+  };
 
   useEffect(() => {
-    const el = sectionRef.current;
-    if (!el) return;
-    const onWheel = (e: WheelEvent) => {
-      if (!isInside.current) return;
-      const now = Date.now();
-      if (now - lastWheel.current < 200) return;
-      lastWheel.current = now;
-      if (e.deltaY > 0 && indexRef.current < projects.length - 1) { e.preventDefault(); navigate(indexRef.current + 1); }
-      else if (e.deltaY < 0 && indexRef.current > 0)               { e.preventDefault(); navigate(indexRef.current - 1); }
-    };
-    const onIn  = () => { isInside.current = true;  };
-    const onOut = () => { isInside.current = false; };
-    el.addEventListener("wheel", onWheel, { passive: false });
-    el.addEventListener("mouseenter", onIn);
-    el.addEventListener("mouseleave", onOut);
-    return () => { el.removeEventListener("wheel", onWheel); el.removeEventListener("mouseenter", onIn); el.removeEventListener("mouseleave", onOut); };
-  }, [navigate]);
+    if (!selectedProject) return;
 
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (!isInside.current) return;
-      if (e.key === "ArrowDown") { e.preventDefault(); navigate(indexRef.current + 1); }
-      if (e.key === "ArrowUp")   { e.preventDefault(); navigate(indexRef.current - 1); }
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [navigate]);
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
 
-  useEffect(() => {
-    const onScroll = () => {
-      if (isInside.current || isMoving.current || !wrapperRef.current) return;
-      const scrolled = window.scrollY - wrapperRef.current.offsetTop;
-      if (scrolled < 0) return;
-      const clamped = Math.max(0, Math.min(projects.length - 1, Math.round(scrolled / window.innerHeight)));
-      if (clamped !== indexRef.current) { setDirection(clamped > indexRef.current ? 1 : -1); setActiveIndex(clamped); }
+    const onEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") closeModal();
     };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
-  const p = projects[activeIndex];
+    window.addEventListener("keydown", onEscape);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", onEscape);
+    };
+  }, [selectedProject]);
 
   return (
-    <div ref={wrapperRef} id="work" style={{ height: `${projects.length * 100}vh` }} className="relative bg-[#0B0B0F]">
-      <section
-        ref={sectionRef}
-        className="sticky top-0 h-screen w-full overflow-hidden flex"
-      >
-        {/* ── LEFT — Cinematic Stage ── */}
-        <div className="flex-1 flex flex-col px-20 pt-[100px] pb-20 relative">
-          <div className="absolute inset-0 bg-[#0B0B0F]" />
-          
-          <div className="flex-1 flex items-center justify-center">
-            <AnimatePresence custom={direction} mode="wait">
-              <motion.div
-                key={p.id}
-                custom={direction}
-                variants={cardVariants}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                className="relative w-full aspect-[16/10] max-w-4xl rounded-[40px] overflow-hidden bg-[#0D0D14] border border-white/8 shadow-[0_0_80px_rgba(0,0,0,0.8)]"
-              >
-                {/* Per-project colour gradient fill */}
-                <div className={`absolute inset-0 bg-gradient-to-br ${p.gradient}`} />
+    <section
+      id="work"
+      aria-labelledby="work-heading"
+      className="relative mx-auto min-h-screen max-w-[1400px] scroll-mt-28 bg-transparent px-6 py-20 md:px-12 md:py-24"
+    >
+      <div className="flex flex-col items-start gap-12 lg:flex-row lg:gap-24">
+        <div className="z-20 w-full flex-shrink-0 space-y-12 lg:sticky lg:top-32 lg:w-[280px]">
+          <div>
+            <p className="mb-4 font-mono text-[10px] font-bold uppercase tracking-[0.6em] text-[var(--color-accent)]">
+              The Archives
+            </p>
+            <h2
+              id="work-heading"
+              className="text-4xl font-serif font-black tracking-tight text-white md:text-5xl"
+            >
+              Selected <br className="hidden lg:block" /> Works
+            </h2>
+            <p className="mt-6 max-w-md text-sm leading-relaxed text-white/78">
+              A curated directory of cinematic edits, brand explorations, and
+              digital design snapshots.
+            </p>
+          </div>
 
-                {/* Subtle radial glow from accent colour */}
-                <div
-                  className="absolute inset-0 opacity-30"
-                  style={{ background: `radial-gradient(circle at 30% 40%, ${p.accent}33 0%, transparent 60%)` }}
-                />
-                
-                {p.type === "video" && (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div
-                      className="w-24 h-24 rounded-full flex items-center justify-center backdrop-blur-xl cursor-pointer hover:scale-110 transition-transform border"
-                      style={{ backgroundColor: `${p.accent}22`, borderColor: `${p.accent}55` }}
-                    >
-                      <Play className="w-10 h-10 ml-1" style={{ color: p.accent, fill: p.accent }} />
+          <div
+            className="hide-scrollbar flex gap-2 overflow-x-auto border-b border-white/10 pb-4 lg:flex-col lg:border-b-0 lg:border-l lg:pb-0 lg:pl-6"
+            role="group"
+            aria-label="Project categories"
+          >
+            {PROJECT_CATEGORIES.map((category) => {
+              const isActive = activeCategory === category;
+              const count = getProjectCountByCategory(
+                SHOWCASE_PROJECTS,
+                category
+              );
+
+              return (
+                <button
+                  key={category}
+                  type="button"
+                  aria-pressed={isActive}
+                  onClick={() => setActiveCategory(category)}
+                  className={`group relative inline-flex min-h-11 items-center justify-between whitespace-nowrap rounded-lg px-4 py-3 text-left transition-all duration-300 lg:px-0 ${
+                    isActive
+                      ? "text-white"
+                      : "text-white/55 hover:text-white/85"
+                  }`}
+                >
+                  <span className="relative z-10 font-sans text-sm font-bold uppercase tracking-widest">
+                    {category}
+                  </span>
+                  <span className="ml-6 hidden font-mono text-[10px] opacity-60 lg:block">
+                    [{count}]
+                  </span>
+
+                  {isActive && (
+                    <motion.div
+                      layoutId="activeCategoryMarker"
+                      className="absolute -left-[25px] bottom-0 top-0 hidden w-[2px] bg-[var(--color-accent)] lg:block"
+                    />
+                  )}
+                  {isActive && (
+                    <motion.div
+                      layoutId="activeCategoryBg"
+                      className="absolute inset-0 rounded-lg bg-white/5 lg:hidden"
+                    />
+                  )}
+                </button>
+              );
+            })}
+          </div>
+          <p className="sr-only" aria-live="polite">
+            Showing {filteredProjects.length} projects for {activeCategory}.
+          </p>
+        </div>
+
+        <div className="w-full flex-1">
+          <motion.div
+            layout
+            className="grid auto-rows-[340px] grid-cols-1 gap-6 md:grid-cols-2"
+          >
+            <AnimatePresence mode="popLayout">
+              {filteredProjects.map((project) => (
+                <motion.article
+                  layout
+                  initial={
+                    shouldReduceMotion
+                      ? { opacity: 0 }
+                      : { opacity: 0, scale: 0.96, filter: "blur(8px)" }
+                  }
+                  animate={
+                    shouldReduceMotion
+                      ? { opacity: 1 }
+                      : { opacity: 1, scale: 1, filter: "blur(0px)" }
+                  }
+                  exit={
+                    shouldReduceMotion
+                      ? { opacity: 0 }
+                      : { opacity: 0, scale: 0.96, filter: "blur(8px)" }
+                  }
+                  transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                  key={project.id}
+                  className={`group relative flex cursor-pointer flex-col justify-end overflow-hidden rounded-[2rem] border border-white/5 bg-[#0A0A0E] shadow-xl transition-shadow duration-500 hover:shadow-[0_20px_60px_rgba(0,0,0,0.4)] ${
+                    project.bentoSize === "large"
+                      ? "md:col-span-2"
+                      : "md:col-span-1"
+                  }`}
+                  onClick={() => setSelectedProject(project)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault();
+                      setSelectedProject(project);
+                    }
+                  }}
+                >
+                  <div className="absolute inset-0 overflow-hidden">
+                    {project.type === "video" && project.videoSrc ? (
+                      <SmartVideoPreview
+                        src={project.videoSrc}
+                        shouldReduceMotion={Boolean(shouldReduceMotion)}
+                        className="h-full w-full object-cover opacity-45 transition-all duration-700 group-hover:opacity-70 group-hover:scale-105"
+                      />
+                    ) : (
+                      <Image
+                        src={project.imgSrc ?? "/color.jpeg"}
+                        alt={`${project.title} project preview`}
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 70vw"
+                        className="object-cover opacity-45 grayscale transition-all duration-700 group-hover:opacity-70 group-hover:scale-105 group-hover:grayscale-0"
+                      />
+                    )}
+
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0B0B0F] via-[#0B0B0F]/60 to-transparent" />
+                  </div>
+
+                  <div className="absolute left-6 top-6 flex items-center gap-3">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-black/40 text-white/75 backdrop-blur-md">
+                      {project.type === "video" ? (
+                        <Video className="h-3.5 w-3.5" aria-hidden="true" />
+                      ) : (
+                        <ImageIcon className="h-3.5 w-3.5" aria-hidden="true" />
+                      )}
                     </div>
                   </div>
-                )}
 
-                {/* Tags row */}
-                <div className="absolute top-8 left-10 flex gap-3">
-                  {p.tags.map(tag => (
+                  {project.type === "video" && !shouldReduceMotion && (
+                    <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center opacity-0 transition-all duration-500 group-hover:scale-100 group-hover:opacity-100">
+                      <div className="flex h-20 w-20 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white shadow-[0_0_30px_rgba(0,0,0,0.3)] backdrop-blur-xl">
+                        <Play className="ml-1 h-6 w-6" aria-hidden="true" />
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="relative z-20 p-8 pt-20">
+                    <p className="mb-2 font-mono text-[10px] uppercase tracking-widest text-[var(--color-accent)] opacity-95">
+                      {project.category}
+                    </p>
+                    <h3 className="text-2xl font-serif font-bold leading-tight tracking-tight text-white md:text-3xl">
+                      {project.title}
+                    </h3>
+
+                    <p className="mt-3 text-sm leading-relaxed text-white/78">
+                      {project.summary}
+                    </p>
+
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      {project.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="rounded-full border border-white/15 bg-white/10 px-3 py-1 font-mono text-[10px] uppercase tracking-wider text-white/80"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+
+                    <div className="mt-5 inline-flex min-h-10 items-center rounded-full border border-white/25 px-4 py-2 font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-white/90 transition-colors group-hover:border-[var(--color-accent)]/50 group-hover:text-[var(--color-accent)]">
+                      Open preview
+                    </div>
+                  </div>
+                </motion.article>
+              ))}
+            </AnimatePresence>
+          </motion.div>
+        </div>
+      </div>
+
+      <AnimatePresence>
+        {selectedProject && (
+          <motion.div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 px-4 py-8 backdrop-blur-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={closeModal}
+            role="dialog"
+            aria-modal="true"
+            aria-label={`${selectedProject.title} preview`}
+          >
+            <motion.div
+              className="hide-scrollbar relative max-h-[90vh] w-full max-w-5xl overflow-auto rounded-3xl border border-white/10 bg-[#0C0C12]"
+              initial={
+                shouldReduceMotion
+                  ? { opacity: 0 }
+                  : { opacity: 0, y: 16, scale: 0.98 }
+              }
+              animate={
+                shouldReduceMotion
+                  ? { opacity: 1 }
+                  : { opacity: 1, y: 0, scale: 1 }
+              }
+              exit={
+                shouldReduceMotion
+                  ? { opacity: 0 }
+                  : { opacity: 0, y: 12, scale: 0.98 }
+              }
+              transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+              onClick={(event) => event.stopPropagation()}
+            >
+              <button
+                type="button"
+                onClick={closeModal}
+                className="absolute right-4 top-4 z-20 flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/40 text-white transition-colors hover:border-white/40"
+                aria-label="Close preview"
+              >
+                <X className="h-4 w-4" />
+              </button>
+
+              <div className="relative aspect-[16/10] w-full overflow-hidden bg-black/40">
+                {selectedProject.type === "video" && selectedProject.videoSrc ? (
+                  <video
+                    src={selectedProject.videoSrc}
+                    controls
+                    autoPlay={!shouldReduceMotion}
+                    loop={!shouldReduceMotion}
+                    muted
+                    playsInline
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <Image
+                    src={selectedProject.imgSrc ?? "/color.jpeg"}
+                    alt={`${selectedProject.title} preview`}
+                    fill
+                    sizes="(max-width: 1024px) 100vw, 960px"
+                    className="object-cover"
+                  />
+                )}
+              </div>
+
+              <div className="space-y-4 p-6 md:p-8">
+                <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--color-accent)]">
+                  {selectedProject.category}
+                </p>
+                <h3 className="font-serif text-3xl font-black text-white md:text-4xl">
+                  {selectedProject.title}
+                </h3>
+                <p className="max-w-3xl text-sm leading-relaxed text-white/80 md:text-base">
+                  {selectedProject.summary}
+                </p>
+                <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-white/65">
+                  Outcome: {selectedProject.outcome}
+                </p>
+
+                <div className="flex flex-wrap gap-2">
+                  {selectedProject.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="px-3 py-1 rounded-full text-[9px] font-mono font-bold uppercase tracking-widest border"
-                      style={{ color: p.accent, borderColor: `${p.accent}44`, backgroundColor: `${p.accent}11` }}
+                      className="rounded-full border border-white/15 bg-white/10 px-3 py-1 font-mono text-[10px] uppercase tracking-wider text-white/80"
                     >
                       {tag}
                     </span>
                   ))}
                 </div>
-                
-                <div className="absolute bottom-10 left-12 font-serif font-black text-[160px] leading-none" style={{ color: `${p.accent}0A` }}>
-                  {activeIndex + 1}
-                </div>
-              </motion.div>
-            </AnimatePresence>
-          </div>
 
-          <AnimatePresence custom={direction} mode="wait">
-            <motion.div
-              key={p.id + "-label"}
-              custom={direction}
-              variants={labelVariants}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              className="mt-12 flex flex-col items-center gap-4"
-            >
-              <h3 className="text-3xl font-serif font-black text-white tracking-tight uppercase">
-                {p.title}
-              </h3>
-              <p className="text-xs font-mono tracking-[0.6em] font-bold uppercase" style={{ color: p.accent }}>
-                {p.category}
-              </p>
-            </motion.div>
-          </AnimatePresence>
-        </div>
-
-        {/* ── RIGHT — Technical Navigation ── */}
-        <div className="w-[360px] flex-shrink-0 flex flex-col justify-between px-12 py-32 border-l border-white/8 bg-[#0D0D14]">
-          <div className="space-y-16">
-            <div>
-              <p className="text-[10px] font-mono uppercase tracking-[0.6em] mb-6 text-white/30 font-bold">Project Directory</p>
-              <div className="space-y-4">
-                {projects.map((proj, i) => {
-                  const active = i === activeIndex;
-                  return (
-                    <button
-                      key={proj.id}
-                      onClick={() => navigate(i)}
-                      className={`group w-full text-left flex items-center gap-6 py-2 transition-all ${active ? "opacity-100" : "opacity-30 hover:opacity-60"}`}
-                    >
-                      <span className="text-[10px] font-mono font-bold tracking-widest" style={{ color: active ? proj.accent : `${proj.accent}99` }}>{String(i + 1).padStart(2, "0")}</span>
-                      <span className={`text-sm font-sans uppercase tracking-widest ${active ? "font-black text-white" : "font-medium text-white/60"}`}>{proj.title}</span>
-                    </button>
-                  );
-                })}
+                <a
+                  href={getProjectInquiryHref(selectedProject.title)}
+                  className="inline-flex min-h-11 items-center rounded-full bg-[var(--color-accent)] px-5 py-2 font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-white transition-shadow hover:shadow-[0_0_22px_rgba(139,92,246,0.45)]"
+                >
+                  Discuss this project
+                  <ArrowUpRight className="ml-2 h-4 w-4" aria-hidden="true" />
+                </a>
               </div>
-            </div>
-          </div>
-
-          <div className="space-y-10">
-            <div className="flex items-center gap-4">
-               {projects.map((proj, i) => (
-                 <div
-                   key={i}
-                   className="h-[2px] flex-1 transition-all duration-700"
-                   style={{ backgroundColor: i === activeIndex ? proj.accent : "rgba(255,255,255,0.08)" }}
-                 />
-               ))}
-            </div>
-            <div className="flex justify-between items-center text-[10px] font-mono uppercase tracking-[0.4em] text-white/20 font-black">
-               <span>Next.js 14</span>
-               <span>v4.2.0</span>
-            </div>
-          </div>
-        </div>
-      </section>
-    </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </section>
   );
 }

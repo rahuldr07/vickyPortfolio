@@ -7,6 +7,7 @@ export default function CustomCursor() {
   const [isVisible, setIsVisible] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
   const [isMedia, setIsMedia] = useState(false);
+  const [isEnabled, setIsEnabled] = useState(true);
 
   // Mouse position
   const mouseX = useMotionValue(0);
@@ -18,10 +19,19 @@ export default function CustomCursor() {
   const cursorY = useSpring(mouseY, springConfig);
 
   useEffect(() => {
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const coarse = window.matchMedia("(pointer: coarse)").matches;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setIsEnabled(!(reduced || coarse));
+  }, []);
+
+  useEffect(() => {
+    if (!isEnabled) return;
+
     const moveCursor = (e: MouseEvent) => {
       mouseX.set(e.clientX);
       mouseY.set(e.clientY);
-      if (!isVisible) setIsVisible(true);
+      setIsVisible(true);
     };
 
     const handleMouseOver = (e: MouseEvent) => {
@@ -39,20 +49,24 @@ export default function CustomCursor() {
       setIsMedia(isMediaElement);
     };
 
+    const handleLeave = () => setIsVisible(false);
+
     window.addEventListener("mousemove", moveCursor);
     window.addEventListener("mouseover", handleMouseOver);
-    document.addEventListener("mouseleave", () => setIsVisible(false));
+    document.addEventListener("mouseleave", handleLeave);
 
     return () => {
       window.removeEventListener("mousemove", moveCursor);
       window.removeEventListener("mouseover", handleMouseOver);
+      document.removeEventListener("mouseleave", handleLeave);
     };
-  }, [mouseX, mouseY, isVisible]);
+  }, [mouseX, mouseY, isEnabled]);
 
-  if (!isVisible) return null;
+  if (!isEnabled || !isVisible) return null;
 
   return (
     <motion.div
+      aria-hidden="true"
       className="fixed top-0 left-0 pointer-events-none z-[9999]"
       style={{ x: cursorX, y: cursorY, translateX: "-50%", translateY: "-50%" }}
     >
