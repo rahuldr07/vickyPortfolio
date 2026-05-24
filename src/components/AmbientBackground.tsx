@@ -1,24 +1,36 @@
 "use client";
 
+import type { CSSProperties } from "react";
 import { useEffect, useState } from "react";
 
+export const AMBIENT_PARTICLE_COUNT = 18;
+
+type AmbientParticle = {
+  id: number;
+  x: number;
+  y: number;
+  size: number;
+  duration: number;
+  delay: number;
+  opacity: number;
+  moveX: number;
+  moveY: number;
+};
+
 export default function AmbientBackground() {
-  const [particles, setParticles] = useState<
-    { id: number; x: number; y: number; size: number; duration: number; delay: number; opacity: number; moveX: number; moveY: number }[]
-  >([]);
+  const [particles, setParticles] = useState<AmbientParticle[]>([]);
 
   useEffect(() => {
-    // Generate random static dust particles on the client side
-    const dust = Array.from({ length: 70 }).map((_, i) => ({
+    const dust = Array.from({ length: AMBIENT_PARTICLE_COUNT }).map((_, i) => ({
       id: i,
-      x: Math.random() * 100, // vw
+      x: Math.random() * 90 + 5, // vw
       y: Math.random() * 100, // vh
       size: Math.random() * 2 + 1, // 1px to 3px
       duration: Math.random() * 30 + 30, // 30s to 60s
       delay: Math.random() * -60, // random start in the animation cycle
-      opacity: Math.random() * 0.4 + 0.1, // 0.1 to 0.5 opacity
-      moveX: (Math.random() - 0.5) * 60, // Random drift distance X
-      moveY: (Math.random() - 0.5) * 80, // Random drift distance Y
+      opacity: Math.random() * 0.18 + 0.06,
+      moveX: (Math.random() - 0.5) * 20, // Random drift distance X
+      moveY: (Math.random() - 0.5) * 44, // Random drift distance Y
     }));
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setParticles(dust);
@@ -26,7 +38,7 @@ export default function AmbientBackground() {
 
   return (
     <>
-      {/* Deep purple/violet background gradient layer */}
+      {/* Cinematic scan and grain layer */}
       <div aria-hidden="true" className="ambient-overlay" />
 
       {/* Floating Stardust / Cinematic Dust layer */}
@@ -34,7 +46,8 @@ export default function AmbientBackground() {
         {particles.map((p) => (
           <div
             key={p.id}
-            className="absolute rounded-full bg-white dust-particle"
+            className="dust-particle absolute rounded-full bg-[var(--color-ivory)]"
+            data-testid="ambient-dust"
             style={{
               left: `${p.x}vw`,
               top: `${p.y}vh`,
@@ -47,7 +60,7 @@ export default function AmbientBackground() {
               "--move-y": `${p.moveY}px`,
               animationDuration: `${p.duration}s`,
               animationDelay: `${p.delay}s`,
-            } as React.CSSProperties}
+            } as CSSProperties}
           />
         ))}
       </div>

@@ -4,7 +4,6 @@ import { useRef } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { SplitText } from "gsap/SplitText";
 import Image from "next/image";
 import {
   Mail,
@@ -16,14 +15,15 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { ABOUT_HIGHLIGHTS, CONTACT, SKILLS } from "@/content/portfolio";
+import DossierChapter from "@/components/DossierChapter";
 
-gsap.registerPlugin(ScrollTrigger, SplitText);
+gsap.registerPlugin(ScrollTrigger);
 
 const stats = [
-  { label: "Visual Design", value: 95, icon: Shield },
-  { label: "Video Editing", value: 88, icon: Zap },
-  { label: "UX / UI", value: 82, icon: Target },
-  { label: "Motion Graphics", value: 85, icon: Star },
+  { label: "Visual Systems", value: 95, icon: Shield },
+  { label: "Cinematic Editing", value: 88, icon: Zap },
+  { label: "UI Direction", value: 82, icon: Target },
+  { label: "Campaign Motion", value: 85, icon: Star },
 ] as const;
 
 export default function CharacterSheet() {
@@ -40,22 +40,6 @@ export default function CharacterSheet() {
       const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
       const ctx = gsap.context(() => {
-        if (headingRef.current && !reduced) {
-          const split = new SplitText(headingRef.current, { type: "chars" });
-          gsap.from(split.chars, {
-            y: 20,
-            opacity: 0,
-            stagger: 0.02,
-            duration: 0.8,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: headingRef.current,
-              start: "top 95%",
-              once: true,
-            },
-          });
-        }
-
         gsap.from([leftRef.current, rightRef.current], {
           y: reduced ? 0 : 20,
           opacity: 0,
@@ -86,6 +70,9 @@ export default function CharacterSheet() {
 
         if (reduced) return;
 
+        const maskX = gsap.quickTo(colorImgRef.current, "--mask-x", { duration: 0.4, ease: "power3.out" });
+        const maskY = gsap.quickTo(colorImgRef.current, "--mask-y", { duration: 0.4, ease: "power3.out" });
+
         const handleMouseMove = (event: MouseEvent) => {
           if (!imgWrapperRef.current) return;
           const rect = imgWrapperRef.current.getBoundingClientRect();
@@ -93,8 +80,8 @@ export default function CharacterSheet() {
           const y = event.clientY - rect.top;
 
           if (colorImgRef.current) {
-            colorImgRef.current.style.maskImage = `radial-gradient(circle 110px at ${x}px ${y}px, black 0%, transparent 100%)`;
-            colorImgRef.current.style.webkitMaskImage = `radial-gradient(circle 110px at ${x}px ${y}px, black 0%, transparent 100%)`;
+            maskX(x);
+            maskY(y);
           }
 
           const px = x / rect.width - 0.5;
@@ -121,37 +108,37 @@ export default function CharacterSheet() {
     { scope: sectionRef }
   );
 
+  const rail = (
+    <>
+      <p className="dossier-kicker mb-4">
+        Creative Profile
+      </p>
+      <h2
+        ref={headingRef}
+        id="about-heading"
+        className="text-4xl font-serif font-black tracking-tight text-white md:text-5xl"
+      >
+        Profile
+      </h2>
+      <p className="mt-4 max-w-md text-sm leading-relaxed text-white/72">
+        How I turn loose briefs into client-ready visual systems and motion assets.
+      </p>
+    </>
+  );
+
   return (
-    <section
+    <DossierChapter
       ref={sectionRef}
       id="about"
-      aria-labelledby="about-heading"
-      className="relative mx-auto max-w-[1400px] scroll-mt-28 bg-transparent px-6 py-20 md:px-12 md:py-24"
+      labelledBy="about-heading"
+      rail={rail}
+      contentClassName="hide-scrollbar"
     >
-      <div className="flex flex-col items-start gap-12 lg:flex-row lg:gap-12">
-        <header className="z-20 w-full flex-shrink-0 space-y-4 text-left lg:sticky lg:top-32 lg:w-[280px]">
-          <p className="mb-4 font-mono text-[10px] font-bold uppercase tracking-[0.5em] text-[var(--color-accent)]">
-            Subject / Profile 01
-          </p>
-          <h2
-            ref={headingRef}
-            id="about-heading"
-            className="text-4xl font-serif font-black tracking-tight text-white md:text-5xl"
-          >
-            Character Sheet
-          </h2>
-          <p className="mt-4 max-w-md text-sm leading-relaxed text-white/72">
-            A focused profile of capabilities, process, and creative strengths — built to
-            show how ideas move from concept to polished final output.
-          </p>
-        </header>
-
-        <div className="w-full flex-1">
-          <div className="grid grid-cols-1 items-start gap-24 lg:grid-cols-12">
-            <div ref={leftRef} className="space-y-12 lg:col-span-5 lg:sticky lg:top-24 lg:self-start">
+          <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-[minmax(260px,0.72fr)_minmax(0,1fr)] xl:gap-12">
+            <div ref={leftRef} className="space-y-12 lg:self-start">
           <div
             ref={imgWrapperRef}
-            className="group relative aspect-[4/5] overflow-hidden rounded-2xl border border-white/5 bg-[#0B0B0F] shadow-2xl"
+            className="dossier-panel group relative aspect-[4/5] overflow-hidden rounded-2xl shadow-2xl"
           >
             <div className="dossier-img absolute -left-[7.5%] -top-[7.5%] h-[115%] w-[115%]">
               <Image
@@ -159,7 +146,7 @@ export default function CharacterSheet() {
                 alt="Geetha Krishna black and white portrait"
                 fill
                 sizes="(max-width: 1024px) 100vw, 40vw"
-                className="absolute inset-0 h-full w-full object-cover opacity-55 grayscale"
+                className="absolute inset-0 h-full w-full object-cover opacity-[0.55] grayscale"
               />
               <Image
                 ref={colorImgRef}
@@ -167,8 +154,11 @@ export default function CharacterSheet() {
                 alt="Geetha Krishna color portrait reveal"
                 fill
                 sizes="(max-width: 1024px) 100vw, 40vw"
-                className="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-                style={{ maskImage: "none", WebkitMaskImage: "none" }}
+                className="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                style={{ 
+                  maskImage: "radial-gradient(circle 140px at var(--mask-x, 50%) var(--mask-y, 50%), black 0%, transparent 100%)", 
+                  WebkitMaskImage: "radial-gradient(circle 140px at var(--mask-x, 50%) var(--mask-y, 50%), black 0%, transparent 100%)" 
+                }}
               />
             </div>
 
@@ -181,7 +171,7 @@ export default function CharacterSheet() {
                     Geetha Krishna
                   </h3>
                   <p className="mt-3 font-mono text-[9px] font-bold uppercase tracking-[0.4em] text-white/45">
-                    Subject ID: GK-2025-V4
+                    Visual Director
                   </p>
                 </div>
               </div>
@@ -190,12 +180,12 @@ export default function CharacterSheet() {
 
           <div className="space-y-6">
             <div className="flex items-center gap-4 font-mono text-[10px] font-bold uppercase tracking-widest text-[var(--color-accent)]">
-              <ChevronRight className="h-3 w-3" aria-hidden="true" /> Origin Summary
+              <ChevronRight className="h-3 w-3" aria-hidden="true" /> Creative Operating System
             </div>
             <p className="font-serif text-xl leading-relaxed text-white/78">
-              A creative engineer merging the precision of
-              <span className="text-white"> Instructional Design</span> with
-              the soul of cinematic storytelling.
+              Merging the precision of
+              <span className="text-white"> instructional structure</span> with
+              the atmosphere of cinematic storytelling.
             </p>
 
             <ul className="space-y-3" aria-label="About highlights">
@@ -212,10 +202,10 @@ export default function CharacterSheet() {
           </div>
         </div>
 
-        <div ref={rightRef} className="space-y-20 lg:col-span-7">
+        <div ref={rightRef} className="space-y-20">
           <div ref={barsRef} className="space-y-12">
             <h4 className="border-b border-white/5 pb-6 font-mono text-[10px] font-bold uppercase tracking-[0.5em] text-white/35">
-              Attribute Matrix
+              Capability Matrix
             </h4>
             <div className="grid grid-cols-1 gap-x-16 gap-y-12 md:grid-cols-2">
               {stats.map((stat) => {
@@ -243,7 +233,7 @@ export default function CharacterSheet() {
           <div className="grid grid-cols-1 gap-12 border-t border-white/5 pt-12 md:grid-cols-2">
             <div>
               <h4 className="mb-8 font-mono text-[10px] font-bold uppercase tracking-[0.4em] text-white/35">
-                Inventory
+                Working Stack
               </h4>
               <div className="flex flex-wrap gap-x-6 gap-y-4">
                 {SKILLS.map((skill) => (
@@ -260,7 +250,7 @@ export default function CharacterSheet() {
             <div className="flex flex-col items-start justify-between gap-12">
               <div className="space-y-6">
                 <h4 className="font-mono text-[10px] font-bold uppercase tracking-[0.4em] text-white/35">
-                  Communication
+                  Brief Channel
                 </h4>
                 <a
                   href={`mailto:${CONTACT.email}`}
@@ -276,17 +266,15 @@ export default function CharacterSheet() {
               </div>
 
               <a
-                href={`mailto:${CONTACT.email}?subject=${encodeURIComponent("Request full portfolio dossier")}`}
+                href={`mailto:${CONTACT.email}?subject=${encodeURIComponent("Request full portfolio")}`}
                 className="flex w-full items-center justify-center gap-4 rounded-full border border-white/10 py-5 font-mono text-[10px] font-black uppercase tracking-[0.3em] text-white/75 transition-colors hover:border-[var(--color-accent)]/45 hover:text-white"
               >
-                Export Dossier <Download className="h-4 w-4" aria-hidden="true" />
+                Request Full Portfolio <Download className="h-4 w-4" aria-hidden="true" />
               </a>
             </div>
           </div>
             </div>
           </div>
-        </div>
-      </div>
-    </section>
+    </DossierChapter>
   );
 }

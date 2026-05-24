@@ -4,14 +4,15 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
+import { ArrowDown, ArrowUpRight } from "lucide-react";
 import { HERO_PROOF_POINTS, HERO_ROLES } from "@/content/portfolio";
 
-const scrambleChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$#@%&*";
+const scrambleChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/#%&";
 
 const heroPillars = [
-  "Brand Identity Systems",
-  "Cinematic Video Editing",
-  "UI/UX Storytelling",
+  "Brand Systems",
+  "Cinematic Editing",
+  "Digital Experience",
 ] as const;
 
 export default function Hero() {
@@ -19,22 +20,22 @@ export default function Hero() {
   const [displayRole, setDisplayRole] = useState<string>(HERO_ROLES[0]);
 
   const sectionRef = useRef<HTMLElement>(null);
-  const bgZoomRef = useRef<HTMLDivElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
   const badgeRef = useRef<HTMLDivElement>(null);
-  const firstLineRef = useRef<HTMLSpanElement>(null);
-  const secondLineRef = useRef<HTMLSpanElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
   const roleRef = useRef<HTMLParagraphElement>(null);
   const bodyRef = useRef<HTMLParagraphElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
+  const proofRef = useRef<HTMLDListElement>(null);
   const portraitWrapRef = useRef<HTMLDivElement>(null);
+  const portraitTiltRef = useRef<HTMLDivElement>(null);
   const colorRevealRef = useRef<HTMLDivElement>(null);
-  const chipsRef = useRef<HTMLDivElement>(null);
   const previousRoleRef = useRef<string>(HERO_ROLES[0]);
 
   useEffect(() => {
     const timer = window.setInterval(() => {
       setRoleIndex((prev) => (prev + 1) % HERO_ROLES.length);
-    }, 4500); // Increased interval to allow text to stay longer
+    }, 5200);
 
     return () => window.clearInterval(timer);
   }, []);
@@ -73,7 +74,7 @@ export default function Hero() {
         setDisplayRole(target);
         window.clearInterval(scramble);
       }
-    }, 60); // Slowed down from 30ms to 60ms
+    }, 54);
 
     return () => window.clearInterval(scramble);
   }, [roleIndex]);
@@ -81,80 +82,78 @@ export default function Hero() {
   useGSAP(
     () => {
       const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
       const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
-      if (!reduced) {
-        tl.fromTo(
-          bgZoomRef.current,
-          { scale: 1, opacity: 0.86 },
-          { scale: 1.18, opacity: 1, duration: 2.6 }
-        );
-      }
-
-      tl.from(
-        [badgeRef.current, firstLineRef.current, secondLineRef.current],
-        {
-          y: 34,
-          opacity: 0,
-          duration: 0.8,
-          stagger: 0.1,
-        },
-        reduced ? 0 : "-=2.1"
-      )
-        .from(roleRef.current, { y: 14, opacity: 0, duration: 0.45 }, "-=0.35")
-        .from(bodyRef.current, { y: 18, opacity: 0, duration: 0.6 }, "-=0.25")
-        .from(ctaRef.current, { y: 18, opacity: 0, duration: 0.6 }, "-=0.25")
+      tl.from(stageRef.current, {
+        opacity: 0,
+        y: reduced ? 0 : 24,
+        duration: reduced ? 0.2 : 0.9,
+      })
         .from(
-          portraitWrapRef.current,
-          { x: 38, opacity: 0, scale: 0.96, duration: 0.9 },
-          "-=0.85"
+          [badgeRef.current, titleRef.current, roleRef.current, bodyRef.current],
+          {
+            y: reduced ? 0 : 22,
+            opacity: 0,
+            duration: reduced ? 0.2 : 0.8,
+            stagger: reduced ? 0 : 0.12,
+            ease: "power3.out"
+          },
+          "-=0.4"
+        )
+        .from(ctaRef.current, { y: reduced ? 0 : 16, opacity: 0, duration: 0.52 }, "-=0.22")
+        .from(
+          proofRef.current?.querySelectorAll(".proof-card") ?? [],
+          { y: reduced ? 0 : 14, opacity: 0, stagger: reduced ? 0 : 0.06, duration: 0.48 },
+          "-=0.25"
         )
         .from(
-          chipsRef.current?.querySelectorAll(".chip") ?? [],
-          { y: 14, opacity: 0, stagger: 0.06, duration: 0.45 },
-          "-=0.45"
+          portraitWrapRef.current,
+          { x: reduced ? 0 : 34, opacity: 0, scale: reduced ? 1 : 0.97, duration: 0.9 },
+          "-=0.85"
         );
     },
     { scope: sectionRef }
   );
 
-  useGSAP(() => {
-    if (!roleRef.current) return;
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduced) return;
-
-    gsap.fromTo(
-      roleRef.current,
-      { y: 8, opacity: 0.3 },
-      { y: 0, opacity: 1, duration: 0.35, ease: "power2.out", delay: 0.6 }
-    );
-  }, { scope: sectionRef });
-
   useEffect(() => {
     const wrap = portraitWrapRef.current;
+    const tilt = portraitTiltRef.current;
     const reveal = colorRevealRef.current;
-    if (!wrap || !reveal) return;
+    if (!wrap || !tilt || !reveal) return;
 
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const coarse = window.matchMedia("(pointer: coarse)").matches;
 
-    if (reduced || coarse) return;
+    if (reduced || coarse) {
+      reveal.style.opacity = "0.38";
+      return;
+    }
 
-    const rotateXTo = gsap.quickTo(wrap, "rotateX", {
+    const tiltState = { rotateX: 0, rotateY: 0 };
+    const applyTilt = () => {
+      tilt.style.transform = `perspective(900px) rotateX(${tiltState.rotateX.toFixed(
+        3
+      )}deg) rotateY(${tiltState.rotateY.toFixed(3)}deg)`;
+    };
+
+    applyTilt();
+
+    const rotateXTo = gsap.quickTo(tiltState, "rotateX", {
       duration: 0.32,
       ease: "power3.out",
+      onUpdate: applyTilt,
     });
-    const rotateYTo = gsap.quickTo(wrap, "rotateY", {
+    const rotateYTo = gsap.quickTo(tiltState, "rotateY", {
       duration: 0.32,
       ease: "power3.out",
+      onUpdate: applyTilt,
     });
     const revealOpacityTo = gsap.quickTo(reveal, "opacity", {
       duration: 0.3,
       ease: "power2.out",
     });
 
-    gsap.set(reveal, { opacity: 0.55 });
+    gsap.set(reveal, { opacity: 0.52 });
 
     let rect = wrap.getBoundingClientRect();
     let centerX = rect.width / 2;
@@ -196,14 +195,14 @@ export default function Hero() {
       reveal.style.setProperty("--my", `${pendingY}px`);
     };
 
-    const onMove = (e: MouseEvent) => {
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
+    const onMove = (event: MouseEvent) => {
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
       const px = x / rect.width - 0.5;
       const py = y / rect.height - 0.5;
 
-      rotateYTo(px * 7);
-      rotateXTo(py * -7);
+      rotateYTo(px * 6);
+      rotateXTo(py * -6);
 
       pendingX = x;
       pendingY = y;
@@ -211,15 +210,12 @@ export default function Hero() {
       if (!raf) raf = requestAnimationFrame(flush);
     };
 
-    const onEnter = (e: MouseEvent) => {
+    const onEnter = (event: MouseEvent) => {
       updateRect();
       orbitTween.pause();
 
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-
-      pendingX = x;
-      pendingY = y;
+      pendingX = event.clientX - rect.left;
+      pendingY = event.clientY - rect.top;
 
       reveal.style.setProperty("--mx", `${pendingX}px`);
       reveal.style.setProperty("--my", `${pendingY}px`);
@@ -229,7 +225,7 @@ export default function Hero() {
     const onLeave = () => {
       rotateXTo(0);
       rotateYTo(0);
-      revealOpacityTo(0.55);
+      revealOpacityTo(0.52);
       orbitTween.play();
     };
 
@@ -244,6 +240,9 @@ export default function Hero() {
       wrap.removeEventListener("mousemove", onMove);
       wrap.removeEventListener("mouseleave", onLeave);
       orbitTween.kill();
+      rotateXTo.tween.kill();
+      rotateYTo.tween.kill();
+      revealOpacityTo.tween.kill();
       if (raf) cancelAnimationFrame(raf);
     };
   }, []);
@@ -251,79 +250,64 @@ export default function Hero() {
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-screen overflow-hidden bg-transparent pt-28"
+      className="relative min-h-screen overflow-hidden bg-transparent px-6 pb-10 pt-28 md:px-12"
       aria-label="Hero intro"
     >
       <div
-        ref={bgZoomRef}
-        className="pointer-events-none absolute inset-0 will-change-transform"
+        ref={stageRef}
+        className="relative z-10 mx-auto grid min-h-[calc(100vh-8rem)] w-full max-w-[calc(100vw_-_3rem)] grid-cols-1 items-center gap-12 overflow-hidden lg:max-w-7xl lg:grid-cols-12"
       >
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(139,92,246,0.04),transparent_65%)]" />
-      </div>
-
-      <div className="relative z-10 mx-auto grid min-h-[calc(100vh-7rem)] max-w-7xl grid-cols-1 items-center gap-10 px-6 pb-16 md:gap-12 md:px-12 lg:grid-cols-12 lg:gap-6">
-        <div className="lg:col-span-7">
+        <div className="hero-copy-lock w-full min-w-0 max-w-[calc(100vw_-_3rem)] lg:col-span-7 lg:max-w-full">
           <div
             ref={badgeRef}
-            className="mb-8 inline-flex min-h-11 items-center rounded-full border border-white/10 bg-white/[0.03] px-5 py-2 font-mono text-[10px] font-bold uppercase tracking-[0.3em] text-white/70"
+            className="dossier-panel mb-7 inline-flex min-h-11 max-w-full items-center rounded-full px-5 py-2 font-mono text-[9px] font-extrabold uppercase tracking-[0.24em] text-white/72 sm:text-[10px] sm:tracking-[0.32em]"
           >
-            Portfolio 2026 · Open to Premium Collaborations
+            Premium visual systems
           </div>
 
           <h1
-            className="text-6xl font-serif font-black uppercase leading-[0.86] tracking-tight text-white sm:text-7xl md:text-8xl lg:text-[108px]"
+            ref={titleRef}
+            className="max-w-full font-serif text-[3.2rem] font-black uppercase leading-[0.8] tracking-normal text-white min-[430px]:text-[3.7rem] sm:text-[4.8rem] md:text-[6rem] lg:text-[7.2rem] xl:text-[8.4rem]"
             aria-label="Geetha Krishna"
           >
-            <span ref={firstLineRef} className="block">
-              Geetha
-            </span>
-            <span
-              ref={secondLineRef}
-              className="block text-[var(--color-accent)]"
-            >
-              Krishna
-            </span>
+            <span className="block">Geetha</span>
+            <span className="block text-[var(--color-accent)]">Krishna</span>
           </h1>
 
           <p
             ref={roleRef}
-            className="mt-6 min-h-11 font-mono text-base font-semibold uppercase tracking-[0.24em] text-white/90 md:text-xl"
+            className="mt-7 min-h-11 font-mono text-sm font-extrabold uppercase tracking-[0.22em] text-white/92 md:text-lg"
           >
-            <span className="mr-3 text-[var(--color-accent)]/85">[ROLE]</span>
+            <span className="mr-3 text-[var(--color-accent)]">[SIGNAL]</span>
             <span aria-hidden="true">{displayRole}</span>
-            <span
-              aria-hidden="true"
-              className="ml-1 inline-block text-white/55"
-              style={{ animation: "caretFast 0.45s steps(1, end) infinite" }}
-            >
-              ▌
+            <span aria-hidden="true" className="ml-1 inline-block text-white/45 motion-safe:animate-pulse">
+              |
             </span>
-            <span className="sr-only" aria-live="polite">{HERO_ROLES[roleIndex]}</span>
+            <span className="sr-only" aria-live="polite">
+              {HERO_ROLES[roleIndex]}
+            </span>
           </p>
 
           <p
             ref={bodyRef}
-            className="mt-5 max-w-[66ch] text-base leading-relaxed text-white/80 md:text-lg"
+            className="mt-5 max-w-full text-base leading-relaxed text-white/78 sm:max-w-[68ch] md:text-lg"
           >
-            I help brands and founders turn ideas into high-impact visuals — from
-            identity systems to cinematic edits and digital experiences that
-            audiences remember.
+            I translate brand ambition into premium visual systems—from identity and motion to campaign assets—delivering clarity and atmosphere.
           </p>
 
-          <div ref={ctaRef} className="mt-10 flex flex-wrap items-center gap-4">
+          <div ref={ctaRef} className="mt-10 flex flex-col items-stretch gap-4 sm:flex-row sm:flex-wrap sm:items-center">
             <a
               href="#work"
-              className="group relative inline-flex min-h-11 items-center overflow-hidden rounded-full bg-[var(--color-accent)] px-8 py-3 font-sans text-xs font-extrabold uppercase tracking-[0.22em] text-white transition-all duration-300 hover:shadow-[0_0_30px_rgba(139,92,246,0.45)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0B0B0F]"
+              className="group scan-sweep relative inline-flex min-h-12 w-full max-w-full items-center justify-center overflow-hidden rounded-full bg-[var(--color-accent)] px-8 py-3 font-sans text-xs font-extrabold uppercase tracking-[0.18em] text-[#050508] transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_12px_34px_rgba(176,132,246,0.35)] sm:w-auto sm:tracking-[0.22em]"
             >
-              <span className="relative z-10 transition-colors duration-300 group-hover:text-[#0B0B0F]">View Projects</span>
-              <div className="absolute inset-0 translate-y-full bg-white transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-y-0" />
+              View Works
+              <ArrowUpRight className="ml-2 h-4 w-4 transition-transform duration-500 group-hover:rotate-45" />
             </a>
             <a
               href="#contact"
-              className="group relative inline-flex min-h-11 items-center overflow-hidden rounded-full border border-white/25 px-8 py-3 font-sans text-xs font-bold uppercase tracking-[0.22em] text-white/92 transition-all duration-300 hover:border-white/65 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0B0B0F]"
+              className="group inline-flex min-h-12 w-full max-w-full items-center justify-center rounded-full border border-white/20 px-8 py-3 font-sans text-xs font-bold uppercase tracking-[0.18em] text-white/90 transition-all duration-500 hover:-translate-y-1 hover:border-white/55 hover:bg-white/[0.08] sm:w-auto sm:tracking-[0.22em]"
             >
-              <span className="relative z-10 transition-colors duration-300 group-hover:text-[#0B0B0F]">Let&apos;s Work Together</span>
-              <div className="absolute inset-0 translate-y-full bg-white transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-y-0" />
+              Start a Brief
             </a>
           </div>
 
@@ -331,23 +315,20 @@ export default function Hero() {
             {heroPillars.map((pillar) => (
               <li
                 key={pillar}
-                className="inline-flex min-h-10 items-center rounded-full border border-white/15 bg-white/5 px-4 py-2 font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-white/85"
+                className="dossier-panel inline-flex min-h-10 items-center rounded-full px-4 py-2 font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-white/76"
               >
                 {pillar}
               </li>
             ))}
           </ul>
 
-          <dl className="mt-8 grid gap-3 sm:grid-cols-3" aria-label="Portfolio proof points">
+          <dl ref={proofRef} className="mt-8 grid gap-3 sm:grid-cols-3" aria-label="Portfolio proof points">
             {HERO_PROOF_POINTS.map((item) => (
-              <div
-                key={item.label}
-                className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-4"
-              >
-                <dt className="font-mono text-[10px] uppercase tracking-[0.16em] text-white/65">
+              <div key={item.label} className="proof-card dossier-panel rounded-2xl px-4 py-4">
+                <dt className="font-mono text-[10px] uppercase tracking-[0.16em] text-white/55">
                   {item.label}
                 </dt>
-                <dd className="mt-2 font-serif text-2xl font-black text-white">
+                <dd className="mt-2 font-serif text-3xl font-black text-white">
                   {item.value}
                 </dd>
               </div>
@@ -355,67 +336,75 @@ export default function Hero() {
           </dl>
         </div>
 
-        <div className="lg:col-span-5 lg:justify-self-end">
+        <div className="w-full min-w-0 lg:col-span-5">
           <div
             ref={portraitWrapRef}
-            className="relative mx-auto aspect-[4/5] w-full max-w-[34rem] overflow-hidden rounded-[2.25rem] border border-white/15 bg-[#11111A] shadow-[0_30px_120px_rgba(0,0,0,0.7)] lg:mx-0 lg:ml-auto"
+            data-testid="hero-portrait-wrap"
+            className="dossier-panel relative mx-auto aspect-[4/5] w-full max-w-[34rem] overflow-hidden rounded-[2rem] shadow-[0_34px_110px_rgba(0,0,0,0.62)] lg:mx-0 lg:ml-auto"
           >
-            <Image
-              src="/blackwhite.jpeg"
-              alt="Geetha Krishna portrait black and white"
-              fill
-              priority
-              sizes="(max-width: 1024px) 80vw, 33vw"
-              className="object-cover opacity-60 grayscale"
-            />
-
             <div
-              ref={colorRevealRef}
-              className="pointer-events-none absolute inset-0 opacity-0"
-              style={{
-                WebkitMaskImage:
-                  "radial-gradient(circle 180px at var(--mx,50%) var(--my,50%), #000 0%, transparent 100%)",
-                maskImage:
-                  "radial-gradient(circle 180px at var(--mx,50%) var(--my,50%), #000 0%, transparent 100%)",
-                WebkitMaskRepeat: "no-repeat",
-                maskRepeat: "no-repeat",
-              }}
+              ref={portraitTiltRef}
+              className="absolute inset-0 will-change-transform"
+              style={{ transformStyle: "preserve-3d" }}
             >
               <Image
-                src="/color.jpeg"
-                alt="Geetha Krishna portrait color reveal"
+                src="/blackwhite.jpeg"
+                alt="Geetha Krishna portrait black and white"
                 fill
-                sizes="(max-width: 1024px) 80vw, 33vw"
-                className="object-cover saturate-110"
+                loading="eager"
+                sizes="(max-width: 1024px) 86vw, 34vw"
+                className="object-cover opacity-[0.62] grayscale"
               />
+
+              <div
+                ref={colorRevealRef}
+                className="pointer-events-none absolute inset-0 opacity-0"
+                style={{
+                  WebkitMaskImage:
+                    "radial-gradient(circle 180px at var(--mx,50%) var(--my,50%), #000 0%, transparent 100%)",
+                  maskImage:
+                    "radial-gradient(circle 180px at var(--mx,50%) var(--my,50%), #000 0%, transparent 100%)",
+                  WebkitMaskRepeat: "no-repeat",
+                  maskRepeat: "no-repeat",
+                }}
+              >
+                <Image
+                  src="/color.jpeg"
+                  alt="Geetha Krishna portrait color reveal"
+                  fill
+                  sizes="(max-width: 1024px) 86vw, 34vw"
+                  className="object-cover saturate-110"
+                />
+              </div>
+
+              <div className="absolute inset-0 archive-texture opacity-25" />
+              <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(7,7,10,0.92)_0%,rgba(7,7,10,0.26)_46%,transparent_100%)]" />
+
+              <div className="absolute left-5 top-5 rounded-full border border-white/[0.12] bg-black/[0.35] px-4 py-2 font-mono text-[10px] uppercase tracking-[0.24em] text-white/65 backdrop-blur-md">
+                Geetha Krishna / 2026
+              </div>
+              <div className="absolute bottom-5 left-5 right-5 grid grid-cols-2 gap-3">
+                {["Visual Direction", "Brand Systems", "Campaign Motion", "Client-ready Output"].map((item) => (
+                  <div
+                    key={item}
+                    className="min-h-11 rounded-xl border border-white/10 bg-black/[0.35] px-3 py-3 text-center font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-white/70 backdrop-blur-md"
+                  >
+                    {item}
+                  </div>
+                ))}
+              </div>
             </div>
-
-
-            <div className="absolute inset-0 bg-[linear-gradient(to-t,rgba(11,11,15,0.90)_0%,rgba(11,11,15,0.22)_48%,transparent_100%)]" />
-
-          </div>
-
-          <div ref={chipsRef} className="mt-6 grid grid-cols-2 gap-3">
-            {["Brand Systems", "Cinematic Editing", "UI Storytelling", "Motion + Design"].map(
-              (item) => (
-                <div
-                  key={item}
-                  className="chip min-h-11 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-center font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-white/70"
-                >
-                  {item}
-                </div>
-              )
-            )}
           </div>
         </div>
       </div>
 
-      <style jsx>{`
-        @keyframes caretFast {
-          0%, 49% { opacity: 1; }
-          50%, 100% { opacity: 0.15; }
-        }
-      `}</style>
+      <a
+        href="#work"
+        className="absolute bottom-5 left-1/2 z-20 hidden -translate-x-1/2 items-center gap-2 rounded-full border border-white/10 bg-black/25 px-4 py-2 font-mono text-[10px] uppercase tracking-[0.22em] text-white/50 backdrop-blur-md transition-colors hover:text-white md:inline-flex"
+      >
+        Scroll to explore
+        <ArrowDown className="h-3.5 w-3.5" aria-hidden="true" />
+      </a>
     </section>
   );
 }

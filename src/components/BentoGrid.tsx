@@ -6,6 +6,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ArrowRight } from "lucide-react";
 import { TOOLS } from "@/content/portfolio";
+import DossierChapter from "@/components/DossierChapter";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -39,7 +40,7 @@ export default function BentoGrid() {
           const totalWidth = marqueeRef.current.scrollWidth / 2;
           gsap.to(marqueeRef.current, {
             x: `-=${totalWidth}`,
-            duration: 35,
+            duration: 40,
             ease: "none",
             repeat: -1,
             modifiers: {
@@ -47,6 +48,27 @@ export default function BentoGrid() {
             },
           });
         }
+
+        const handleCardMouseMove = (e: MouseEvent) => {
+          const target = e.currentTarget as HTMLElement;
+          const rect = target.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          target.style.setProperty("--mouse-x", `${x}px`);
+          target.style.setProperty("--mouse-y", `${y}px`);
+        };
+
+        const bentoCards = cardsRef.current?.querySelectorAll(".bento-card");
+        bentoCards?.forEach((card) => {
+          card.addEventListener("mousemove", handleCardMouseMove as EventListener);
+        });
+
+        return () => {
+          bentoCards?.forEach((card) => {
+            card.removeEventListener("mousemove", handleCardMouseMove as EventListener);
+          });
+          ctx.revert();
+        };
       }, sectionRef);
 
       return () => ctx.revert();
@@ -54,63 +76,71 @@ export default function BentoGrid() {
     { scope: sectionRef }
   );
 
+  const rail = (
+    <>
+      <p className="dossier-kicker mb-4">
+        Skills & Production
+      </p>
+      <h2
+        id="arsenal-heading"
+        className="text-4xl font-serif font-black tracking-tight text-white md:text-5xl"
+      >
+        Capabilities
+      </h2>
+      <p className="mt-4 max-w-md text-sm leading-relaxed text-white/72">
+        The core stack for visual systems, motion editing, and UI layout.
+      </p>
+    </>
+  );
+
   return (
-    <section
+    <DossierChapter
       ref={sectionRef}
       id="arsenal"
-      aria-labelledby="arsenal-heading"
-      className="relative mx-auto max-w-[1400px] scroll-mt-28 bg-transparent px-6 py-20 md:px-12 md:py-24"
+      labelledBy="arsenal-heading"
+      rail={rail}
+      contentClassName="hide-scrollbar"
     >
-      <div className="flex flex-col items-start gap-12 lg:flex-row lg:gap-12">
-        <header className="z-20 w-full flex-shrink-0 space-y-4 text-left lg:sticky lg:top-32 lg:w-[280px]">
-          <p className="mb-4 font-mono text-[10px] font-bold uppercase tracking-[0.5em] text-[var(--color-accent)]">
-            Inventory / 02
-          </p>
-          <h2
-            id="arsenal-heading"
-            className="text-4xl font-serif font-black tracking-tight text-white md:text-5xl"
-          >
-            The Arsenal
-          </h2>
-          <p className="mt-4 max-w-md text-sm leading-relaxed text-white/72">
-            A curated selection of tools and methodologies leveraged to craft
-            high-performance visual identities.
-          </p>
-        </header>
-
         <div
           ref={cardsRef}
-          className="grid w-full flex-1 grid-cols-1 gap-px overflow-hidden rounded-3xl border border-white/8 bg-white/8 shadow-2xl md:grid-cols-12"
+          className="dossier-panel grid w-full flex-1 grid-cols-1 gap-px overflow-hidden rounded-3xl shadow-2xl md:grid-cols-12"
         >
-        <div className="bento-card group relative flex flex-col justify-center bg-[#0B0B0F] p-12 md:col-span-8 md:p-20">
+        <div className="bento-card group relative flex flex-col justify-center overflow-hidden bg-[#0B0B0F] p-12 transition-all duration-500 hover:bg-[#0E0E14] md:col-span-8 md:p-20">
+          <div className="pointer-events-none absolute -inset-px opacity-0 transition-opacity duration-300 group-hover:opacity-100" style={{ background: "radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(176,132,246,0.1), transparent 40%)" }} />
           <div className="motion-safe:animate-ping absolute left-12 top-12 h-1 w-1 rounded-full bg-[var(--color-accent)]" />
-          <h3 className="mb-12 text-sm font-mono uppercase tracking-[0.4em] text-white/40">
+          <h3 className="mb-6 text-sm font-mono uppercase tracking-[0.4em] text-white/40">
             Design Philosophy
           </h3>
-          <p className="max-w-2xl font-serif text-2xl leading-tight text-white/70 transition-colors duration-700 group-hover:text-white md:text-4xl">
-            I synthesize <span className="text-white">Instructional Design</span>{" "}
-            with high-end
-            <span className="text-[var(--color-accent)]">
-              {" "}
-              Cinematic Storytelling
-            </span>{" "}
-            to bridge the gap between complex data and intuitive human
-            experience.
+          <p className="text-2xl font-light leading-tight text-[var(--color-foreground)] md:text-3xl lg:text-4xl">
+            Clean logic.<br />
+            Bold aesthetics.
           </p>
-          <div className="mt-16 flex items-center gap-8 font-mono text-[10px] uppercase tracking-widest text-white/40">
-            <div className="flex items-center gap-2">
-              <span className="text-[var(--color-accent)]">[01]</span> Strategy
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-[var(--color-accent)]">[02]</span> Execution
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-[var(--color-accent)]">[03]</span> Refinement
-            </div>
+          <div className="mt-8 flex gap-4">
+            <span className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs text-white/60">UI/UX</span>
+            <span className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs text-white/60">Motion</span>
+            <span className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs text-white/60">Brand</span>
           </div>
+          <h3 className="mt-12 mb-6 text-sm font-mono uppercase tracking-[0.4em] text-white/40">
+            Core Toolkit
+          </h3>
+          <ul className="flex flex-col gap-4 text-lg font-medium text-white/80">
+            <li className="flex items-center gap-3">
+              <div className="h-2 w-2 rounded-full bg-[var(--color-accent)]" /> Premiere Pro
+            </li>
+            <li className="flex items-center gap-3">
+              <div className="h-2 w-2 rounded-full bg-[var(--color-accent)]" /> After Effects
+            </li>
+            <li className="flex items-center gap-3">
+              <div className="h-2 w-2 rounded-full bg-[var(--color-accent)]" /> Figma
+            </li>
+            <li className="flex items-center gap-3">
+              <div className="h-2 w-2 rounded-full bg-[var(--color-accent)]" /> Photoshop
+            </li>
+          </ul>
         </div>
 
-        <div className="bento-card group flex flex-col border-l border-white/8 bg-[#0B0B0F] p-12 md:col-span-4">
+        <div className="bento-card group relative flex flex-col overflow-hidden border-l border-white/[0.08] bg-[#0B0B0F] p-12 transition-all duration-500 hover:bg-[#0E0E14] md:col-span-4">
+          <div className="pointer-events-none absolute -inset-px opacity-0 transition-opacity duration-300 group-hover:opacity-100" style={{ background: "radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(176,132,246,0.1), transparent 40%)" }} />
           <h3 className="mb-12 text-sm font-mono uppercase tracking-[0.4em] text-white/40">
             Formation
           </h3>
@@ -120,14 +150,14 @@ export default function BentoGrid() {
                 Arena Animations
               </h4>
               <p className="mt-4 font-mono text-[10px] uppercase tracking-[0.3em] text-[var(--color-soft)]">
-                VFX Prime / 2019—2022
+                VFX Prime / 2019-2022
               </p>
             </div>
             <div className="space-y-4">
               {["Post-Production", "Compositing", "CGI Mastery"].map((item) => (
                 <div
                   key={item}
-                  className="flex items-center justify-between border-b border-white/8 pb-2 font-mono text-xs text-white/55 transition-colors group-hover:text-white/75"
+                  className="flex items-center justify-between border-b border-white/[0.08] pb-2 font-mono text-xs text-white/55 transition-colors group-hover:text-white/75"
                 >
                   <span>{item}</span>
                   <ArrowRight className="-translate-x-2 h-3 w-3 opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-100" />
@@ -137,36 +167,43 @@ export default function BentoGrid() {
           </div>
         </div>
 
-        <div className="bento-card overflow-hidden border-y border-white/8 bg-[#10101A] py-10 md:col-span-12">
-          <div
-            ref={marqueeRef}
-            className="flex w-max items-center gap-24 whitespace-nowrap will-change-transform"
-          >
-            {[...TOOLS, ...TOOLS, ...TOOLS].map((tool, index) => (
-              <div key={`${tool}-${index}`} className="group/item flex items-center gap-12">
-                <span className="select-none font-mono text-xs font-bold uppercase tracking-[0.5em] text-white/35 transition-all duration-300 group-hover/item:text-[var(--color-accent)] md:text-sm">
-                  {tool}
-                </span>
-                <span className="font-mono text-[10px] tracking-widest text-[var(--color-accent)] opacity-30">
-                  /
-                </span>
-              </div>
-            ))}
+        <div className="bento-card relative h-28 overflow-hidden border-y border-white/[0.08] bg-[#10101A] transition-all duration-500 hover:bg-[#12121E] md:col-span-12">
+          <div className="pointer-events-none absolute -inset-px opacity-0 transition-opacity duration-300 group-hover:opacity-100" style={{ background: "radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(176,132,246,0.06), transparent 40%)" }} />
+          <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 overflow-hidden">
+            <div
+              ref={marqueeRef}
+              className="flex w-max items-center gap-24 whitespace-nowrap will-change-transform"
+            >
+              {[...TOOLS, ...TOOLS].map((tool, index) => (
+                <div key={`${tool}-${index}`} className="group/item flex items-center gap-12">
+                  <span className="select-none font-mono text-xs font-bold uppercase tracking-[0.5em] text-white/35 transition-all duration-300 group-hover/item:text-[var(--color-accent)] md:text-sm">
+                    {tool}
+                  </span>
+                  <span className="font-mono text-[10px] tracking-widest text-[var(--color-accent)] opacity-30">
+                    /
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
-        <div className="bento-card flex flex-col items-center justify-between gap-20 bg-[#0B0B0F] p-12 md:col-span-12 md:flex-row md:p-16">
+        <div className="bento-card group relative flex flex-col items-center justify-between gap-20 overflow-hidden bg-[#0B0B0F] p-12 transition-all duration-500 hover:bg-[#0E0E14] md:col-span-12 md:flex-row md:p-16">
+          <div className="pointer-events-none absolute -inset-px opacity-0 transition-opacity duration-300 group-hover:opacity-100" style={{ background: "radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(176,132,246,0.1), transparent 40%)" }} />
           <div className="flex-1">
-            <h3 className="mb-8 text-sm font-mono uppercase tracking-[0.4em] text-white/40">
-              Strategic Capability
+            <h3 className="mb-4 text-sm font-mono uppercase tracking-[0.4em] text-white/40">
+              Service Range
             </h3>
+            <p className="max-w-md text-xl leading-relaxed text-white/80 md:text-2xl mb-8">
+              From cinematic motion to scalable design systems.
+            </p>
             <div className="grid grid-cols-2 gap-x-8 gap-y-12 md:grid-cols-3">
               {[
                 { label: "Identity", sub: "Logo & Branding" },
                 { label: "Interface", sub: "Web & UX/UI" },
-                { label: "Narrative", sub: "Video & Editing" },
+                { label: "Narrative", sub: "Video Editing" },
                 { label: "Instruction", sub: "E-Learning UI" },
-                { label: "Structure", sub: "Print & Layout" },
+                { label: "Structure", sub: "Print Layout" },
                 { label: "Foundation", sub: "Color Theory" },
               ].map((item) => (
                 <div key={item.label} className="group cursor-default">
@@ -182,7 +219,6 @@ export default function BentoGrid() {
           </div>
         </div>
         </div>
-      </div>
-    </section>
+    </DossierChapter>
   );
 }

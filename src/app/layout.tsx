@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Montserrat, Nunito_Sans } from "next/font/google";
 import "./globals.css";
 import { SITE_META } from "@/content/portfolio";
+import SmoothScroll from "@/components/SmoothScroll";
 import WebVitals from "@/components/WebVitals";
 
 const montserrat = Montserrat({
@@ -46,8 +47,9 @@ export default function RootLayout({
       lang="en"
       className={`${montserrat.variable} ${nunitoSans.variable} antialiased`}
     >
-      <body className="min-h-screen overflow-x-hidden bg-background font-sans text-foreground selection:bg-accent/30 selection:text-accent">
+      <body className="min-h-screen bg-background font-sans text-foreground selection:bg-accent/30 selection:text-accent">
         <WebVitals />
+        <SmoothScroll />
         <a
           href="#main-content"
           className="sr-only focus:not-sr-only focus:fixed focus:left-6 focus:top-6 focus:z-50 focus:rounded-full focus:bg-[var(--color-accent)] focus:px-4 focus:py-2 focus:text-sm focus:font-bold focus:text-[#0B0B0F]"

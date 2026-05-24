@@ -24,4 +24,19 @@ describe("project helpers", () => {
     expect(isProjectCategory("Brand Identity")).toBe(true);
     expect(isProjectCategory("Unknown")).toBe(false);
   });
+
+  it("provides dossier metadata for every showcased project", () => {
+    SHOWCASE_PROJECTS.forEach((project) => {
+      expect(project.brief).toBeTruthy();
+      expect(project.impact).toBeTruthy();
+      expect(project.role).toBeTruthy();
+      expect(project.mediaAlt).toBeTruthy();
+      expect(project.deliverables.length).toBeGreaterThan(0);
+      expect(project.visualTreatment).toMatchObject({
+        code: expect.any(String),
+        signal: expect.any(String),
+        texture: expect.any(String),
+      });
+    });
+  });
 });

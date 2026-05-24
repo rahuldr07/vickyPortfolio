@@ -5,6 +5,7 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { EXPERIENCE_ENTRIES } from "@/content/portfolio";
+import PinnedDossierChapter from "@/components/PinnedDossierChapter";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -91,30 +92,51 @@ export default function ExperiencePath() {
     { scope: sectionRef }
   );
 
+  const rail = (
+    <>
+      <h2
+        id="experience-heading"
+        className="text-glow text-4xl font-serif md:text-5xl"
+      >
+        Experience
+      </h2>
+      <p className="mt-2 max-w-sm font-mono text-sm uppercase tracking-widest text-[var(--color-soft)]">
+        Experience / Evolution
+      </p>
+      <p className="mt-5 max-w-sm text-sm leading-relaxed text-white/72">
+        A timeline of growth across design, content, and digital execution.
+      </p>
+      <div className="hud-glass mt-8 hidden rounded-2xl p-4 lg:block">
+        <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.22em] text-white/48">
+          <span>Progression</span>
+          <span>{String(EXPERIENCE_ENTRIES.length).padStart(2, "0")}</span>
+        </div>
+        <div className="mt-4 grid gap-2">
+          {EXPERIENCE_ENTRIES.map((experience, index) => (
+            <div
+              key={`${experience.company}-rail`}
+              className="flex items-center gap-3 text-[11px] text-white/58"
+            >
+              <span className="h-px flex-1 bg-white/12" />
+              <span className="font-mono uppercase tracking-[0.16em]">
+                {String(index + 1).padStart(2, "0")}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </>
+  );
+
   return (
-    <section
+    <PinnedDossierChapter
       ref={sectionRef}
       id="experience"
-      aria-labelledby="experience-heading"
-      className="relative mx-auto max-w-[1400px] scroll-mt-28 px-6 py-20 md:px-12 md:py-24"
+      labelledBy="experience-heading"
+      rail={rail}
+      railClassName="lg:pt-2"
+      contentClassName="hide-scrollbar"
     >
-      <div className="flex flex-col items-start gap-12 lg:flex-row lg:gap-12">
-        <header className="z-20 w-full flex-shrink-0 space-y-4 text-left lg:sticky lg:top-32 lg:w-[280px]">
-          <h2
-            id="experience-heading"
-            className="text-glow text-4xl font-serif md:text-5xl"
-          >
-            The Journey
-          </h2>
-          <p className="mt-2 max-w-sm font-mono text-sm uppercase tracking-widest text-[var(--color-soft)]">
-            Experience & Evolution
-          </p>
-          <p className="mt-5 max-w-sm text-sm leading-relaxed text-white/72">
-            A timeline of growth across design, content, and digital execution — with
-            impact and ownership at each stage.
-          </p>
-        </header>
-
         <div className="relative w-full flex-1">
           <div className="absolute bottom-0 left-2 top-0 w-[2px] bg-white/10" />
 
@@ -133,9 +155,10 @@ export default function ExperiencePath() {
             className="pointer-events-none absolute left-2 z-30 flex justify-center"
             style={{ top: 0, transform: "translateX(-50%)" }}
           >
-          <div className="relative flex items-center justify-center">
-            <div className="h-3 w-3 rotate-45 border border-white/50 bg-[var(--color-accent)] shadow-[0_0_15px_var(--color-accent)]" />
-            <div className="motion-safe:animate-pulse absolute left-1/2 top-1/2 h-12 w-12 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[var(--color-accent)]/20 blur-xl" />
+          <div className="relative flex flex-col items-center justify-center">
+            <div className="h-4 w-4 rotate-45 border border-white/60 bg-[var(--color-accent)] shadow-[0_0_24px_var(--color-accent)]" />
+            <div className="motion-safe:animate-pulse absolute left-1/2 top-1/2 h-16 w-16 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[var(--color-accent)]/20 blur-xl" />
+            <div className="absolute top-2 h-20 w-[2px] bg-gradient-to-b from-[var(--color-accent)] to-transparent blur-[2px]" />
           </div>
         </div>
 
@@ -155,7 +178,7 @@ export default function ExperiencePath() {
                   }}
                 />
 
-                <div className="exp-card group relative overflow-hidden rounded-3xl border border-white/5 bg-[var(--color-surface)]/40 p-8 backdrop-blur-md transition-all duration-500 hover:border-[var(--color-accent)]/40">
+                <div className="exp-card dossier-panel group relative overflow-hidden rounded-3xl p-8 transition-all duration-500 hover:border-[var(--color-accent)]/40">
                   <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-accent)]/10 to-transparent opacity-0 transition-opacity duration-700 group-hover:opacity-100" />
                   <span className="font-mono text-xs uppercase tracking-widest text-[var(--color-soft)]">
                     {experience.duration}
@@ -177,7 +200,6 @@ export default function ExperiencePath() {
             ))}
           </div>
         </div>
-      </div>
-    </section>
+    </PinnedDossierChapter>
   );
 }

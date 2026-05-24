@@ -7,12 +7,14 @@ import ExperiencePath from "@/components/ExperiencePath";
 import VideoShowcase from "@/components/VideoShowcase";
 import Footer from "@/components/Footer";
 import TopNav from "@/components/TopNav";
+import ScrollSnap from "@/components/ScrollSnap";
 
 export default function Home() {
   return (
     <main id="main-content" className="relative z-10 flex min-h-screen flex-col bg-transparent">
       <AmbientBackground />
       <CustomCursor />
+      <ScrollSnap />
 
       <TopNav />
 

@@ -1,26 +1,185 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { motion, useMotionValue, useSpring } from "framer-motion";
+import { useEffect, useState, type CSSProperties } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+
+type CursorBaseState = "default" | "interactive" | "media" | "text";
+type CursorRenderState = CursorBaseState | "pressed" | "hidden";
+
+type CursorTarget = {
+  label?: string;
+  state: CursorBaseState;
+};
+
+const DEFAULT_TARGET: CursorTarget = { state: "default" };
+
+const INTERACTIVE_SELECTOR =
+  "a[href], button:not([disabled]), [role='button'], input:not([type='hidden']), textarea, select, summary, [tabindex]:not([tabindex='-1'])";
+const MEDIA_SELECTOR = "img, video, canvas, picture";
+const TEXT_SELECTOR =
+  "p, h1, h2, h3, h4, h5, h6, li, blockquote, code, pre, [contenteditable='true']";
+
+const STATE_STYLES: Record<
+  Exclude<CursorRenderState, "hidden">,
+  {
+    accentOpacity: number;
+    caretOpacity: number;
+    crossOpacity: number;
+    dotOpacity: number;
+    dotScale: number;
+    ringOpacity: number;
+    ringSize: number;
+    rotate: number;
+    scale: number;
+  }
+> = {
+  default: {
+    accentOpacity: 0.44,
+    caretOpacity: 0,
+    crossOpacity: 0.68,
+    dotOpacity: 0.82,
+    dotScale: 1,
+    ringOpacity: 0.66,
+    ringSize: 40,
+    rotate: 0,
+    scale: 1,
+  },
+  interactive: {
+    accentOpacity: 0.96,
+    caretOpacity: 0,
+    crossOpacity: 0.9,
+    dotOpacity: 0,
+    dotScale: 0,
+    ringOpacity: 0.92,
+    ringSize: 56,
+    rotate: 0,
+    scale: 1,
+  },
+  media: {
+    accentOpacity: 1,
+    caretOpacity: 0,
+    crossOpacity: 0.86,
+    dotOpacity: 0.74,
+    dotScale: 0.8,
+    ringOpacity: 0.92,
+    ringSize: 68,
+    rotate: 45,
+    scale: 1,
+  },
+  text: {
+    accentOpacity: 0,
+    caretOpacity: 1,
+    crossOpacity: 0,
+    dotOpacity: 0,
+    dotScale: 0,
+    ringOpacity: 0,
+    ringSize: 22,
+    rotate: 0,
+    scale: 1,
+  },
+  pressed: {
+    accentOpacity: 1,
+    caretOpacity: 0,
+    crossOpacity: 1,
+    dotOpacity: 0.94,
+    dotScale: 0.72,
+    ringOpacity: 1,
+    ringSize: 36,
+    rotate: 0,
+    scale: 0.84,
+  },
+};
+
+function getHTMLElement(target: EventTarget | null) {
+  return target instanceof HTMLElement ? target : null;
+}
+
+function getOverrideTarget(element: HTMLElement) {
+  return element.closest<HTMLElement>("[data-cursor]");
+}
+
+function fromOverride(element: HTMLElement): CursorTarget | null {
+  const overrideTarget = getOverrideTarget(element);
+
+  if (!overrideTarget) return null;
+
+  const override = overrideTarget.dataset.cursor;
+  const label = overrideTarget.dataset.cursorLabel;
+
+  if (override === "media") {
+    return { state: "media", label: label ?? "View" };
+  }
+
+  if (override === "text") {
+    return { state: "text" };
+  }
+
+  if (override === "link" || override === "interactive") {
+    return { state: "interactive", label };
+  }
+
+  return null;
+}
+
+function getCursorTarget(target: EventTarget | null): CursorTarget {
+  const element = getHTMLElement(target);
+
+  if (!element) return DEFAULT_TARGET;
+
+  const overrideTarget = getOverrideTarget(element);
+  const interactiveTarget = element.closest<HTMLElement>(INTERACTIVE_SELECTOR);
+
+  if (
+    interactiveTarget &&
+    overrideTarget &&
+    interactiveTarget !== overrideTarget &&
+    overrideTarget.contains(interactiveTarget)
+  ) {
+    return {
+      state: "interactive",
+      label: interactiveTarget.dataset.cursorLabel,
+    };
+  }
+
+  const override = fromOverride(element);
+
+  if (override) return override;
+
+  if (interactiveTarget) {
+    return {
+      state: "interactive",
+      label: interactiveTarget.dataset.cursorLabel,
+    };
+  }
+
+  const mediaTarget = element.closest<HTMLElement>(MEDIA_SELECTOR);
+
+  if (mediaTarget) {
+    return {
+      state: "media",
+      label: mediaTarget.dataset.cursorLabel ?? "View",
+    };
+  }
+
+  if (element.closest(TEXT_SELECTOR)) {
+    return { state: "text" };
+  }
+
+  return DEFAULT_TARGET;
+}
 
 export default function CustomCursor() {
-  const [isVisible, setIsVisible] = useState(false);
-  const [isHovering, setIsHovering] = useState(false);
-  const [isMedia, setIsMedia] = useState(false);
+  const [cursorTarget, setCursorTarget] =
+    useState<CursorTarget>(DEFAULT_TARGET);
   const [isEnabled, setIsEnabled] = useState(true);
-
-  // Mouse position
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-
-  // Smooth spring physics
-  const springConfig = { damping: 30, stiffness: 500, mass: 0.5 };
-  const cursorX = useSpring(mouseX, springConfig);
-  const cursorY = useSpring(mouseY, springConfig);
+  const [isPressed, setIsPressed] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const coarse = window.matchMedia("(pointer: coarse)").matches;
+
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsEnabled(!(reduced || coarse));
   }, []);
@@ -28,79 +187,146 @@ export default function CustomCursor() {
   useEffect(() => {
     if (!isEnabled) return;
 
-    const moveCursor = (e: MouseEvent) => {
-      mouseX.set(e.clientX);
-      mouseY.set(e.clientY);
+    document.body.classList.add("custom-cursor-enabled");
+
+    return () => {
+      document.body.classList.remove("custom-cursor-enabled");
+    };
+  }, [isEnabled]);
+
+  useEffect(() => {
+    if (!isEnabled) return;
+
+    const syncCursorPosition = (event: MouseEvent) => {
+      setPosition({ x: event.clientX, y: event.clientY });
       setIsVisible(true);
     };
 
-    const handleMouseOver = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      const isInteractive = !!(target.tagName.toLowerCase() === "a" || 
-                               target.tagName.toLowerCase() === "button" || 
-                               target.closest("a") || 
-                               target.closest("button"));
-      
-      const isMediaElement = !!(target.tagName.toLowerCase() === "img" || 
-                                target.tagName.toLowerCase() === "video" || 
-                                target.closest(".group")); 
-
-      setIsHovering(isInteractive);
-      setIsMedia(isMediaElement);
+    const moveCursor = (event: MouseEvent) => {
+      syncCursorPosition(event);
     };
 
-    const handleLeave = () => setIsVisible(false);
+    const handleTargetChange = (event: MouseEvent) => {
+      syncCursorPosition(event);
+      setCursorTarget(getCursorTarget(event.target));
+    };
+
+    const handleMouseDown = () => {
+      setIsPressed(true);
+      setIsVisible(true);
+    };
+
+    const handleMouseUp = () => setIsPressed(false);
+
+    const handleLeave = () => {
+      setCursorTarget(DEFAULT_TARGET);
+      setIsPressed(false);
+      setIsVisible(false);
+    };
 
     window.addEventListener("mousemove", moveCursor);
-    window.addEventListener("mouseover", handleMouseOver);
+    window.addEventListener("mouseover", handleTargetChange);
+    window.addEventListener("mousedown", handleMouseDown);
+    window.addEventListener("mouseup", handleMouseUp);
     document.addEventListener("mouseleave", handleLeave);
+    window.addEventListener("blur", handleLeave);
 
     return () => {
       window.removeEventListener("mousemove", moveCursor);
-      window.removeEventListener("mouseover", handleMouseOver);
+      window.removeEventListener("mouseover", handleTargetChange);
+      window.removeEventListener("mousedown", handleMouseDown);
+      window.removeEventListener("mouseup", handleMouseUp);
       document.removeEventListener("mouseleave", handleLeave);
+      window.removeEventListener("blur", handleLeave);
     };
-  }, [mouseX, mouseY, isEnabled]);
+  }, [isEnabled]);
 
-  if (!isEnabled || !isVisible) return null;
+  const cursorState: CursorRenderState = !isVisible
+    ? "hidden"
+    : isPressed
+      ? "pressed"
+      : cursorTarget.state;
+
+  if (!isEnabled || cursorState === "hidden") return null;
+
+  const style = STATE_STYLES[cursorState];
+  const label = cursorState === "pressed" ? undefined : cursorTarget.label;
+  const positionStyle = {
+    transform: `translate3d(${position.x}px, ${position.y}px, 0)`,
+  } as CSSProperties;
 
   return (
-    <motion.div
+    <div
       aria-hidden="true"
-      className="fixed top-0 left-0 pointer-events-none z-[9999]"
-      style={{ x: cursorX, y: cursorY, translateX: "-50%", translateY: "-50%" }}
+      className="fixed left-0 top-0 pointer-events-none z-[9999] text-[var(--cursor-ivory)] transition-transform duration-75 ease-out will-change-transform"
+      data-cursor-state={cursorState}
+      data-testid="custom-cursor"
+      style={positionStyle}
     >
-      {/* Central Aim Dot */}
-      <motion.div 
-        className="w-1 h-1 bg-white rounded-full"
-        animate={{ scale: isHovering ? 0 : 1, opacity: isMedia ? 0.8 : 0.4 }}
-      />
-
-      {/* Outer Ring / Brackets */}
+      <div style={{ transform: "translate(-50%, -50%)" }}>
       <motion.div
-        className="absolute inset-0 flex items-center justify-center"
-        animate={{
-          scale: isHovering ? 2.5 : isMedia ? 1.5 : 1,
-          rotate: isMedia ? 45 : 0
-        }}
-        transition={{ duration: 0.3, ease: "easeOut" }}
+        className="relative flex h-20 w-20 items-center justify-center"
+        animate={{ scale: style.scale }}
+        transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
       >
-        {/* Four Corner Brackets for "Viewfinder" look */}
-        <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-white/20" />
-        <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-white/20" />
-        <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-white/20" />
-        <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-white/20" />
-        
-        {/* Accent Pulse for Media */}
-        {isMedia && (
-          <motion.div 
-            className="absolute inset-0 border border-[var(--color-accent)]/30 rounded-full"
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1.2, opacity: 1 }}
-            transition={{ repeat: Infinity, duration: 1.5, ease: "easeOut" }}
-          />
-        )}
+        <motion.div
+          className="absolute rounded-full border-2 border-[var(--cursor-ivory)]/70 bg-black/[0.05] shadow-[0_0_30px_rgba(255,250,238,0.16),0_0_34px_rgba(184,154,255,0.2)] backdrop-blur-[1px]"
+          animate={{
+            height: style.ringSize,
+            opacity: style.ringOpacity,
+            rotate: style.rotate,
+            width: style.ringSize,
+          }}
+          transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+        />
+
+        <motion.div
+          className="absolute rounded-full border-2 border-[var(--cursor-accent)] shadow-[0_0_26px_rgba(184,154,255,0.58)]"
+          animate={{
+            height: style.ringSize + 12,
+            opacity: style.accentOpacity,
+            rotate: -style.rotate,
+            width: style.ringSize + 12,
+          }}
+          transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+        />
+
+        <motion.div
+          className="absolute h-0.5 w-12 bg-gradient-to-r from-transparent via-[var(--cursor-ivory)] to-transparent"
+          animate={{ opacity: style.crossOpacity, scaleX: cursorState === "media" ? 0.72 : 1 }}
+        />
+        <motion.div
+          className="absolute h-12 w-0.5 bg-gradient-to-b from-transparent via-[var(--cursor-ivory)] to-transparent"
+          animate={{ opacity: style.crossOpacity, scaleY: cursorState === "media" ? 0.72 : 1 }}
+        />
+
+        <motion.div
+          className="absolute h-11 w-0.5 rounded-full bg-[var(--cursor-accent)] shadow-[0_0_18px_rgba(184,154,255,0.78)]"
+          animate={{ opacity: style.caretOpacity, scaleY: style.caretOpacity ? 1 : 0.5 }}
+          transition={{ duration: 0.18, ease: "easeOut" }}
+        />
+
+        <motion.div
+          className="h-2 w-2 rounded-full bg-[var(--cursor-ivory)] shadow-[0_0_16px_rgba(255,250,238,0.72)]"
+          animate={{ opacity: style.dotOpacity, scale: style.dotScale }}
+          transition={{ duration: 0.18, ease: "easeOut" }}
+        />
+
+        <AnimatePresence>
+          {label && (
+            <motion.div
+              className="absolute left-14 top-1/2 whitespace-nowrap rounded-full border-2 border-[var(--cursor-accent)]/70 bg-[#07070A]/86 px-3.5 py-1.5 font-mono text-[10px] font-black uppercase tracking-[0.22em] text-[var(--cursor-ivory)] shadow-[0_12px_34px_rgba(0,0,0,0.34),0_0_24px_rgba(184,154,255,0.24)] backdrop-blur-md"
+              initial={{ opacity: 0, x: -4, y: "-50%" }}
+              animate={{ opacity: 1, x: 0, y: "-50%" }}
+              exit={{ opacity: 0, x: -4, y: "-50%" }}
+              transition={{ duration: 0.16, ease: "easeOut" }}
+            >
+              {label}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 }

@@ -1,23 +1,21 @@
 "use client";
 
-import { useEffect, useId, useMemo, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { CONTACT, NAV_LINKS } from "@/content/portfolio";
 
 const sectionIds = NAV_LINKS.map((link) => link.href.replace("#", ""));
+const SHOW_AT_TOP_OFFSET = 80;
+const HIDE_DELTA = 10;
+const SHOW_DELTA = -6;
 
 export default function TopNav() {
   const [open, setOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState(() => {
-    if (typeof window !== "undefined") {
-      const hash = window.location.hash.replace("#", "");
-      if (hash && sectionIds.includes(hash)) return hash;
-    }
-
-    return sectionIds[0] ?? "";
-  });
+  const [activeSection, setActiveSection] = useState(sectionIds[0] ?? "");
+  const [isHidden, setIsHidden] = useState(false);
   const shouldReduceMotion = useReducedMotion();
+  const previousScrollYRef = useRef(0);
   const menuId = useId();
 
   const desktopLinks = useMemo(
@@ -32,18 +30,91 @@ export default function TopNav() {
             href={link.href}
             aria-current={isActive ? "page" : undefined}
             onClick={() => setActiveSection(section)}
-            className={`inline-flex min-h-10 items-center rounded-lg px-2.5 transition-colors duration-300 ${
+            className={`relative isolate inline-flex min-h-10 items-center rounded-full px-4 text-[13px] transition-colors duration-300 ${
               isActive
-                ? "text-[var(--color-accent)]"
-                : "text-white/75 hover:text-[var(--color-accent)]"
+                ? "text-white"
+                : "text-white/62 hover:text-white"
             }`}
           >
-            {link.label}
+            {isActive && (
+              <motion.span
+                layoutId="hudActiveSection"
+                className="absolute inset-0 -z-10 rounded-full border border-[var(--color-accent)]/40 bg-[var(--color-accent)]/20 shadow-[0_0_24px_rgba(176,132,246,0.25)]"
+                transition={{ type: "spring", stiffness: 350, damping: 30 }}
+              />
+            )}
+            <span className="relative z-10">{link.label}</span>
           </a>
         );
       }),
     [activeSection]
   );
+
+  useEffect(() => {
+    if (shouldReduceMotion) {
+      return;
+    }
+
+    let previousTouchY: number | null = null;
+    previousScrollYRef.current = window.scrollY;
+
+    const updateVisibility = (delta: number, latest = window.scrollY) => {
+      if (open || latest < SHOW_AT_TOP_OFFSET) {
+        setIsHidden(false);
+        return;
+      }
+
+      if (delta > HIDE_DELTA) {
+        setIsHidden(true);
+        return;
+      }
+
+      if (delta < SHOW_DELTA) {
+        setIsHidden(false);
+      }
+    };
+
+    const onScroll = () => {
+      const latest = window.scrollY;
+      const delta = latest - previousScrollYRef.current;
+      previousScrollYRef.current = latest;
+      updateVisibility(delta, latest);
+    };
+
+    const onWheel = (event: WheelEvent) => {
+      updateVisibility(event.deltaY);
+    };
+
+    const onTouchStart = (event: TouchEvent) => {
+      previousTouchY = event.touches[0]?.clientY ?? null;
+    };
+
+    const onTouchMove = (event: TouchEvent) => {
+      const currentTouchY = event.touches[0]?.clientY;
+      if (previousTouchY === null || currentTouchY === undefined) return;
+
+      updateVisibility(previousTouchY - currentTouchY);
+      previousTouchY = currentTouchY;
+    };
+
+    const scrollTargets: EventTarget[] = [window, document, document.body];
+
+    scrollTargets.forEach((target) => {
+      target.addEventListener("scroll", onScroll, { passive: true });
+    });
+    window.addEventListener("wheel", onWheel, { passive: true });
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("touchmove", onTouchMove, { passive: true });
+
+    return () => {
+      scrollTargets.forEach((target) => {
+        target.removeEventListener("scroll", onScroll);
+      });
+      window.removeEventListener("wheel", onWheel);
+      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchmove", onTouchMove);
+    };
+  }, [open, shouldReduceMotion]);
 
   useEffect(() => {
     if (!open) return;
@@ -61,6 +132,20 @@ export default function TopNav() {
       window.removeEventListener("keydown", onEscape);
     };
   }, [open]);
+
+  useEffect(() => {
+    const syncHashSection = () => {
+      const hash = window.location.hash.replace("#", "");
+      if (hash && sectionIds.includes(hash)) {
+        setActiveSection(hash);
+      }
+    };
+
+    syncHashSection();
+    window.addEventListener("hashchange", syncHashSection);
+
+    return () => window.removeEventListener("hashchange", syncHashSection);
+  }, []);
 
   useEffect(() => {
     const sections = sectionIds
@@ -91,29 +176,50 @@ export default function TopNav() {
     return () => observer.disconnect();
   }, []);
 
+  const navHidden = Boolean(isHidden && !open && !shouldReduceMotion);
+
   return (
     <>
       <nav
         aria-label="Primary"
-        className="fixed top-0 z-40 flex w-full items-center justify-between border-b border-white/5 bg-[var(--color-background)]/60 px-5 py-3 backdrop-blur-md md:px-10"
+        data-scroll-hidden={navHidden}
+        style={{
+          opacity: navHidden ? 0 : 1,
+          pointerEvents: navHidden ? "none" : "auto",
+          transform: `translate(-50%, ${navHidden ? "-135%" : "0%"})`,
+        }}
+        className="nas-style-nav fixed left-1/2 top-4 z-40 flex w-[calc(100%-1.25rem)] max-w-5xl items-center justify-between gap-3 rounded-full px-3 py-2 text-[var(--color-ivory)] transition-[opacity,transform] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform"
       >
         <a
           href="#main-content"
-          className="font-serif text-lg font-bold uppercase tracking-[0.14em] text-white"
+          className="relative z-10 inline-flex h-11 min-w-11 items-center justify-center rounded-full px-3 font-serif text-xl font-black uppercase tracking-normal text-white"
         >
+          <span
+            className="mr-2 inline-flex h-4 w-4 rotate-45 rounded-[4px] bg-[var(--color-accent)] shadow-[0_0_16px_rgba(159,122,234,0.36)]"
+            aria-hidden="true"
+          />
           GK<span className="text-[var(--color-accent)]">.</span>
         </a>
 
-        <div className="hidden gap-5 font-sans text-xs uppercase tracking-wider md:flex">
+        <div className="relative z-10 hidden items-center rounded-full font-sans font-extrabold tracking-normal lg:flex">
           {desktopLinks}
         </div>
 
-        <a
-          href={`mailto:${CONTACT.email}`}
-          className="hidden min-h-10 items-center rounded-full bg-[var(--color-accent)] px-4 py-2 font-sans text-[11px] font-bold uppercase tracking-wider text-white transition-shadow duration-300 hover:shadow-[0_0_20px_rgba(139,92,246,0.5)] md:inline-flex"
-        >
-          Hire Me
-        </a>
+        <div className="relative z-10 hidden items-center gap-2 lg:flex">
+          <a
+            href="#work"
+            className="inline-flex min-h-12 items-center rounded-full border border-white/[0.08] bg-white/[0.08] px-6 py-2 font-sans text-sm font-extrabold text-white/82 transition-colors duration-300 hover:bg-white/[0.12] hover:text-white"
+          >
+            Dossier
+          </a>
+
+          <a
+            href={`mailto:${CONTACT.email}`}
+            className="scan-sweep inline-flex min-h-12 items-center rounded-full bg-[var(--color-accent)] px-6 py-2 font-sans text-sm font-extrabold text-[#07070A] transition-shadow duration-300 hover:shadow-[0_8px_22px_rgba(159,122,234,0.38)]"
+          >
+            Brief Me
+          </a>
+        </div>
 
         <button
           type="button"
@@ -121,7 +227,7 @@ export default function TopNav() {
           aria-expanded={open}
           aria-controls={menuId}
           onClick={() => setOpen((value) => !value)}
-          className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/15 text-white md:hidden"
+          className="relative z-10 inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/[0.08] bg-white/[0.08] text-white lg:hidden"
         >
           {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
@@ -130,47 +236,65 @@ export default function TopNav() {
       <AnimatePresence>
         {open && (
           <motion.div
-            id={menuId}
-            role="dialog"
-            aria-modal="true"
-            aria-label="Mobile menu"
-            initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: -10 }}
-            animate={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
-            exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: -10 }}
-            transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed inset-0 z-30 bg-[var(--color-background)]/96 px-6 pt-24 md:hidden"
+            key="mobile-menu-shell"
+            className="fixed inset-0 z-30 lg:hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
           >
-            <div className="flex flex-col gap-4 font-sans text-lg uppercase tracking-widest">
-              {NAV_LINKS.map((link) => {
-                const section = link.href.replace("#", "");
-                const isActive = activeSection === section;
+            <motion.div
+              className="absolute inset-0 bg-black/35 backdrop-blur-[2px]"
+              onClick={() => setOpen(false)}
+            />
+            <motion.div
+              id={menuId}
+              role="dialog"
+              aria-modal="true"
+              aria-label="Mobile menu"
+              initial={
+                shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: -10 }
+              }
+              animate={
+                shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }
+              }
+              exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: -10 }}
+              transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+              className="absolute left-3 right-3 top-20 rounded-[1.75rem] border border-white/[0.12] bg-[#0e0e13]/94 p-4 text-white shadow-[0_18px_45px_rgba(0,0,0,0.42)] backdrop-blur-2xl"
+              onClick={(event) => event.stopPropagation()}
+            >
+              <div className="relative z-10 flex flex-col gap-3 font-sans text-base font-extrabold tracking-normal">
+                {NAV_LINKS.map((link) => {
+                  const section = link.href.replace("#", "");
+                  const isActive = activeSection === section;
 
-                return (
-                  <a
-                    key={link.href}
-                    href={link.href}
-                    aria-current={isActive ? "page" : undefined}
-                    onClick={() => {
-                      setActiveSection(section);
-                      setOpen(false);
-                    }}
-                    className={`inline-flex min-h-11 items-center rounded-xl border px-4 py-3 ${
-                      isActive
-                        ? "border-[var(--color-accent)]/30 bg-[var(--color-accent)]/10 text-white"
-                        : "border-white/10 text-white/90"
-                    }`}
-                  >
-                    {link.label}
-                  </a>
-                );
-              })}
-              <a
-                href={`mailto:${CONTACT.email}`}
-                className="mt-2 inline-flex min-h-11 items-center justify-center rounded-full bg-[var(--color-accent)] px-5 py-3 text-sm font-bold text-white"
-              >
-                Hire Me
-              </a>
-            </div>
+                  return (
+                    <a
+                      key={link.href}
+                      href={link.href}
+                      aria-current={isActive ? "page" : undefined}
+                      onClick={() => {
+                        setActiveSection(section);
+                        setOpen(false);
+                      }}
+                      className={`inline-flex min-h-11 items-center rounded-2xl border px-4 py-3 transition-colors ${
+                        isActive
+                          ? "border-[var(--color-accent)]/30 bg-[var(--color-accent)]/14 text-white"
+                          : "border-white/[0.08] bg-white/[0.06] text-white/76"
+                      }`}
+                    >
+                      {link.label}
+                    </a>
+                  );
+                })}
+                <a
+                  href={`mailto:${CONTACT.email}`}
+                  onClick={() => setOpen(false)}
+                  className="scan-sweep mt-2 inline-flex min-h-12 items-center justify-center rounded-full bg-[var(--color-accent)] px-5 py-3 text-sm font-black text-[#07070A]"
+                >
+                  Brief Me
+                </a>
+              </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
