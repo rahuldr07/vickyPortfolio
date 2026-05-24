@@ -20,22 +20,6 @@ export default function BentoGrid() {
       const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
       const ctx = gsap.context(() => {
-        const cards = cardsRef.current?.querySelectorAll(".bento-card");
-        if (cards?.length) {
-          gsap.from(cards, {
-            y: reduced ? 0 : 20,
-            opacity: 0,
-            duration: reduced ? 0.25 : 1,
-            ease: "power2.out",
-            stagger: reduced ? 0 : 0.1,
-            scrollTrigger: {
-              trigger: cardsRef.current,
-              start: "top 90%",
-              once: true,
-            },
-          });
-        }
-
         if (marqueeRef.current && !reduced) {
           const totalWidth = marqueeRef.current.scrollWidth / 2;
           gsap.to(marqueeRef.current, {
@@ -67,7 +51,6 @@ export default function BentoGrid() {
           bentoCards?.forEach((card) => {
             card.removeEventListener("mousemove", handleCardMouseMove as EventListener);
           });
-          ctx.revert();
         };
       }, sectionRef);
 
@@ -87,8 +70,8 @@ export default function BentoGrid() {
       >
         Capabilities
       </h2>
-      <p className="mt-4 max-w-md text-sm leading-relaxed text-white/72">
-        The core stack for visual systems, motion editing, and UI layout.
+      <p className="mt-4 max-w-md text-[15px] leading-relaxed text-white/72">
+        A practical production stack for logos, posters, menus, thumbnails, reels, UI screens, and e-learning visuals.
       </p>
     </>
   );
@@ -103,48 +86,57 @@ export default function BentoGrid() {
     >
         <div
           ref={cardsRef}
-          className="dossier-panel grid w-full flex-1 grid-cols-1 gap-px overflow-hidden rounded-3xl shadow-2xl md:grid-cols-12"
+          className="dossier-panel grid w-full flex-1 grid-cols-1 gap-px overflow-hidden rounded-3xl shadow-2xl sm:grid-cols-12"
         >
-        <div className="bento-card group relative flex flex-col justify-center overflow-hidden bg-[#0B0B0F] p-12 transition-all duration-500 hover:bg-[#0E0E14] md:col-span-8 md:p-20">
+        <div className="bento-card group relative flex flex-col justify-center overflow-hidden bg-[#0B0B0F] p-8 opacity-100 transition-all duration-500 hover:bg-[#0E0E14] sm:col-span-8 md:p-10 xl:p-12">
           <div className="pointer-events-none absolute -inset-px opacity-0 transition-opacity duration-300 group-hover:opacity-100" style={{ background: "radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(176,132,246,0.1), transparent 40%)" }} />
           <div className="motion-safe:animate-ping absolute left-12 top-12 h-1 w-1 rounded-full bg-[var(--color-accent)]" />
           <h3 className="mb-6 text-sm font-mono uppercase tracking-[0.4em] text-white/40">
-            Design Philosophy
+            Production Profile
           </h3>
-          <p className="text-2xl font-light leading-tight text-[var(--color-foreground)] md:text-3xl lg:text-4xl">
-            Clean logic.<br />
-            Bold aesthetics.
+          <p className="max-w-2xl text-2xl font-light leading-tight text-[var(--color-foreground)] md:text-3xl">
+            Design assets that move from brand mark to campaign, screen, print, and reel.
           </p>
-          <div className="mt-8 flex gap-4">
-            <span className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs text-white/60">UI/UX</span>
-            <span className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs text-white/60">Motion</span>
-            <span className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs text-white/60">Brand</span>
+          <div className="mt-8 grid gap-3 sm:grid-cols-2">
+            {[
+              "Logo systems",
+              "Menu cards",
+              "Product posters",
+              "Video reels",
+            ].map((item) => (
+              <span
+                key={item}
+                className="rounded-xl border border-white/10 bg-white/[0.045] px-4 py-3 font-mono text-[10px] uppercase tracking-[0.16em] text-white/64"
+              >
+                {item}
+              </span>
+            ))}
           </div>
-          <h3 className="mt-12 mb-6 text-sm font-mono uppercase tracking-[0.4em] text-white/40">
+          <h3 className="mt-8 mb-5 text-sm font-mono uppercase tracking-[0.4em] text-white/40">
             Core Toolkit
           </h3>
-          <ul className="flex flex-col gap-4 text-lg font-medium text-white/80">
+          <ul className="grid gap-3 text-base font-medium text-white/80 sm:grid-cols-2">
+            <li className="flex items-center gap-3">
+              <div className="h-2 w-2 rounded-full bg-[var(--color-accent)]" /> Photoshop
+            </li>
+            <li className="flex items-center gap-3">
+              <div className="h-2 w-2 rounded-full bg-[var(--color-accent)]" /> Illustrator
+            </li>
             <li className="flex items-center gap-3">
               <div className="h-2 w-2 rounded-full bg-[var(--color-accent)]" /> Premiere Pro
             </li>
             <li className="flex items-center gap-3">
               <div className="h-2 w-2 rounded-full bg-[var(--color-accent)]" /> After Effects
             </li>
-            <li className="flex items-center gap-3">
-              <div className="h-2 w-2 rounded-full bg-[var(--color-accent)]" /> Figma
-            </li>
-            <li className="flex items-center gap-3">
-              <div className="h-2 w-2 rounded-full bg-[var(--color-accent)]" /> Photoshop
-            </li>
           </ul>
         </div>
 
-        <div className="bento-card group relative flex flex-col overflow-hidden border-l border-white/[0.08] bg-[#0B0B0F] p-12 transition-all duration-500 hover:bg-[#0E0E14] md:col-span-4">
+        <div className="bento-card group relative flex flex-col overflow-hidden border-l border-white/[0.08] bg-[#0B0B0F] p-8 opacity-100 transition-all duration-500 hover:bg-[#0E0E14] sm:col-span-4 md:p-10">
           <div className="pointer-events-none absolute -inset-px opacity-0 transition-opacity duration-300 group-hover:opacity-100" style={{ background: "radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(176,132,246,0.1), transparent 40%)" }} />
-          <h3 className="mb-12 text-sm font-mono uppercase tracking-[0.4em] text-white/40">
+          <h3 className="mb-8 text-sm font-mono uppercase tracking-[0.4em] text-white/40">
             Formation
           </h3>
-          <div className="mt-auto space-y-12">
+          <div className="mt-auto space-y-8">
             <div>
               <h4 className="font-serif text-3xl font-bold tracking-tight text-white">
                 Arena Animations
@@ -154,7 +146,7 @@ export default function BentoGrid() {
               </p>
             </div>
             <div className="space-y-4">
-              {["Post-Production", "Compositing", "CGI Mastery"].map((item) => (
+              {["VFX Prime", "Post-production", "Compositing", "Motion basics"].map((item) => (
                 <div
                   key={item}
                   className="flex items-center justify-between border-b border-white/[0.08] pb-2 font-mono text-xs text-white/55 transition-colors group-hover:text-white/75"
@@ -167,7 +159,7 @@ export default function BentoGrid() {
           </div>
         </div>
 
-        <div className="bento-card relative h-28 overflow-hidden border-y border-white/[0.08] bg-[#10101A] transition-all duration-500 hover:bg-[#12121E] md:col-span-12">
+        <div className="bento-card relative h-20 overflow-hidden border-y border-white/[0.08] bg-[#10101A] opacity-100 transition-all duration-500 hover:bg-[#12121E] sm:col-span-12">
           <div className="pointer-events-none absolute -inset-px opacity-0 transition-opacity duration-300 group-hover:opacity-100" style={{ background: "radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(176,132,246,0.06), transparent 40%)" }} />
           <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 overflow-hidden">
             <div
@@ -188,25 +180,28 @@ export default function BentoGrid() {
           </div>
         </div>
 
-        <div className="bento-card group relative flex flex-col items-center justify-between gap-20 overflow-hidden bg-[#0B0B0F] p-12 transition-all duration-500 hover:bg-[#0E0E14] md:col-span-12 md:flex-row md:p-16">
+        <div className="bento-card group relative flex flex-col items-center justify-between gap-8 overflow-hidden bg-[#0B0B0F] p-8 opacity-100 transition-all duration-500 hover:bg-[#0E0E14] sm:col-span-12 md:flex-row md:p-10">
           <div className="pointer-events-none absolute -inset-px opacity-0 transition-opacity duration-300 group-hover:opacity-100" style={{ background: "radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(176,132,246,0.1), transparent 40%)" }} />
           <div className="flex-1">
             <h3 className="mb-4 text-sm font-mono uppercase tracking-[0.4em] text-white/40">
               Service Range
             </h3>
-            <p className="max-w-md text-xl leading-relaxed text-white/80 md:text-2xl mb-8">
-              From cinematic motion to scalable design systems.
+            <p className="mb-6 max-w-2xl text-lg leading-relaxed text-white/80 md:text-xl">
+              From restaurant logos to product posters, thumbnails, UI screens, web banners, and learning modules.
             </p>
-            <div className="grid grid-cols-2 gap-x-8 gap-y-12 md:grid-cols-3">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {[
                 { label: "Identity", sub: "Logo & Branding" },
-                { label: "Interface", sub: "Web & UX/UI" },
-                { label: "Narrative", sub: "Video Editing" },
-                { label: "Instruction", sub: "E-Learning UI" },
-                { label: "Structure", sub: "Print Layout" },
-                { label: "Foundation", sub: "Color Theory" },
+                { label: "Campaigns", sub: "Posters & Creatives" },
+                { label: "Social", sub: "Thumbnails & Shorts" },
+                { label: "Motion", sub: "Video Editing" },
+                { label: "Interface", sub: "UI Screens & WIX" },
+                { label: "Learning", sub: "Articulate 360" },
               ].map((item) => (
-                <div key={item.label} className="group cursor-default">
+                <div
+                  key={item.label}
+                  className="group cursor-default rounded-2xl border border-white/10 bg-[#121218] p-5 transition-colors hover:border-[var(--color-accent)]/40"
+                >
                   <p className="font-serif text-lg font-bold text-white transition-colors group-hover:text-[var(--color-accent)]">
                     {item.label}
                   </p>

@@ -480,35 +480,44 @@ export const SKILLS = [
   "Adobe XD",
   "WIX",
   "Articulate 360",
+  "Logo Design",
+  "Print Design",
+  "Color Theory",
 ] as const;
 
 export const ABOUT_HIGHLIGHTS = [
-  "Premium visual systems across brand, motion, UI, and print.",
-  "Cinematic storytelling backed by instructional design structure.",
-  "Turning loose briefs into organized, client-ready output.",
+  "4 years across graphic design, visual content creation, motion edits, and brand storytelling.",
+  "Strong Adobe production stack: Photoshop, Illustrator, Premiere Pro, After Effects, and DaVinci Resolve.",
+  "Design systems and prototype thinking through Figma, Adobe XD, WIX, and Articulate 360 e-learning workflows.",
 ] as const;
 
 export const EXPERIENCE_ENTRIES = [
   {
-    role: "Graphic Designer (Intern)",
-    company: "Pixel Scoop Studios",
+    role: "Graphic Designer Intern",
+    company: "Design Internship",
     duration: "2021 Jan - 2021 Dec",
-    description: "Built core production skills across Photoshop, Illustrator, and short-form edits.",
-    highlight: "Fast visual execution.",
+    description:
+      "Started as an intern graphic designer, building production confidence in Adobe Photoshop and Illustrator while supporting short video and album video edits.",
+    highlight: "Adobe production foundation",
+    focus: ["Photoshop", "Illustrator", "Short edits", "Album videos"],
   },
   {
     role: "Graphic Designer & Content Creator",
     company: "GreenMonk Energy Drink",
-    duration: "2022 Jan - 2023 Feb",
-    description: "Produced posters, UI screens, music video edits, and YouTube assets.",
-    highlight: "Social-first campaigns.",
+    duration: "Product & social content",
+    description:
+      "Created product posters, creatives, thumbnails, and UI screens, then extended the same campaign language into music videos, product concept shorts, and YouTube edits.",
+    highlight: "Campaign content system",
+    focus: ["Product posters", "Thumbnails", "UI screens", "YouTube edits"],
   },
   {
-    role: "Graphic & Web Designer",
-    company: "Buddha-CEO Quantum Foundation",
-    duration: "2023 Mar - Present",
-    description: "Leads design for web, print, magazines, and daily content updates.",
-    highlight: "Visual communication lead.",
+    role: "Graphic Designer & Visual Content Creator",
+    company: "Portfolio Practice",
+    duration: "4+ years total practice",
+    description:
+      "Develops logo systems, menu cards, banners, reels, and learning-oriented digital layouts with a focus on clear hierarchy, color control, and brand communication.",
+    highlight: "Brand, print, UI, motion",
+    focus: ["Logo systems", "Menu cards", "Banners", "E-learning layouts"],
   },
 ] as const;
 
@@ -522,6 +531,11 @@ export const TOOLS = [
   "Adobe XD",
   "WIX",
   "Articulate 360",
+  "Logo Design",
+  "Print Design",
+  "Visual Design",
+  "Color Theory",
+  "E-Learning",
 ] as const;
 
 export const CONTACT = {

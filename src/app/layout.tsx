@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { Montserrat, Nunito_Sans } from "next/font/google";
 import "./globals.css";
 import { SITE_META } from "@/content/portfolio";
-import SmoothScroll from "@/components/SmoothScroll";
 import WebVitals from "@/components/WebVitals";
+import SmoothScroll from "@/components/SmoothScroll";
 
 const montserrat = Montserrat({
   weight: ["400", "500", "600", "700", "800", "900"],

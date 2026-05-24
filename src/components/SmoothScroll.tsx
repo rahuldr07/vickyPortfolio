@@ -12,7 +12,8 @@ import {
   normalizeWheelDelta,
 } from "@/lib/smooth-scroll";
 
-const SCROLL_LERP = 0.15;
+const SCROLL_LERP = 0.2;
+const MAX_WHEEL_DELTA = 260;
 
 function getMaxScroll() {
   return Math.max(
@@ -39,6 +40,9 @@ export default function SmoothScroll() {
       "(prefers-reduced-motion: reduce)"
     ).matches;
     if (reducedMotion) return;
+
+    const coarsePointer = window.matchMedia("(pointer: coarse)").matches;
+    if (coarsePointer) return;
 
     const root = document.documentElement;
     const previousScrollBehavior =
@@ -114,7 +118,11 @@ export default function SmoothScroll() {
         event.deltaMode,
         window.innerHeight
       );
-      start(targetYRef.current + delta);
+      const clampedDelta = Math.max(
+        Math.min(delta, MAX_WHEEL_DELTA),
+        -MAX_WHEEL_DELTA
+      );
+      start(targetYRef.current + clampedDelta);
     };
 
     const onKeyDown = (event: KeyboardEvent) => {

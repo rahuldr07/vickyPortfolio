@@ -380,14 +380,14 @@ export default function Hero() {
               <div className="absolute inset-0 archive-texture opacity-25" />
               <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(7,7,10,0.92)_0%,rgba(7,7,10,0.26)_46%,transparent_100%)]" />
 
-              <div className="absolute left-5 top-5 rounded-full border border-white/[0.12] bg-black/[0.35] px-4 py-2 font-mono text-[10px] uppercase tracking-[0.24em] text-white/65 backdrop-blur-md">
+              <div className="absolute left-5 top-5 rounded-full border border-white/[0.12] bg-[#08080d]/85 px-4 py-2 font-mono text-[10px] uppercase tracking-[0.24em] text-white/65">
                 Geetha Krishna / 2026
               </div>
               <div className="absolute bottom-5 left-5 right-5 grid grid-cols-2 gap-3">
                 {["Visual Direction", "Brand Systems", "Campaign Motion", "Client-ready Output"].map((item) => (
                   <div
                     key={item}
-                    className="min-h-11 rounded-xl border border-white/10 bg-black/[0.35] px-3 py-3 text-center font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-white/70 backdrop-blur-md"
+                    className="min-h-11 rounded-xl border border-white/10 bg-[#08080d]/85 px-3 py-3 text-center font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-white/70"
                   >
                     {item}
                   </div>
@@ -400,7 +400,7 @@ export default function Hero() {
 
       <a
         href="#work"
-        className="absolute bottom-5 left-1/2 z-20 hidden -translate-x-1/2 items-center gap-2 rounded-full border border-white/10 bg-black/25 px-4 py-2 font-mono text-[10px] uppercase tracking-[0.22em] text-white/50 backdrop-blur-md transition-colors hover:text-white md:inline-flex"
+        className="absolute bottom-5 left-1/2 z-20 hidden -translate-x-1/2 items-center gap-2 rounded-full border border-white/10 bg-[#08080d]/80 px-4 py-2 font-mono text-[10px] uppercase tracking-[0.22em] text-white/50 transition-colors hover:text-white md:inline-flex"
       >
         Scroll to explore
         <ArrowDown className="h-3.5 w-3.5" aria-hidden="true" />

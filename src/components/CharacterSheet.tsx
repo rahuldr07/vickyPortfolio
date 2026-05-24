@@ -20,10 +20,10 @@ import DossierChapter from "@/components/DossierChapter";
 gsap.registerPlugin(ScrollTrigger);
 
 const stats = [
-  { label: "Visual Systems", value: 95, icon: Shield },
-  { label: "Cinematic Editing", value: 88, icon: Zap },
-  { label: "UI Direction", value: 82, icon: Target },
-  { label: "Campaign Motion", value: 85, icon: Star },
+  { label: "Logo & Brand Systems", value: 94, icon: Shield },
+  { label: "Print & Campaign Design", value: 91, icon: Target },
+  { label: "Video Editing", value: 88, icon: Zap },
+  { label: "E-Learning Visuals", value: 82, icon: Star },
 ] as const;
 
 export default function CharacterSheet() {
@@ -120,8 +120,8 @@ export default function CharacterSheet() {
       >
         Profile
       </h2>
-      <p className="mt-4 max-w-md text-sm leading-relaxed text-white/72">
-        How I turn loose briefs into client-ready visual systems and motion assets.
+      <p className="mt-4 max-w-md text-[15px] leading-relaxed text-white/72">
+        A graphic designer building logos, menus, banners, reels, UI screens, and learning content with clear brand communication.
       </p>
     </>
   );
@@ -134,11 +134,11 @@ export default function CharacterSheet() {
       rail={rail}
       contentClassName="hide-scrollbar"
     >
-          <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-[minmax(260px,0.72fr)_minmax(0,1fr)] xl:gap-12">
-            <div ref={leftRef} className="space-y-12 lg:self-start">
+          <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-[minmax(220px,0.55fr)_minmax(0,1fr)] xl:gap-10">
+            <div ref={leftRef} className="space-y-7 lg:self-start">
           <div
             ref={imgWrapperRef}
-            className="dossier-panel group relative aspect-[4/5] overflow-hidden rounded-2xl shadow-2xl"
+            className="dossier-panel group relative mx-auto aspect-[4/5] w-full max-w-sm overflow-hidden rounded-2xl shadow-2xl lg:max-w-none"
           >
             <div className="dossier-img absolute -left-[7.5%] -top-[7.5%] h-[115%] w-[115%]">
               <Image
@@ -164,35 +164,35 @@ export default function CharacterSheet() {
 
             <div className="absolute inset-0 bg-gradient-to-t from-[#0B0B0F] via-[#0B0B0F]/20 to-transparent opacity-90" />
 
-            <div className="pointer-events-none absolute bottom-0 left-0 right-0 z-20 p-10">
-              <div className="flex items-end justify-between border-t border-white/10 pt-6">
+            <div className="pointer-events-none absolute bottom-0 left-0 right-0 z-20 p-7">
+              <div className="flex items-end justify-between border-t border-white/10 pt-5">
                 <div>
                   <h3 className="text-3xl font-serif font-bold tracking-tight text-white">
                     Geetha Krishna
                   </h3>
                   <p className="mt-3 font-mono text-[9px] font-bold uppercase tracking-[0.4em] text-white/45">
-                    Visual Director
+                    Graphic Designer
                   </p>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="space-y-6">
+          <div className="space-y-5">
             <div className="flex items-center gap-4 font-mono text-[10px] font-bold uppercase tracking-widest text-[var(--color-accent)]">
               <ChevronRight className="h-3 w-3" aria-hidden="true" /> Creative Operating System
             </div>
-            <p className="font-serif text-xl leading-relaxed text-white/78">
-              Merging the precision of
-              <span className="text-white"> instructional structure</span> with
-              the atmosphere of cinematic storytelling.
+            <p className="font-serif text-xl leading-relaxed text-white/78 lg:text-2xl">
+              Four years of visual content practice across
+              <span className="text-white"> brand identity, print layouts, motion edits, UI screens,</span>
+              and e-learning design.
             </p>
 
             <ul className="space-y-3" aria-label="About highlights">
               {ABOUT_HIGHLIGHTS.map((highlight) => (
                 <li
                   key={highlight}
-                  className="flex items-start gap-3 text-sm leading-relaxed text-white/72"
+                  className="flex items-start gap-3 text-[15px] leading-relaxed text-white/72"
                 >
                   <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--color-accent)]" />
                   <span>{highlight}</span>
@@ -202,12 +202,12 @@ export default function CharacterSheet() {
           </div>
         </div>
 
-        <div ref={rightRef} className="space-y-20">
-          <div ref={barsRef} className="space-y-12">
-            <h4 className="border-b border-white/5 pb-6 font-mono text-[10px] font-bold uppercase tracking-[0.5em] text-white/35">
-              Capability Matrix
+        <div ref={rightRef} className="space-y-10">
+          <div ref={barsRef} className="space-y-7">
+            <h4 className="border-b border-white/5 pb-5 font-mono text-[10px] font-bold uppercase tracking-[0.5em] text-white/35">
+              Resume-Backed Matrix
             </h4>
-            <div className="grid grid-cols-1 gap-x-16 gap-y-12 md:grid-cols-2">
+            <div className="grid grid-cols-1 gap-x-12 gap-y-7 md:grid-cols-2">
               {stats.map((stat) => {
                 const Icon = stat.icon;
                 return (
@@ -230,7 +230,7 @@ export default function CharacterSheet() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-12 border-t border-white/5 pt-12 md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-8 border-t border-white/5 pt-8 md:grid-cols-2">
             <div>
               <h4 className="mb-8 font-mono text-[10px] font-bold uppercase tracking-[0.4em] text-white/35">
                 Working Stack
@@ -252,8 +252,11 @@ export default function CharacterSheet() {
                 <h4 className="font-mono text-[10px] font-bold uppercase tracking-[0.4em] text-white/35">
                   Brief Channel
                 </h4>
+                <p className="max-w-sm text-[15px] leading-relaxed text-white/64">
+                  Best fit: logo systems, product posters, menu cards, thumbnails, reels, web banners, UI screens, and interactive learning material.
+                </p>
                 <a
-                  href={`mailto:${CONTACT.email}`}
+                  href="#contact"
                   className="group flex min-h-11 items-center gap-4 text-white transition-colors hover:text-[var(--color-accent)]"
                 >
                   <div className="flex h-12 w-12 items-center justify-center rounded-full border border-white/10 transition-all group-hover:border-[var(--color-accent)]/30">
@@ -266,7 +269,7 @@ export default function CharacterSheet() {
               </div>
 
               <a
-                href={`mailto:${CONTACT.email}?subject=${encodeURIComponent("Request full portfolio")}`}
+                href="#contact"
                 className="flex w-full items-center justify-center gap-4 rounded-full border border-white/10 py-5 font-mono text-[10px] font-black uppercase tracking-[0.3em] text-white/75 transition-colors hover:border-[var(--color-accent)]/45 hover:text-white"
               >
                 Request Full Portfolio <Download className="h-4 w-4" aria-hidden="true" />

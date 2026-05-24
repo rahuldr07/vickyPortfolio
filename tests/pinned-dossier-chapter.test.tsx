@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import PinnedDossierChapter from "@/components/PinnedDossierChapter";
 
 describe("PinnedDossierChapter", () => {
-  it("renders a viewport-bounded sticky rail and page-scrolled content", () => {
+  it("renders a sticky rail without trapping content in an inner scroller", () => {
     render(
       <PinnedDossierChapter
         id="pinned-chapter"
@@ -22,10 +22,10 @@ describe("PinnedDossierChapter", () => {
     expect(screen.getByTestId("pinned-dossier-chapter-rail")).toHaveClass(
       "lg:sticky"
     );
-    expect(screen.getByTestId("pinned-dossier-chapter-rail")).toHaveClass(
+    expect(screen.getByTestId("pinned-dossier-chapter-rail")).not.toHaveClass(
       "lg:max-h-[calc(100svh-8rem)]"
     );
-    expect(screen.getByTestId("pinned-dossier-chapter-rail")).toHaveClass(
+    expect(screen.getByTestId("pinned-dossier-chapter-rail")).not.toHaveClass(
       "lg:overflow-y-auto"
     );
     expect(screen.getByTestId("pinned-dossier-chapter-content")).toHaveClass(

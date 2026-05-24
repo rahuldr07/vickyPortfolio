@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import DossierChapter from "@/components/DossierChapter";
 
 describe("DossierChapter", () => {
-  it("renders a sticky left rail and page-scrolled right content", () => {
+  it("renders a sticky left rail without trapping content in an inner scroller", () => {
     render(
       <DossierChapter
         id="chapter"
@@ -18,10 +18,10 @@ describe("DossierChapter", () => {
     expect(screen.getByTestId("dossier-chapter-rail")).toHaveClass(
       "lg:sticky"
     );
-    expect(screen.getByTestId("dossier-chapter-rail")).toHaveClass(
+    expect(screen.getByTestId("dossier-chapter-rail")).not.toHaveClass(
       "lg:max-h-[calc(100svh-8rem)]"
     );
-    expect(screen.getByTestId("dossier-chapter-rail")).toHaveClass(
+    expect(screen.getByTestId("dossier-chapter-rail")).not.toHaveClass(
       "lg:overflow-y-auto"
     );
     expect(screen.getByTestId("dossier-chapter-content")).toHaveClass(

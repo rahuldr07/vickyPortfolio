@@ -2,7 +2,6 @@
 
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { Menu, X } from "lucide-react";
-import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { CONTACT, NAV_LINKS } from "@/content/portfolio";
 
 const sectionIds = NAV_LINKS.map((link) => link.href.replace("#", ""));
@@ -14,7 +13,6 @@ export default function TopNav() {
   const [open, setOpen] = useState(false);
   const [activeSection, setActiveSection] = useState(sectionIds[0] ?? "");
   const [isHidden, setIsHidden] = useState(false);
-  const shouldReduceMotion = useReducedMotion();
   const previousScrollYRef = useRef(0);
   const menuId = useId();
 
@@ -37,10 +35,8 @@ export default function TopNav() {
             }`}
           >
             {isActive && (
-              <motion.span
-                layoutId="hudActiveSection"
+              <span
                 className="absolute inset-0 -z-10 rounded-full border border-[var(--color-accent)]/40 bg-[var(--color-accent)]/20 shadow-[0_0_24px_rgba(176,132,246,0.25)]"
-                transition={{ type: "spring", stiffness: 350, damping: 30 }}
               />
             )}
             <span className="relative z-10">{link.label}</span>
@@ -51,10 +47,6 @@ export default function TopNav() {
   );
 
   useEffect(() => {
-    if (shouldReduceMotion) {
-      return;
-    }
-
     let previousTouchY: number | null = null;
     previousScrollYRef.current = window.scrollY;
 
@@ -114,7 +106,7 @@ export default function TopNav() {
       window.removeEventListener("touchstart", onTouchStart);
       window.removeEventListener("touchmove", onTouchMove);
     };
-  }, [open, shouldReduceMotion]);
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -176,7 +168,7 @@ export default function TopNav() {
     return () => observer.disconnect();
   }, []);
 
-  const navHidden = Boolean(isHidden && !open && !shouldReduceMotion);
+  const navHidden = Boolean(isHidden && !open);
 
   return (
     <>
@@ -207,14 +199,7 @@ export default function TopNav() {
 
         <div className="relative z-10 hidden items-center gap-2 lg:flex">
           <a
-            href="#work"
-            className="inline-flex min-h-12 items-center rounded-full border border-white/[0.08] bg-white/[0.08] px-6 py-2 font-sans text-sm font-extrabold text-white/82 transition-colors duration-300 hover:bg-white/[0.12] hover:text-white"
-          >
-            Dossier
-          </a>
-
-          <a
-            href={`mailto:${CONTACT.email}`}
+            href="#contact"
             className="scan-sweep inline-flex min-h-12 items-center rounded-full bg-[var(--color-accent)] px-6 py-2 font-sans text-sm font-extrabold text-[#07070A] transition-shadow duration-300 hover:shadow-[0_8px_22px_rgba(159,122,234,0.38)]"
           >
             Brief Me
@@ -233,71 +218,52 @@ export default function TopNav() {
         </button>
       </nav>
 
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            key="mobile-menu-shell"
-            className="fixed inset-0 z-30 lg:hidden"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+      {open && (
+        <div className="fixed inset-0 z-30 lg:hidden">
+          <div className="absolute inset-0 bg-black/45" onClick={() => setOpen(false)} />
+          <div
+            id={menuId}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Mobile menu"
+            className="absolute left-3 right-3 top-20 rounded-[1.75rem] border border-white/[0.12] bg-[#0e0e13] p-4 text-white shadow-[0_18px_45px_rgba(0,0,0,0.42)]"
+            onClick={(event) => event.stopPropagation()}
           >
-            <motion.div
-              className="absolute inset-0 bg-black/35 backdrop-blur-[2px]"
-              onClick={() => setOpen(false)}
-            />
-            <motion.div
-              id={menuId}
-              role="dialog"
-              aria-modal="true"
-              aria-label="Mobile menu"
-              initial={
-                shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: -10 }
-              }
-              animate={
-                shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }
-              }
-              exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: -10 }}
-              transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-              className="absolute left-3 right-3 top-20 rounded-[1.75rem] border border-white/[0.12] bg-[#0e0e13]/94 p-4 text-white shadow-[0_18px_45px_rgba(0,0,0,0.42)] backdrop-blur-2xl"
-              onClick={(event) => event.stopPropagation()}
-            >
-              <div className="relative z-10 flex flex-col gap-3 font-sans text-base font-extrabold tracking-normal">
-                {NAV_LINKS.map((link) => {
-                  const section = link.href.replace("#", "");
-                  const isActive = activeSection === section;
+            <div className="relative z-10 flex flex-col gap-3 font-sans text-base font-extrabold tracking-normal">
+              {NAV_LINKS.map((link) => {
+                const section = link.href.replace("#", "");
+                const isActive = activeSection === section;
 
-                  return (
-                    <a
-                      key={link.href}
-                      href={link.href}
-                      aria-current={isActive ? "page" : undefined}
-                      onClick={() => {
-                        setActiveSection(section);
-                        setOpen(false);
-                      }}
-                      className={`inline-flex min-h-11 items-center rounded-2xl border px-4 py-3 transition-colors ${
-                        isActive
-                          ? "border-[var(--color-accent)]/30 bg-[var(--color-accent)]/14 text-white"
-                          : "border-white/[0.08] bg-white/[0.06] text-white/76"
-                      }`}
-                    >
-                      {link.label}
-                    </a>
-                  );
-                })}
-                <a
-                  href={`mailto:${CONTACT.email}`}
-                  onClick={() => setOpen(false)}
-                  className="scan-sweep mt-2 inline-flex min-h-12 items-center justify-center rounded-full bg-[var(--color-accent)] px-5 py-3 text-sm font-black text-[#07070A]"
-                >
-                  Brief Me
-                </a>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+                return (
+                  <a
+                    key={link.href}
+                    href={link.href}
+                    aria-current={isActive ? "page" : undefined}
+                    onClick={() => {
+                      setActiveSection(section);
+                      setOpen(false);
+                    }}
+                    className={`inline-flex min-h-11 items-center rounded-2xl border px-4 py-3 transition-colors ${
+                      isActive
+                        ? "border-[var(--color-accent)]/30 bg-[var(--color-accent)]/14 text-white"
+                        : "border-white/[0.08] bg-white/[0.06] text-white/76"
+                    }`}
+                  >
+                    {link.label}
+                  </a>
+                );
+              })}
+              <a
+                href="#contact"
+                onClick={() => setOpen(false)}
+                className="scan-sweep mt-2 inline-flex min-h-12 items-center justify-center rounded-full bg-[var(--color-accent)] px-5 py-3 text-sm font-black text-[#07070A]"
+              >
+                Brief Me
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
