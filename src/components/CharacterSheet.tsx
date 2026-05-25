@@ -1,37 +1,25 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
-import {
-  Mail,
-  Download,
-  Shield,
-  Zap,
-  Target,
-  Star,
-  ChevronRight,
-} from "lucide-react";
-import { ABOUT_HIGHLIGHTS, CONTACT, SKILLS } from "@/content/portfolio";
+import { ArrowUpRight, ChevronRight, FileText, X } from "lucide-react";
+import { ABOUT_HIGHLIGHTS } from "@/content/portfolio";
 import DossierChapter from "@/components/DossierChapter";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const stats = [
-  { label: "Logo & Brand Systems", value: 94, icon: Shield },
-  { label: "Print & Campaign Design", value: 91, icon: Target },
-  { label: "Video Editing", value: 88, icon: Zap },
-  { label: "E-Learning Visuals", value: 82, icon: Star },
-] as const;
+const RESUME_PDF_URL = "/resume/geetha-krishna-resume.pdf";
+const RESUME_PREVIEW_SRC = "/resume/geetha-krishna-resume-preview.webp";
 
 export default function CharacterSheet() {
+  const [resumeOpen, setResumeOpen] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const leftRef = useRef<HTMLDivElement>(null);
   const rightRef = useRef<HTMLDivElement>(null);
-  const barsRef = useRef<HTMLDivElement>(null);
   const imgWrapperRef = useRef<HTMLDivElement>(null);
   const colorImgRef = useRef<HTMLImageElement>(null);
 
@@ -53,20 +41,21 @@ export default function CharacterSheet() {
           },
         });
 
-        const fills = barsRef.current?.querySelectorAll(".stat-fill");
-        fills?.forEach((fill, i) => {
-          gsap.to(fill, {
-            width: `${stats[i].value}%`,
-            duration: reduced ? 0.3 : 1.8,
-            delay: reduced ? 0 : 0.4 + i * 0.1,
-            ease: "power4.out",
+        const revealItems = rightRef.current?.querySelectorAll(".profile-reveal");
+        if (revealItems?.length) {
+          gsap.from(revealItems, {
+            y: reduced ? 0 : 18,
+            opacity: 0,
+            duration: reduced ? 0.2 : 0.7,
+            stagger: reduced ? 0 : 0.08,
+            ease: "power3.out",
             scrollTrigger: {
-              trigger: barsRef.current,
+              trigger: rightRef.current,
               start: "top 85%",
               once: true,
             },
           });
-        });
+        }
 
         if (reduced) return;
 
@@ -107,6 +96,24 @@ export default function CharacterSheet() {
     },
     { scope: sectionRef }
   );
+
+  useEffect(() => {
+    if (!resumeOpen) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const onEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setResumeOpen(false);
+    };
+
+    window.addEventListener("keydown", onEscape);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", onEscape);
+    };
+  }, [resumeOpen]);
 
   const rail = (
     <>
@@ -178,106 +185,139 @@ export default function CharacterSheet() {
             </div>
           </div>
 
-          <div className="space-y-5">
-            <div className="flex items-center gap-4 font-mono text-[10px] font-bold uppercase tracking-widest text-[var(--color-accent)]">
-              <ChevronRight className="h-3 w-3" aria-hidden="true" /> Creative Operating System
-            </div>
-            <p className="font-serif text-xl leading-relaxed text-white/78 lg:text-2xl">
-              Four years of visual content practice across
-              <span className="text-white"> brand identity, print layouts, motion edits, UI screens,</span>
-              and e-learning design.
-            </p>
-
-            <ul className="space-y-3" aria-label="About highlights">
-              {ABOUT_HIGHLIGHTS.map((highlight) => (
-                <li
-                  key={highlight}
-                  className="flex items-start gap-3 text-[15px] leading-relaxed text-white/72"
-                >
-                  <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--color-accent)]" />
-                  <span>{highlight}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
         </div>
 
-        <div ref={rightRef} className="space-y-10">
-          <div ref={barsRef} className="space-y-7">
-            <h4 className="border-b border-white/5 pb-5 font-mono text-[10px] font-bold uppercase tracking-[0.5em] text-white/35">
-              Resume-Backed Matrix
-            </h4>
-            <div className="grid grid-cols-1 gap-x-12 gap-y-7 md:grid-cols-2">
-              {stats.map((stat) => {
-                const Icon = stat.icon;
-                return (
-                  <div key={stat.label} className="space-y-4">
-                    <div className="flex items-end justify-between">
-                      <span className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-white/60">
-                        <Icon className="h-3.5 w-3.5 text-[var(--color-soft)]" />
-                        {stat.label}
-                      </span>
-                      <span className="font-mono text-xs font-bold text-white">
-                        {stat.value}%
-                      </span>
-                    </div>
-                    <div className="h-[1px] w-full overflow-hidden rounded-full bg-white/5">
-                      <div className="stat-fill h-full w-0 rounded-full bg-[var(--color-accent)] shadow-[0_0_10px_var(--color-accent)]" />
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+        <div ref={rightRef} className="space-y-7 lg:pt-4">
+          <div className="profile-reveal flex items-center gap-4 font-mono text-[10px] font-bold uppercase tracking-widest text-[var(--color-accent)]">
+            <ChevronRight className="h-3 w-3" aria-hidden="true" /> Creative Operating System
           </div>
 
-          <div className="grid grid-cols-1 gap-8 border-t border-white/5 pt-8 md:grid-cols-2">
-            <div>
-              <h4 className="mb-8 font-mono text-[10px] font-bold uppercase tracking-[0.4em] text-white/35">
-                Working Stack
-              </h4>
-              <div className="flex flex-wrap gap-x-6 gap-y-4">
-                {SKILLS.map((skill) => (
-                  <span
-                    key={skill}
-                    className="cursor-default font-mono text-xs text-white/60 transition-colors hover:text-white"
-                  >
-                    {skill}
-                  </span>
-                ))}
-              </div>
-            </div>
+          <div className="profile-reveal space-y-5">
+            <p className="max-w-4xl font-serif text-3xl font-black leading-[1.08] tracking-tight text-white md:text-5xl">
+              Visual designer focused on clean brand communication across print,
+              motion, and digital screens.
+            </p>
+            <p className="max-w-3xl text-[17px] leading-relaxed text-white/72">
+              Four years of visual content practice across
+              <span className="text-white"> brand identity, print layouts, motion edits, UI screens,</span>
+              and e-learning design. I shape loose briefs into usable, client-ready
+              design assets with clear hierarchy and consistent production quality.
+            </p>
+          </div>
 
-            <div className="flex flex-col items-start justify-between gap-12">
-              <div className="space-y-6">
-                <h4 className="font-mono text-[10px] font-bold uppercase tracking-[0.4em] text-white/35">
-                  Brief Channel
-                </h4>
-                <p className="max-w-sm text-[15px] leading-relaxed text-white/64">
-                  Best fit: logo systems, product posters, menu cards, thumbnails, reels, web banners, UI screens, and interactive learning material.
-                </p>
-                <a
-                  href="#contact"
-                  className="group flex min-h-11 items-center gap-4 text-white transition-colors hover:text-[var(--color-accent)]"
-                >
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full border border-white/10 transition-all group-hover:border-[var(--color-accent)]/30">
-                    <Mail className="h-5 w-5" aria-hidden="true" />
-                  </div>
-                  <span className="font-mono text-[10px] uppercase tracking-widest">
-                    Email Link
-                  </span>
-                </a>
-              </div>
-
-              <a
-                href="#contact"
-                className="flex w-full items-center justify-center gap-4 rounded-full border border-white/10 py-5 font-mono text-[10px] font-black uppercase tracking-[0.3em] text-white/75 transition-colors hover:border-[var(--color-accent)]/45 hover:text-white"
+          <div className="grid gap-3 md:grid-cols-3">
+            {[
+              ["01", "Brand Identity", "Logo systems, marks, and scalable visual language."],
+              ["02", "Print & Campaigns", "Menus, posters, banners, thumbnails, and launch assets."],
+              ["03", "Motion & Learning", "Video edits, reels, UI screens, and e-learning visuals."],
+            ].map(([index, title, description]) => (
+              <div
+                key={title}
+                className="profile-reveal rounded-2xl border border-white/10 bg-[#0d0d13] p-5"
               >
-                Request Full Portfolio <Download className="h-4 w-4" aria-hidden="true" />
-              </a>
+                <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--color-accent)]">
+                  {index}
+                </p>
+                <h3 className="mt-4 font-serif text-xl font-black text-white">
+                  {title}
+                </h3>
+                <p className="mt-3 text-sm leading-relaxed text-white/62">
+                  {description}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <ul className="profile-reveal grid gap-3 border-t border-white/10 pt-6 md:grid-cols-3" aria-label="About highlights">
+            {ABOUT_HIGHLIGHTS.map((highlight) => (
+              <li
+                key={highlight}
+                className="flex items-start gap-3 text-[15px] leading-relaxed text-white/70"
+              >
+                <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--color-accent)]" />
+                <span>{highlight}</span>
+              </li>
+            ))}
+          </ul>
+
+          <div className="profile-reveal flex flex-col gap-3 rounded-2xl border border-white/10 bg-[#0d0d13] p-5 sm:flex-row sm:items-center sm:justify-between">
+            <div className="min-w-0">
+              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--color-accent)]">
+                Resume dossier
+              </p>
+              <p className="mt-2 max-w-xl text-sm leading-relaxed text-white/64">
+                Full role history, tools, education, and project background.
+              </p>
             </div>
+            <button
+              type="button"
+              onClick={() => setResumeOpen(true)}
+              className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-full border border-white/12 px-5 py-2 font-mono text-[10px] font-extrabold uppercase tracking-[0.16em] text-white/78 transition-colors hover:border-[var(--color-accent)]/50 hover:text-white"
+            >
+              <FileText className="mr-2 h-4 w-4" aria-hidden="true" />
+              View Resume
+            </button>
           </div>
             </div>
           </div>
+
+      {resumeOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/82 px-4 py-8"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Geetha Krishna resume"
+          onClick={() => setResumeOpen(false)}
+        >
+          <div
+            data-native-scroll="true"
+            className="relative flex h-[82svh] w-full max-w-5xl flex-col overflow-hidden rounded-[1.25rem] border border-white/12 bg-[#0b0b10] shadow-[0_36px_100px_rgba(0,0,0,0.62)]"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="flex items-center justify-between gap-4 border-b border-white/10 px-4 py-3 sm:px-5">
+              <div className="min-w-0">
+                <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--color-accent)]">
+                  Resume Dossier
+                </p>
+                <h3 className="mt-1 truncate font-serif text-xl font-black text-white">
+                  Geetha Krishna
+                </h3>
+              </div>
+              <div className="flex shrink-0 items-center gap-2">
+                <a
+                  href={RESUME_PDF_URL}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex min-h-10 items-center rounded-full border border-white/12 px-4 py-2 font-mono text-[10px] font-extrabold uppercase tracking-[0.14em] text-white/72 transition-colors hover:border-[var(--color-accent)]/50 hover:text-white"
+                >
+                  Open PDF
+                  <ArrowUpRight className="ml-2 h-3.5 w-3.5" aria-hidden="true" />
+                </a>
+                <button
+                  type="button"
+                  onClick={() => setResumeOpen(false)}
+                  className="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/[0.56] text-white transition-colors hover:border-white/40"
+                  aria-label="Close resume"
+                >
+                  <X className="h-4 w-4" aria-hidden="true" />
+                </button>
+              </div>
+            </div>
+            <div className="min-h-0 flex-1 overflow-y-auto bg-[#15151c] px-4 py-5 sm:px-6">
+              <div className="mx-auto w-full max-w-3xl overflow-hidden rounded-xl bg-white shadow-[0_24px_80px_rgba(0,0,0,0.45)]">
+                <Image
+                  src={RESUME_PREVIEW_SRC}
+                  alt="Geetha Krishna resume preview"
+                  width={1311}
+                  height={1853}
+                  className="h-auto w-full"
+                  unoptimized
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </DossierChapter>
   );
 }

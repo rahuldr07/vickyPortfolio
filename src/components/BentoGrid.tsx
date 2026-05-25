@@ -88,50 +88,7 @@ export default function BentoGrid() {
           ref={cardsRef}
           className="dossier-panel grid w-full flex-1 grid-cols-1 gap-px overflow-hidden rounded-3xl shadow-2xl lg:grid-cols-12"
         >
-        <div className="bento-card group relative flex flex-col justify-center overflow-hidden bg-[#0B0B0F] p-6 opacity-100 transition-all duration-500 hover:bg-[#0E0E14] sm:p-8 lg:col-span-8 xl:p-12">
-          <div className="pointer-events-none absolute -inset-px opacity-0 transition-opacity duration-300 group-hover:opacity-100" style={{ background: "radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(176,132,246,0.1), transparent 40%)" }} />
-          <div className="motion-safe:animate-ping absolute left-12 top-12 h-1 w-1 rounded-full bg-[var(--color-accent)]" />
-          <h3 className="mb-6 text-sm font-mono uppercase tracking-[0.4em] text-white/40">
-            Production Profile
-          </h3>
-          <p className="max-w-2xl text-2xl font-light leading-tight text-[var(--color-foreground)] md:text-3xl">
-            Design assets that move from brand mark to campaign, screen, print, and reel.
-          </p>
-          <div className="mt-8 grid gap-3 sm:grid-cols-2">
-            {[
-              "Logo systems",
-              "Menu cards",
-              "Product posters",
-              "Video reels",
-            ].map((item) => (
-              <span
-                key={item}
-                className="rounded-xl border border-white/10 bg-white/[0.045] px-4 py-3 font-mono text-[10px] uppercase tracking-[0.16em] text-white/64"
-              >
-                {item}
-              </span>
-            ))}
-          </div>
-          <h3 className="mt-8 mb-5 text-sm font-mono uppercase tracking-[0.4em] text-white/40">
-            Core Toolkit
-          </h3>
-          <ul className="grid gap-3 text-base font-medium text-white/80 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
-            <li className="flex items-center gap-3">
-              <div className="h-2 w-2 rounded-full bg-[var(--color-accent)]" /> Photoshop
-            </li>
-            <li className="flex items-center gap-3">
-              <div className="h-2 w-2 rounded-full bg-[var(--color-accent)]" /> Illustrator
-            </li>
-            <li className="flex items-center gap-3">
-              <div className="h-2 w-2 rounded-full bg-[var(--color-accent)]" /> Premiere Pro
-            </li>
-            <li className="flex items-center gap-3">
-              <div className="h-2 w-2 rounded-full bg-[var(--color-accent)]" /> After Effects
-            </li>
-          </ul>
-        </div>
-
-        <div className="bento-card group relative flex flex-col overflow-hidden border-t border-white/[0.08] bg-[#0B0B0F] p-6 opacity-100 transition-all duration-500 hover:bg-[#0E0E14] sm:p-8 lg:col-span-4 lg:border-l lg:border-t-0 xl:p-10">
+        <div className="bento-card group relative flex flex-col overflow-hidden bg-[#0B0B0F] p-6 opacity-100 transition-all duration-500 hover:bg-[#0E0E14] sm:p-8 lg:col-span-12 xl:p-10">
           <div className="pointer-events-none absolute -inset-px opacity-0 transition-opacity duration-300 group-hover:opacity-100" style={{ background: "radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(176,132,246,0.1), transparent 40%)" }} />
           <h3 className="mb-8 text-sm font-mono uppercase tracking-[0.4em] text-white/40">
             Formation
