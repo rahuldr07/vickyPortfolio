@@ -151,6 +151,10 @@ function getArchiveFrame(project: ShowcaseProject): WorkArchiveFrame {
   return "poster";
 }
 
+function getArchiveThumbnailSrc(project: ShowcaseProject) {
+  return `/works/thumbs/project-${project.id}.webp`;
+}
+
 function filterArchiveProjects(
   projects: readonly ShowcaseProject[],
   frame: WorkArchiveFrame
@@ -305,10 +309,11 @@ export default function VideoShowcase() {
                         className={`absolute overflow-hidden border border-white/10 bg-[#111119] ${frameMeta.imageBoxClassName}`}
                       >
                         <Image
-                          src={project.imgSrc ?? "/color.jpeg"}
+                          src={getArchiveThumbnailSrc(project)}
                           alt={project.mediaAlt}
                           fill
-                          sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 22vw"
+                          sizes="(max-width: 768px) 44vw, (max-width: 1200px) 30vw, 20vw"
+                          quality={58}
                           className={frameMeta.mediaClassName}
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-[#07070a]/88 via-transparent to-transparent" />
