@@ -86,9 +86,9 @@ export default function BentoGrid() {
     >
         <div
           ref={cardsRef}
-          className="dossier-panel grid w-full flex-1 grid-cols-1 gap-px overflow-hidden rounded-3xl shadow-2xl sm:grid-cols-12"
+          className="dossier-panel grid w-full flex-1 grid-cols-1 gap-px overflow-hidden rounded-3xl shadow-2xl lg:grid-cols-12"
         >
-        <div className="bento-card group relative flex flex-col justify-center overflow-hidden bg-[#0B0B0F] p-8 opacity-100 transition-all duration-500 hover:bg-[#0E0E14] sm:col-span-8 md:p-10 xl:p-12">
+        <div className="bento-card group relative flex flex-col justify-center overflow-hidden bg-[#0B0B0F] p-6 opacity-100 transition-all duration-500 hover:bg-[#0E0E14] sm:p-8 lg:col-span-8 xl:p-12">
           <div className="pointer-events-none absolute -inset-px opacity-0 transition-opacity duration-300 group-hover:opacity-100" style={{ background: "radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(176,132,246,0.1), transparent 40%)" }} />
           <div className="motion-safe:animate-ping absolute left-12 top-12 h-1 w-1 rounded-full bg-[var(--color-accent)]" />
           <h3 className="mb-6 text-sm font-mono uppercase tracking-[0.4em] text-white/40">
@@ -115,7 +115,7 @@ export default function BentoGrid() {
           <h3 className="mt-8 mb-5 text-sm font-mono uppercase tracking-[0.4em] text-white/40">
             Core Toolkit
           </h3>
-          <ul className="grid gap-3 text-base font-medium text-white/80 sm:grid-cols-2">
+          <ul className="grid gap-3 text-base font-medium text-white/80 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
             <li className="flex items-center gap-3">
               <div className="h-2 w-2 rounded-full bg-[var(--color-accent)]" /> Photoshop
             </li>
@@ -131,7 +131,7 @@ export default function BentoGrid() {
           </ul>
         </div>
 
-        <div className="bento-card group relative flex flex-col overflow-hidden border-l border-white/[0.08] bg-[#0B0B0F] p-8 opacity-100 transition-all duration-500 hover:bg-[#0E0E14] sm:col-span-4 md:p-10">
+        <div className="bento-card group relative flex flex-col overflow-hidden border-t border-white/[0.08] bg-[#0B0B0F] p-6 opacity-100 transition-all duration-500 hover:bg-[#0E0E14] sm:p-8 lg:col-span-4 lg:border-l lg:border-t-0 xl:p-10">
           <div className="pointer-events-none absolute -inset-px opacity-0 transition-opacity duration-300 group-hover:opacity-100" style={{ background: "radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(176,132,246,0.1), transparent 40%)" }} />
           <h3 className="mb-8 text-sm font-mono uppercase tracking-[0.4em] text-white/40">
             Formation
@@ -159,16 +159,16 @@ export default function BentoGrid() {
           </div>
         </div>
 
-        <div className="bento-card relative h-20 overflow-hidden border-y border-white/[0.08] bg-[#10101A] opacity-100 transition-all duration-500 hover:bg-[#12121E] sm:col-span-12">
+        <div className="bento-card relative h-20 overflow-hidden border-y border-white/[0.08] bg-[#10101A] opacity-100 transition-all duration-500 hover:bg-[#12121E] lg:col-span-12">
           <div className="pointer-events-none absolute -inset-px opacity-0 transition-opacity duration-300 group-hover:opacity-100" style={{ background: "radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(176,132,246,0.06), transparent 40%)" }} />
           <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 overflow-hidden">
             <div
               ref={marqueeRef}
-              className="flex w-max items-center gap-24 whitespace-nowrap will-change-transform"
+              className="flex w-max items-center gap-12 whitespace-nowrap will-change-transform sm:gap-16 lg:gap-24"
             >
               {[...TOOLS, ...TOOLS].map((tool, index) => (
-                <div key={`${tool}-${index}`} className="group/item flex items-center gap-12">
-                  <span className="select-none font-mono text-xs font-bold uppercase tracking-[0.5em] text-white/35 transition-all duration-300 group-hover/item:text-[var(--color-accent)] md:text-sm">
+                <div key={`${tool}-${index}`} className="group/item flex items-center gap-6 sm:gap-8 lg:gap-12">
+                  <span className="select-none font-mono text-[11px] font-bold uppercase tracking-[0.28em] text-white/35 transition-all duration-300 group-hover/item:text-[var(--color-accent)] sm:tracking-[0.4em] md:text-sm">
                     {tool}
                   </span>
                   <span className="font-mono text-[10px] tracking-widest text-[var(--color-accent)] opacity-30">
@@ -180,7 +180,7 @@ export default function BentoGrid() {
           </div>
         </div>
 
-        <div className="bento-card group relative flex flex-col items-center justify-between gap-8 overflow-hidden bg-[#0B0B0F] p-8 opacity-100 transition-all duration-500 hover:bg-[#0E0E14] sm:col-span-12 md:flex-row md:p-10">
+        <div className="bento-card group relative flex flex-col items-center justify-between gap-8 overflow-hidden bg-[#0B0B0F] p-6 opacity-100 transition-all duration-500 hover:bg-[#0E0E14] sm:p-8 md:flex-row lg:col-span-12 xl:p-10">
           <div className="pointer-events-none absolute -inset-px opacity-0 transition-opacity duration-300 group-hover:opacity-100" style={{ background: "radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(176,132,246,0.1), transparent 40%)" }} />
           <div className="flex-1">
             <h3 className="mb-4 text-sm font-mono uppercase tracking-[0.4em] text-white/40">

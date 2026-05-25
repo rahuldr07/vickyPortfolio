@@ -7,16 +7,14 @@ export const NAV_LINKS = [
 ] as const;
 
 export const HERO_ROLES = [
-  "Brand Identity Systems",
-  "Cinematic Campaign Edits",
-  "Premium UI Storytelling",
-  "Launch Visual Direction",
+  "Graphic Designer & Video Editor",
+  "Brand & Visual Designer",
+  "Visual Designer & Content Creator",
 ] as const;
 
 export const HERO_PROOF_POINTS = [
-  { value: "4+", label: "Years shaping visual systems" },
-  { value: "70+", label: "Campaign assets and design outputs" },
-  { value: "3", label: "Core disciplines in one workflow" },
+  { value: "4+", label: "Brand design, video editing & UI" },
+  { value: "100+", label: "Projects across print, digital & motion" },
 ] as const;
 
 export type ProjectType = "image" | "video";

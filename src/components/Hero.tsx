@@ -9,19 +9,12 @@ import { HERO_PROOF_POINTS, HERO_ROLES } from "@/content/portfolio";
 
 const scrambleChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/#%&";
 
-const heroPillars = [
-  "Brand Systems",
-  "Cinematic Editing",
-  "Digital Experience",
-] as const;
-
 export default function Hero() {
   const [roleIndex, setRoleIndex] = useState(0);
   const [displayRole, setDisplayRole] = useState<string>(HERO_ROLES[0]);
 
   const sectionRef = useRef<HTMLElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
-  const badgeRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const roleRef = useRef<HTMLParagraphElement>(null);
   const bodyRef = useRef<HTMLParagraphElement>(null);
@@ -41,13 +34,12 @@ export default function Hero() {
   }, []);
 
   useEffect(() => {
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const target = HERO_ROLES[roleIndex];
-
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduced) {
       previousRoleRef.current = target;
-      const id = window.setTimeout(() => setDisplayRole(target), 0);
-      return () => window.clearTimeout(id);
+      setDisplayRole(target);
+      return;
     }
 
     let frame = 0;
@@ -58,9 +50,9 @@ export default function Hero() {
       const next = target
         .padEnd(maxLen, " ")
         .split("")
-        .map((ch, i) => {
+        .map((ch, index) => {
           if (ch === " ") return " ";
-          if (i < revealCount) return ch;
+          if (index < revealCount) return ch;
           return scrambleChars[Math.floor(Math.random() * scrambleChars.length)];
         })
         .join("")
@@ -90,7 +82,7 @@ export default function Hero() {
         duration: reduced ? 0.2 : 0.9,
       })
         .from(
-          [badgeRef.current, titleRef.current, roleRef.current, bodyRef.current],
+          [titleRef.current, roleRef.current, bodyRef.current],
           {
             y: reduced ? 0 : 22,
             opacity: 0,
@@ -258,13 +250,6 @@ export default function Hero() {
         className="relative z-10 mx-auto grid min-h-[calc(100vh-8rem)] w-full max-w-[calc(100vw_-_3rem)] grid-cols-1 items-center gap-12 overflow-hidden lg:max-w-7xl lg:grid-cols-12"
       >
         <div className="hero-copy-lock w-full min-w-0 max-w-[calc(100vw_-_3rem)] lg:col-span-7 lg:max-w-full">
-          <div
-            ref={badgeRef}
-            className="dossier-panel mb-7 inline-flex min-h-11 max-w-full items-center rounded-full px-5 py-2 font-mono text-[9px] font-extrabold uppercase tracking-[0.24em] text-white/72 sm:text-[10px] sm:tracking-[0.32em]"
-          >
-            Premium visual systems
-          </div>
-
           <h1
             ref={titleRef}
             className="max-w-full font-serif text-[3.2rem] font-black uppercase leading-[0.8] tracking-normal text-white min-[430px]:text-[3.7rem] sm:text-[4.8rem] md:text-[6rem] lg:text-[7.2rem] xl:text-[8.4rem]"
@@ -276,11 +261,15 @@ export default function Hero() {
 
           <p
             ref={roleRef}
-            className="mt-7 min-h-11 font-mono text-sm font-extrabold uppercase tracking-[0.22em] text-white/92 md:text-lg"
+            className="mt-7 min-h-10 font-sans text-sm font-extrabold tracking-normal text-white/92 md:text-base"
           >
-            <span className="mr-3 text-[var(--color-accent)]">[SIGNAL]</span>
-            <span aria-hidden="true">{displayRole}</span>
-            <span aria-hidden="true" className="ml-1 inline-block text-white/45 motion-safe:animate-pulse">
+            <span className="mr-3 font-mono text-xs uppercase tracking-[0.18em] text-[var(--color-accent)] md:text-sm">
+              [ROLE]
+            </span>
+            <span aria-hidden="true" className="font-mono uppercase tracking-[0.14em] md:tracking-[0.16em]">
+              {displayRole}
+            </span>
+            <span aria-hidden="true" className="ml-1 inline-block font-mono text-white/45 motion-safe:animate-pulse">
               |
             </span>
             <span className="sr-only" aria-live="polite">
@@ -307,22 +296,11 @@ export default function Hero() {
               href="#contact"
               className="group inline-flex min-h-12 w-full max-w-full items-center justify-center rounded-full border border-white/20 px-8 py-3 font-sans text-xs font-bold uppercase tracking-[0.18em] text-white/90 transition-all duration-500 hover:-translate-y-1 hover:border-white/55 hover:bg-white/[0.08] sm:w-auto sm:tracking-[0.22em]"
             >
-              Start a Brief
+              Contact Me
             </a>
           </div>
 
-          <ul className="mt-8 flex flex-wrap gap-3" aria-label="Core services">
-            {heroPillars.map((pillar) => (
-              <li
-                key={pillar}
-                className="dossier-panel inline-flex min-h-10 items-center rounded-full px-4 py-2 font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-white/76"
-              >
-                {pillar}
-              </li>
-            ))}
-          </ul>
-
-          <dl ref={proofRef} className="mt-8 grid gap-3 sm:grid-cols-3" aria-label="Portfolio proof points">
+          <dl ref={proofRef} className="mt-8 grid gap-3 sm:grid-cols-2" aria-label="Portfolio proof points">
             {HERO_PROOF_POINTS.map((item) => (
               <div key={item.label} className="proof-card dossier-panel rounded-2xl px-4 py-4">
                 <dt className="font-mono text-[10px] uppercase tracking-[0.16em] text-white/55">
@@ -380,18 +358,8 @@ export default function Hero() {
               <div className="absolute inset-0 archive-texture opacity-25" />
               <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(7,7,10,0.92)_0%,rgba(7,7,10,0.26)_46%,transparent_100%)]" />
 
-              <div className="absolute left-5 top-5 rounded-full border border-white/[0.12] bg-[#08080d]/85 px-4 py-2 font-mono text-[10px] uppercase tracking-[0.24em] text-white/65">
+              <div className="absolute bottom-5 left-5 rounded-full border border-white/[0.12] bg-[#08080d]/85 px-4 py-2 font-mono text-[10px] uppercase tracking-[0.24em] text-white/65">
                 Geetha Krishna / 2026
-              </div>
-              <div className="absolute bottom-5 left-5 right-5 grid grid-cols-2 gap-3">
-                {["Visual Direction", "Brand Systems", "Campaign Motion", "Client-ready Output"].map((item) => (
-                  <div
-                    key={item}
-                    className="min-h-11 rounded-xl border border-white/10 bg-[#08080d]/85 px-3 py-3 text-center font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-white/70"
-                  >
-                    {item}
-                  </div>
-                ))}
               </div>
             </div>
           </div>
