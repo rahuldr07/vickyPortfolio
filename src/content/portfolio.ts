@@ -1,6 +1,7 @@
 export const NAV_LINKS = [
-  { href: "#about", label: "Profile" },
+  { href: "#home", label: "Home" },
   { href: "#work", label: "Work" },
+  { href: "#about", label: "Profile" },
   { href: "#arsenal", label: "Capabilities" },
   { href: "#experience", label: "Journey" },
   { href: "#contact", label: "Contact" },
@@ -13,7 +14,7 @@ export const HERO_ROLES = [
 ] as const;
 
 export const HERO_PROOF_POINTS = [
-  { value: "4+", label: "Brand design, video editing & UI" },
+  { value: "5+", label: "Brand design, video editing & UI" },
   { value: "100+", label: "Projects across print, digital & motion" },
 ] as const;
 
@@ -460,7 +461,7 @@ export const SKILLS = [
 ] as const;
 
 export const ABOUT_HIGHLIGHTS = [
-  "4 years across graphic design, visual content creation, motion edits, and brand storytelling.",
+  "5+ years across graphic design, visual content creation, motion edits, and brand storytelling.",
   "Strong Adobe production stack: Photoshop, Illustrator, Premiere Pro, After Effects, and DaVinci Resolve.",
   "Design systems and prototype thinking through Figma, Adobe XD, WIX, and Articulate 360 e-learning workflows.",
 ] as const;

@@ -243,13 +243,15 @@ export default function Hero() {
 
   return (
     <section
+      id="home"
       ref={sectionRef}
-      className="relative min-h-screen overflow-hidden bg-transparent px-6 pb-10 pt-28 md:px-12"
+      data-scroll-chapter="true"
+      className="relative min-h-[100svh] overflow-hidden bg-transparent px-6 md:px-12"
       aria-label="Hero intro"
     >
       <div
         ref={stageRef}
-        className="relative z-10 mx-auto grid min-h-[calc(100vh-8rem)] w-full max-w-[calc(100vw_-_3rem)] grid-cols-1 items-center gap-12 overflow-hidden lg:max-w-7xl lg:grid-cols-12"
+        className="relative z-10 mx-auto grid box-border min-h-[100svh] w-full max-w-[calc(100vw_-_3rem)] grid-cols-1 items-center gap-12 overflow-hidden pb-10 pt-28 lg:max-w-7xl lg:grid-cols-12"
       >
         <div className="hero-copy-lock w-full min-w-0 max-w-[calc(100vw_-_3rem)] lg:col-span-7 lg:max-w-full">
           <h1
@@ -263,9 +265,9 @@ export default function Hero() {
 
           <p
             ref={roleRef}
-            className="mt-7 min-h-10 font-sans text-sm font-extrabold tracking-normal text-white/92 md:text-base"
+            className="mt-7 min-h-11 font-sans text-base font-extrabold leading-snug tracking-normal text-white/92 sm:text-lg md:text-xl"
           >
-            <span className="mr-3 font-mono text-xs uppercase tracking-[0.18em] text-[var(--color-accent)] md:text-sm">
+            <span className="mr-3 font-mono text-sm uppercase tracking-[0.18em] text-[var(--color-accent)] md:text-base">
               [ROLE]
             </span>
             <span aria-hidden="true" className="font-mono uppercase tracking-[0.14em] md:tracking-[0.16em]">

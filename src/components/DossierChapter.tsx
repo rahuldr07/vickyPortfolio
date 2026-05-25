@@ -3,15 +3,17 @@ import { forwardRef, type ReactNode } from "react";
 type DossierChapterProps = {
   children: ReactNode;
   className?: string;
+  contentScrollable?: boolean;
   contentClassName?: string;
   id: string;
   labelledBy: string;
   layoutClassName?: string;
   rail: ReactNode;
   railClassName?: string;
+  viewportChapter?: boolean;
 };
 
-function cx(...classes: Array<string | undefined>) {
+function cx(...classes: Array<string | false | null | undefined>) {
   return classes.filter(Boolean).join(" ");
 }
 
@@ -26,6 +28,8 @@ const DossierChapter = forwardRef<HTMLElement, DossierChapterProps>(
       layoutClassName,
       rail,
       railClassName,
+      viewportChapter = false,
+      contentScrollable = false,
     },
     ref
   ) {
@@ -34,8 +38,11 @@ const DossierChapter = forwardRef<HTMLElement, DossierChapterProps>(
         ref={ref}
         id={id}
         aria-labelledby={labelledBy}
+        data-scroll-chapter={viewportChapter ? "true" : undefined}
         className={cx(
-          "relative mx-auto w-full max-w-none scroll-mt-24 bg-transparent px-4 py-14 sm:px-6 md:py-16 lg:px-8 xl:px-10 2xl:px-12",
+          "relative mx-auto w-full max-w-none scroll-mt-24 bg-transparent px-4 sm:px-6 lg:px-8 xl:px-10 2xl:px-12",
+          "py-14 md:py-16",
+          viewportChapter && "min-h-[100svh]",
           className
         )}
       >
@@ -57,8 +64,10 @@ const DossierChapter = forwardRef<HTMLElement, DossierChapterProps>(
 
           <div
             data-testid="dossier-chapter-content"
+            data-native-scroll={viewportChapter && contentScrollable ? "true" : undefined}
             className={cx(
               "dossier-chapter-pane w-full min-w-0 overflow-x-clip",
+              viewportChapter && contentScrollable && "lg:max-h-[calc(100svh-8rem)] lg:overflow-y-auto",
               contentClassName
             )}
           >

@@ -11,6 +11,19 @@ afterEach(() => {
 });
 
 describe("TopNav", () => {
+  it("links Home to the hero while keeping Profile as its own section", () => {
+    render(<TopNav />);
+
+    expect(screen.getByRole("link", { name: /^Home$/i })).toHaveAttribute(
+      "href",
+      "#home"
+    );
+    expect(screen.getByRole("link", { name: /^Profile$/i })).toHaveAttribute(
+      "href",
+      "#about"
+    );
+  });
+
   it("opens and closes the mobile menu", () => {
     render(<TopNav />);
 

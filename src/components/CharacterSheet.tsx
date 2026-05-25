@@ -11,7 +11,7 @@ import DossierChapter from "@/components/DossierChapter";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const RESUME_PDF_URL = "/resume/geetha-krishna-resume.pdf";
+const RESUME_PDF_URL = "/resume/GeethaKrishna_5_Graphic%20Designer.pdf";
 const RESUME_PREVIEW_SRC = "/resume/geetha-krishna-resume-preview.webp";
 
 export default function CharacterSheet() {
@@ -140,6 +140,7 @@ export default function CharacterSheet() {
       labelledBy="about-heading"
       rail={rail}
       contentClassName="hide-scrollbar"
+      viewportChapter
     >
           <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-[minmax(220px,0.55fr)_minmax(0,1fr)] xl:gap-10">
             <div ref={leftRef} className="space-y-7 lg:self-start">
@@ -185,6 +186,25 @@ export default function CharacterSheet() {
             </div>
           </div>
 
+          <div className="flex flex-col gap-3 rounded-2xl border border-white/10 bg-[#0d0d13] p-5 sm:flex-row sm:items-center sm:justify-between">
+            <div className="min-w-0">
+              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--color-accent)]">
+                Resume dossier
+              </p>
+              <p className="mt-2 max-w-xl text-sm leading-relaxed text-white/64">
+                Full role history, tools, education, and project background.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setResumeOpen(true)}
+              className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-full border border-white/12 px-5 py-2 font-mono text-[10px] font-extrabold uppercase tracking-[0.16em] text-white/78 transition-colors hover:border-[var(--color-accent)]/50 hover:text-white"
+            >
+              <FileText className="mr-2 h-4 w-4" aria-hidden="true" />
+              View Resume
+            </button>
+          </div>
+
         </div>
 
         <div ref={rightRef} className="space-y-7 lg:pt-4">
@@ -198,7 +218,7 @@ export default function CharacterSheet() {
               motion, and digital screens.
             </p>
             <p className="max-w-3xl text-[17px] leading-relaxed text-white/72">
-              Four years of visual content practice across
+              5+ years of visual content practice across
               <span className="text-white"> brand identity, print layouts, motion edits, UI screens,</span>
               and e-learning design. I shape loose briefs into usable, client-ready
               design assets with clear hierarchy and consistent production quality.
@@ -240,24 +260,6 @@ export default function CharacterSheet() {
             ))}
           </ul>
 
-          <div className="profile-reveal flex flex-col gap-3 rounded-2xl border border-white/10 bg-[#0d0d13] p-5 sm:flex-row sm:items-center sm:justify-between">
-            <div className="min-w-0">
-              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--color-accent)]">
-                Resume dossier
-              </p>
-              <p className="mt-2 max-w-xl text-sm leading-relaxed text-white/64">
-                Full role history, tools, education, and project background.
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={() => setResumeOpen(true)}
-              className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-full border border-white/12 px-5 py-2 font-mono text-[10px] font-extrabold uppercase tracking-[0.16em] text-white/78 transition-colors hover:border-[var(--color-accent)]/50 hover:text-white"
-            >
-              <FileText className="mr-2 h-4 w-4" aria-hidden="true" />
-              View Resume
-            </button>
-          </div>
             </div>
           </div>
 

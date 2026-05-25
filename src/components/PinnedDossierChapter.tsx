@@ -8,9 +8,11 @@ type PinnedDossierChapterProps = {
   rail: ReactNode;
   children: ReactNode;
   className?: string;
+  contentScrollable?: boolean;
   layoutClassName?: string;
   railClassName?: string;
   contentClassName?: string;
+  viewportChapter?: boolean;
 };
 
 function cx(...classes: Array<string | false | null | undefined>) {
@@ -25,12 +27,17 @@ const PinnedDossierChapter = forwardRef<HTMLElement, PinnedDossierChapterProps>(
       rail,
       children,
       className,
+      contentScrollable,
       layoutClassName,
       railClassName,
       contentClassName,
+      viewportChapter = false,
     },
     forwardedRef
   ) {
+    const isContentScrollable =
+      contentScrollable ?? false;
+
     return (
       <section
         ref={forwardedRef}
@@ -38,8 +45,11 @@ const PinnedDossierChapter = forwardRef<HTMLElement, PinnedDossierChapterProps>(
         aria-labelledby={labelledBy}
         data-testid="pinned-dossier-chapter"
         data-pinned-chapter-id={id}
+        data-scroll-chapter={viewportChapter ? "true" : undefined}
         className={cx(
-          "relative mx-auto w-full max-w-none scroll-mt-24 bg-transparent px-4 py-14 sm:px-6 md:py-16 lg:px-8 xl:px-10 2xl:px-12",
+          "relative mx-auto w-full max-w-none scroll-mt-24 bg-transparent px-4 sm:px-6 lg:px-8 xl:px-10 2xl:px-12",
+          "py-14 md:py-16",
+          viewportChapter && "min-h-[100svh]",
           className
         )}
       >
@@ -61,7 +71,16 @@ const PinnedDossierChapter = forwardRef<HTMLElement, PinnedDossierChapterProps>(
 
           <div
             data-testid="pinned-dossier-chapter-content"
-            className={cx("dossier-chapter-pane w-full min-w-0 overflow-x-clip", contentClassName)}
+            data-native-scroll={
+              viewportChapter && isContentScrollable ? "true" : undefined
+            }
+            className={cx(
+              "dossier-chapter-pane w-full min-w-0 overflow-x-clip",
+              viewportChapter &&
+                isContentScrollable &&
+                "lg:max-h-[calc(100svh-8rem)] lg:overflow-y-auto",
+              contentClassName
+            )}
           >
             {children}
           </div>

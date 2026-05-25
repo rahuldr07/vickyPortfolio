@@ -37,6 +37,17 @@
     scroll-behavior: auto !important;
   }
 
+  @media (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-snap-type: y mandatory;
+    }
+
+    [data-scroll-chapter="true"] {
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+    }
+  }
+
   body {
     background-color: var(--background);
     color: var(--foreground);
@@ -154,6 +165,7 @@
   @media (prefers-reduced-motion: reduce) {
     html {
       scroll-behavior: auto;
+      scroll-snap-type: none;
     }
 
     body {
@@ -173,6 +185,12 @@
     .ambient-overlay::after,
     .dust-particle {
       animation: none;
+    }
+  }
+
+  @media (pointer: coarse) {
+    html {
+      scroll-snap-type: none;
     }
   }
 

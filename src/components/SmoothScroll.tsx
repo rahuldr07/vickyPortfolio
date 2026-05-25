@@ -4,16 +4,18 @@ import { useEffect, useRef } from "react";
 import {
   clampScrollTarget,
   getAnchorScrollTarget,
+  getDirectionalSectionScrollTarget,
   getKeyboardScrollDestination,
   getLerpScrollStep,
+  getWheelSectionScrollTarget,
   isScrollSettled,
   isEditableTarget,
   isNativeScrollableTarget,
   normalizeWheelDelta,
 } from "@/lib/smooth-scroll";
 
-const SCROLL_LERP = 0.2;
-const MAX_WHEEL_DELTA = 260;
+const SCROLL_LERP = 0.16;
+const MAX_WHEEL_DELTA = 220;
 
 function getMaxScroll() {
   return Math.max(
@@ -101,23 +103,40 @@ export default function SmoothScroll() {
       }
     };
 
+    const getSectionTops = () =>
+      Array.from(
+        document.querySelectorAll<HTMLElement>('[data-scroll-chapter="true"]')
+      )
+        .map((section) => section.getBoundingClientRect().top + window.scrollY)
+        .sort((left, right) => left - right);
+
     const onWheel = (event: WheelEvent) => {
-      if (
-        event.defaultPrevented ||
-        event.ctrlKey ||
-        isScrollLocked() ||
-        isNativeScrollableTarget(event.target)
-      ) {
+      if (event.defaultPrevented || event.ctrlKey || isScrollLocked()) {
         return;
       }
-
-      event.preventDefault();
 
       const delta = normalizeWheelDelta(
         event.deltaY,
         event.deltaMode,
         window.innerHeight
       );
+
+      if (isNativeScrollableTarget(event.target, delta)) {
+        return;
+      }
+
+      event.preventDefault();
+
+      const sectionTarget = getWheelSectionScrollTarget(
+        getSectionTops(),
+        window.scrollY,
+        delta
+      );
+      if (sectionTarget !== null) {
+        start(sectionTarget);
+        return;
+      }
+
       const clampedDelta = Math.max(
         Math.min(delta, MAX_WHEEL_DELTA),
         -MAX_WHEEL_DELTA
@@ -135,6 +154,42 @@ export default function SmoothScroll() {
         isEditableTarget(event.target)
       ) {
         return;
+      }
+
+      const sectionTops = getSectionTops();
+      if (sectionTops.length) {
+        if (event.key === "Home") {
+          event.preventDefault();
+          start(sectionTops[0] ?? 0);
+          return;
+        }
+
+        if (event.key === "End") {
+          event.preventDefault();
+          start(sectionTops[sectionTops.length - 1] ?? getMaxScroll());
+          return;
+        }
+
+        const direction =
+          event.key === "ArrowDown" || event.key === "PageDown" || event.key === " "
+            ? 1
+            : event.key === "ArrowUp" || event.key === "PageUp"
+              ? -1
+              : 0;
+
+        if (direction !== 0) {
+          const sectionTarget = getDirectionalSectionScrollTarget(
+            sectionTops,
+            window.scrollY,
+            direction
+          );
+
+          if (sectionTarget !== null) {
+            event.preventDefault();
+            start(sectionTarget);
+            return;
+          }
+        }
       }
 
       const destination = getKeyboardScrollDestination(
@@ -176,7 +231,9 @@ export default function SmoothScroll() {
     };
 
     const onResize = () => {
-      targetYRef.current = clampScrollTarget(window.scrollY, getMaxScroll());
+      const nextY = clampScrollTarget(window.scrollY, getMaxScroll());
+      currentYRef.current = nextY;
+      targetYRef.current = nextY;
     };
 
     const onNativeScroll = () => {

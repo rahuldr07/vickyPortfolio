@@ -1,6 +1,7 @@
 const LINE_DELTA = 16;
 const PAGE_DELTA_RATIO = 0.8;
 const FRAME_MS = 16.67;
+const WHEEL_SECTION_SNAP_DELTA = 160;
 
 export function clampScrollTarget(value: number, maxScroll: number) {
   if (Number.isNaN(value)) return 0;
@@ -49,6 +50,10 @@ export function getAnchorScrollTarget(hash: string, currentScrollY: number) {
   const target = document.getElementById(id);
   if (!target) return null;
 
+  if (target.getAttribute("data-scroll-chapter") === "true") {
+    return target.getBoundingClientRect().top + currentScrollY;
+  }
+
   const scrollMarginTop = Number.parseFloat(
     window.getComputedStyle(target).scrollMarginTop
   );
@@ -57,17 +62,65 @@ export function getAnchorScrollTarget(hash: string, currentScrollY: number) {
   return target.getBoundingClientRect().top + currentScrollY - offset;
 }
 
-export function isNativeScrollableTarget(target: EventTarget | null) {
+export function getDirectionalSectionScrollTarget(
+  sectionTops: readonly number[],
+  currentScrollY: number,
+  direction: number,
+  threshold = 2
+) {
+  if (!sectionTops.length || direction === 0) return null;
+
+  if (direction > 0) {
+    return sectionTops.find((top) => top > currentScrollY + threshold) ?? null;
+  }
+
+  for (let index = sectionTops.length - 1; index >= 0; index -= 1) {
+    const top = sectionTops[index];
+    if (top < currentScrollY - threshold) {
+      return top;
+    }
+  }
+
+  return null;
+}
+
+export function getWheelSectionScrollTarget(
+  sectionTops: readonly number[],
+  currentScrollY: number,
+  deltaY: number,
+  minDelta = WHEEL_SECTION_SNAP_DELTA
+) {
+  if (Math.abs(deltaY) < minDelta) return null;
+
+  return getDirectionalSectionScrollTarget(sectionTops, currentScrollY, deltaY);
+}
+
+function canScrollInDirection(node: Element, deltaY: number) {
+  const maxScrollTop = node.scrollHeight - node.clientHeight;
+  if (maxScrollTop <= 0) return false;
+
+  if (deltaY > 0) return node.scrollTop < maxScrollTop - 1;
+  if (deltaY < 0) return node.scrollTop > 1;
+
+  return true;
+}
+
+export function isNativeScrollableTarget(
+  target: EventTarget | null,
+  deltaY = 0
+) {
   if (!(target instanceof Element)) return false;
 
   let node: Element | null = target;
   while (node && node !== document.body && node !== document.documentElement) {
-    if (node.getAttribute("data-native-scroll") === "true") return true;
+    if (node.getAttribute("data-native-scroll") === "true") {
+      return canScrollInDirection(node, deltaY);
+    }
 
     const style = window.getComputedStyle(node);
     const canScrollY =
       /(auto|scroll|overlay)/.test(style.overflowY) &&
-      node.scrollHeight > node.clientHeight;
+      canScrollInDirection(node, deltaY);
     const canScrollX =
       /(auto|scroll|overlay)/.test(style.overflowX) &&
       node.scrollWidth > node.clientWidth;

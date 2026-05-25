@@ -128,7 +128,7 @@ export default function ExperiencePath() {
           </p>
         </div>
         <div className="border-r border-white/10 p-3">
-          <p className="font-serif text-2xl text-white">4+</p>
+          <p className="font-serif text-2xl text-white">5+</p>
           <p className="mt-1 font-mono text-[9px] uppercase tracking-[0.18em] text-white/48">
             Years
           </p>
@@ -151,6 +151,7 @@ export default function ExperiencePath() {
       rail={rail}
       railClassName="lg:pt-2"
       contentClassName="hide-scrollbar"
+      viewportChapter
     >
       <div className="relative w-full min-w-0 py-2 pl-16 sm:pl-20">
         <div

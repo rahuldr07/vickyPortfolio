@@ -1,8 +1,8 @@
-import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import sharp from "sharp";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import VideoShowcase from "@/components/VideoShowcase";
 import { SHOWCASE_PROJECTS } from "@/content/portfolio";
 
@@ -12,39 +12,56 @@ describe("VideoShowcase", () => {
     document.body.style.overflow = "";
   });
 
-  it("links category navigation to continuous archive sections", () => {
+  it("uses local category controls without hash navigation and keeps menus last", () => {
     render(<VideoShowcase />);
 
     expect(
-      screen.getByRole("link", {
+      screen.getByRole("button", {
         name: /^All projects section 27 projects$/i,
       })
-    ).toHaveAttribute("href", "#work");
+    ).toHaveAttribute("aria-controls", "work");
     expect(
-      screen.getByRole("link", {
+      screen.getByRole("button", {
         name: /^Logos section 7 projects$/i,
       })
-    ).toHaveAttribute("href", "#work-logos");
+    ).toHaveAttribute("aria-controls", "work-logos");
     expect(
-      screen.getByRole("link", {
-        name: /^Menus section 2 projects$/i,
-      })
-    ).toHaveAttribute("href", "#work-menus");
-    expect(
-      screen.getByRole("link", {
+      screen.getByRole("button", {
         name: /^Posters section 14 projects$/i,
       })
-    ).toHaveAttribute("href", "#work-posters");
+    ).toHaveAttribute("aria-controls", "work-posters");
     expect(
-      screen.getByRole("link", {
+      screen.getByRole("button", {
         name: /^Banners section 3 projects$/i,
       })
-    ).toHaveAttribute("href", "#work-banners");
+    ).toHaveAttribute("aria-controls", "work-banners");
     expect(
-      screen.getByRole("link", {
+      screen.getByRole("button", {
         name: /^Video Reels section 1 projects$/i,
       })
-    ).toHaveAttribute("href", "#work-reels");
+    ).toHaveAttribute("aria-controls", "work-reels");
+    expect(
+      screen.getByRole("button", {
+        name: /^Menus section 2 projects$/i,
+      })
+    ).toHaveAttribute("aria-controls", "work-menus");
+
+    const sectionControls = screen.getAllByRole("button", {
+      name: /section \d+ projects$/i,
+    });
+    expect(sectionControls.at(-1)).toHaveAccessibleName(/^Menus section 2 projects$/i);
+    expect(sectionControls.some((control) => control.hasAttribute("href"))).toBe(false);
+
+    window.location.hash = "";
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: /^Video Reels section 1 projects$/i,
+      })
+    );
+    expect(window.location.hash).toBe("");
+    expect(
+      document.querySelector("#work [data-native-scroll='true']")
+    ).toBeNull();
   });
 
   it("renders category sections with project counts and opens an image-only project preview", () => {
@@ -129,6 +146,61 @@ describe("VideoShowcase", () => {
     expect(video).toHaveAttribute("preload", "metadata");
   });
 
+  it("renders the video reel archive card as a lightweight viewport-gated inline preview", () => {
+    const originalIntersectionObserver = window.IntersectionObserver;
+    const observedTargets = new Map<Element, IntersectionObserverCallback>();
+
+    class TriggerableIntersectionObserver {
+      constructor(private callback: IntersectionObserverCallback) {}
+
+      observe = vi.fn((target: Element) => {
+        observedTargets.set(target, this.callback);
+      });
+      unobserve = vi.fn((target: Element) => {
+        observedTargets.delete(target);
+      });
+      disconnect = vi.fn();
+    }
+
+    window.IntersectionObserver =
+      TriggerableIntersectionObserver as unknown as typeof IntersectionObserver;
+
+    render(<VideoShowcase />);
+
+    const reelsSection = screen.getByRole("region", {
+      name: /^Motion Edits & Reels$/i,
+    });
+    const reelCard = within(reelsSection).getByRole("button", {
+      name: /Open Cinematic Final Output/i,
+    });
+    const inlineVideo = reelCard.querySelector("video");
+
+    expect(inlineVideo).toBeInTheDocument();
+    expect(inlineVideo).toHaveAttribute("poster", "/works/thumbs/project-4.webp");
+    expect(inlineVideo).toHaveAttribute("preload", "metadata");
+    expect(inlineVideo).toHaveProperty("muted", true);
+    expect(inlineVideo).toHaveProperty("playsInline", true);
+    expect(inlineVideo).toHaveProperty("loop", true);
+    expect(inlineVideo).not.toHaveAttribute("controls");
+    expect(inlineVideo).not.toHaveAttribute("src");
+
+    act(() => {
+      observedTargets.get(inlineVideo as HTMLVideoElement)?.(
+        [
+          {
+            isIntersecting: true,
+            target: inlineVideo as HTMLVideoElement,
+          } as unknown as IntersectionObserverEntry,
+        ],
+        {} as IntersectionObserver
+      );
+    });
+
+    expect(inlineVideo).toHaveAttribute("src", "/works/Videos/Final Output.mp4");
+
+    window.IntersectionObserver = originalIntersectionObserver;
+  });
+
   it("uses normal card-fit media with faster stronger hover zoom only for logo cards", () => {
     render(<VideoShowcase />);
 
@@ -164,10 +236,10 @@ describe("VideoShowcase", () => {
     render(<VideoShowcase />);
 
     expect(
-      screen.getByRole("link", {
+      screen.getByRole("button", {
         name: /^All projects section 27 projects$/i,
       })
-    ).toHaveAttribute("href", "#work");
+    ).toHaveAttribute("aria-controls", "work");
     expect(screen.getAllByTestId("work-reel-card")).toHaveLength(27);
     expect(screen.getByText("Creative Portfolio")).toBeInTheDocument();
     expect(screen.getByText("Brand identity, print layouts, campaigns, ads, and motion reels.")).toBeInTheDocument();
@@ -182,7 +254,7 @@ describe("VideoShowcase", () => {
   it("uses lightweight project thumbnails for archive card media", () => {
     render(<VideoShowcase />);
 
-    SHOWCASE_PROJECTS.forEach((project) => {
+    SHOWCASE_PROJECTS.filter((project) => project.type === "image").forEach((project) => {
       const expectedThumbnail = `/works/thumbs/project-${project.id}.webp`;
       const encodedThumbnail = encodeURIComponent(expectedThumbnail);
       const archiveImage = screen.getByAltText(project.mediaAlt);
@@ -242,10 +314,25 @@ describe("VideoShowcase", () => {
     expect(source).not.toContain("AnimatePresence");
     expect(source).not.toContain("<motion");
     expect(source).not.toContain("ScrollTrigger");
+    expect(source).not.toContain("overscroll-contain");
     expect(source).toContain("useGSAP");
     expect(source).toContain("IntersectionObserver");
     expect(source).not.toContain("scrollArchiveToSection");
     expect(source).not.toContain("archiveViewportRef");
     expect(source).not.toContain("SmartVideoPreview");
+  });
+
+  it("keeps the work archive on page scroll while the chapter rail stays sticky", () => {
+    render(<VideoShowcase />);
+
+    expect(screen.getByTestId("pinned-dossier-chapter-rail")).toHaveClass(
+      "lg:sticky"
+    );
+    expect(
+      document.querySelector("#work [data-native-scroll='true']")
+    ).toBeNull();
+    expect(screen.getByTestId("pinned-dossier-chapter-content")).not.toHaveClass(
+      "lg:overflow-y-auto"
+    );
   });
 });

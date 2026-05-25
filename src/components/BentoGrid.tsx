@@ -83,6 +83,7 @@ export default function BentoGrid() {
       labelledBy="arsenal-heading"
       rail={rail}
       contentClassName="hide-scrollbar"
+      viewportChapter
     >
         <div
           ref={cardsRef}

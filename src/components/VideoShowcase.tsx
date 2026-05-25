@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  useCallback,
   useEffect,
   useRef,
   useState,
@@ -52,14 +53,6 @@ const WORK_ARCHIVE_SECTIONS: readonly {
     description: "Identity marks, primary logo mockups, and scalable brand assets.",
   },
   {
-    id: "work-menus",
-    frame: "menu",
-    label: "Menus",
-    railLabel: "Print & Menus",
-    title: "Print Menus & Layouts",
-    description: "Print-ready food layouts with hierarchy, readability, and production polish.",
-  },
-  {
     id: "work-posters",
     frame: "poster",
     label: "Posters",
@@ -82,6 +75,14 @@ const WORK_ARCHIVE_SECTIONS: readonly {
     railLabel: "Motion & Reels",
     title: "Motion Edits & Reels",
     description: "Motion edits and cinematic output loaded only when previewed.",
+  },
+  {
+    id: "work-menus",
+    frame: "menu",
+    label: "Menus",
+    railLabel: "Print & Menus",
+    title: "Print Menus & Layouts",
+    description: "Print-ready food layouts with hierarchy, readability, and production polish.",
   },
 ] as const;
 
@@ -166,7 +167,12 @@ function filterArchiveProjects(
 
 export default function VideoShowcase() {
   const archiveRef = useRef<HTMLDivElement>(null);
+  const reelPreviewRefs = useRef(new Map<number, HTMLVideoElement>());
   const [selectedProject, setSelectedProject] = useState<ShowcaseProject | null>(null);
+  const [activeArchiveSectionId, setActiveArchiveSectionId] = useState("work");
+  const [activeReelPreviewIds, setActiveReelPreviewIds] = useState<ReadonlySet<number>>(
+    () => new Set()
+  );
   const shouldReduceMotion = useSyncExternalStore(
     subscribeToReducedMotion,
     getReducedMotionSnapshot,
@@ -179,6 +185,37 @@ export default function VideoShowcase() {
   }));
 
   const closeModal = () => setSelectedProject(null);
+  const goToArchiveSection = useCallback(
+    (sectionId: string) => {
+      setActiveArchiveSectionId(sectionId);
+      const targetId = sectionId === "work" ? "work" : sectionId;
+      const target = document.getElementById(targetId);
+      if (!target) return;
+
+      const scrollMarginTop = Number.parseFloat(
+        window.getComputedStyle(target).scrollMarginTop
+      );
+      const offset = Number.isNaN(scrollMarginTop) ? 0 : scrollMarginTop;
+      const top = target.getBoundingClientRect().top + window.scrollY - offset;
+
+      window.scrollTo({
+        top: Math.max(top, 0),
+        behavior: "smooth",
+      });
+    },
+    []
+  );
+  const setReelPreviewRef = useCallback(
+    (projectId: number, node: HTMLVideoElement | null) => {
+      if (node) {
+        reelPreviewRefs.current.set(projectId, node);
+        return;
+      }
+
+      reelPreviewRefs.current.delete(projectId);
+    },
+    []
+  );
 
   useGSAP(
     () => {
@@ -255,6 +292,99 @@ export default function VideoShowcase() {
     };
   }, [selectedProject]);
 
+  useEffect(() => {
+    if (shouldReduceMotion) {
+      reelPreviewRefs.current.forEach((video) => video.pause());
+      return;
+    }
+
+    if (typeof IntersectionObserver === "undefined") return;
+
+    const videos = Array.from(reelPreviewRefs.current.values());
+    if (!videos.length) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        setActiveReelPreviewIds((previousIds) => {
+          const nextIds = new Set(previousIds);
+          let changed = false;
+
+          entries.forEach((entry) => {
+            const video = entry.target as HTMLVideoElement;
+            const projectId = Number.parseInt(video.dataset.projectId ?? "", 10);
+            if (!Number.isFinite(projectId)) return;
+
+            if (entry.isIntersecting) {
+              if (!nextIds.has(projectId)) {
+                nextIds.add(projectId);
+                changed = true;
+              }
+              return;
+            }
+
+            if (nextIds.delete(projectId)) {
+              video.pause();
+              changed = true;
+            }
+          });
+
+          return changed ? nextIds : previousIds;
+        });
+      },
+      { rootMargin: "320px 0px 240px 0px", threshold: 0.12 }
+    );
+
+    videos.forEach((video) => observer.observe(video));
+
+    return () => {
+      observer.disconnect();
+      videos.forEach((video) => video.pause());
+    };
+  }, [shouldReduceMotion]);
+
+  useEffect(() => {
+    reelPreviewRefs.current.forEach((video, projectId) => {
+      if (shouldReduceMotion || !activeReelPreviewIds.has(projectId)) {
+        video.pause();
+        return;
+      }
+
+      const playPromise = video.play();
+      if (playPromise) {
+        void playPromise.catch(() => {});
+      }
+    });
+  }, [activeReelPreviewIds, shouldReduceMotion]);
+
+  useEffect(() => {
+    const sections = ["work", ...WORK_ARCHIVE_SECTIONS.map((section) => section.id)]
+      .map((id) => document.getElementById(id))
+      .filter((section): section is HTMLElement => section !== null);
+
+    if (!sections.length || typeof IntersectionObserver === "undefined") return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((left, right) => right.intersectionRatio - left.intersectionRatio);
+
+        if (visible[0]) {
+          setActiveArchiveSectionId(visible[0].target.id);
+        }
+      },
+      {
+        root: null,
+        rootMargin: "-22% 0px -55% 0px",
+        threshold: [0.1, 0.25, 0.45, 0.65],
+      }
+    );
+
+    sections.forEach((section) => observer.observe(section));
+
+    return () => observer.disconnect();
+  }, []);
+
   const rail = (
     <div className="space-y-4">
       <div>
@@ -274,8 +404,11 @@ export default function VideoShowcase() {
         className="grid grid-cols-2 gap-2 border-b border-white/10 pb-4 sm:grid-cols-3 lg:flex lg:flex-col lg:gap-1 lg:border-b-0 lg:border-l lg:pb-0 lg:pl-4"
         aria-label="Project sections"
       >
-        <a
-          href="#work"
+        <button
+          type="button"
+          onClick={() => goToArchiveSection("work")}
+          aria-current={activeArchiveSectionId === "work" ? "true" : undefined}
+          aria-controls="work"
           aria-label={`All projects section ${SHOWCASE_PROJECTS.length} projects`}
           className="relative rounded-xl border border-[var(--color-accent)]/55 bg-[var(--color-accent)]/14 px-3 py-1.5 text-left text-white transition-[background,border-color,color] duration-200 lg:border-transparent"
         >
@@ -292,13 +425,23 @@ export default function VideoShowcase() {
               [{SHOWCASE_PROJECTS.length}]
             </span>
           </span>
-        </a>
-        {sectionGroups.map((section) => (
-          <a
+        </button>
+        {sectionGroups.map((section) => {
+          const isActive = activeArchiveSectionId === section.id;
+
+          return (
+          <button
             key={section.id}
-            href={`#${section.id}`}
+            type="button"
+            onClick={() => goToArchiveSection(section.id)}
+            aria-current={isActive ? "true" : undefined}
+            aria-controls={section.id}
             aria-label={`${section.label} section ${section.projects.length} projects`}
-            className="relative rounded-xl border border-white/10 bg-[#0d0d13] px-3 py-1.5 text-left text-white/58 transition-[background,border-color,color] duration-200 hover:border-white/20 hover:bg-[#14141c] hover:text-white lg:border-transparent"
+            className={`relative rounded-xl border px-3 py-1.5 text-left transition-[background,border-color,color] duration-200 lg:border-transparent ${
+              isActive
+                ? "border-[var(--color-accent)]/45 bg-[var(--color-accent)]/12 text-white"
+                : "border-white/10 bg-[#0d0d13] text-white/58 hover:border-white/20 hover:bg-[#14141c] hover:text-white"
+            }`}
           >
             <span className="flex items-start justify-between gap-3">
               <span className="min-w-0">
@@ -313,8 +456,9 @@ export default function VideoShowcase() {
                 [{section.projects.length}]
               </span>
             </span>
-          </a>
-        ))}
+          </button>
+          );
+        })}
       </div>
 
       <p className="sr-only" aria-live="polite">
@@ -330,9 +474,10 @@ export default function VideoShowcase() {
         labelledBy="work-heading"
         rail={rail}
         railClassName="lg:pt-2"
-        contentClassName="hide-scrollbar"
+        viewportChapter
+        contentScrollable={false}
       >
-          <div ref={archiveRef} className="space-y-10">
+          <div ref={archiveRef} className="space-y-10 pr-1">
             {sectionGroups.map((section) => (
               <section
                 key={section.id}
@@ -363,6 +508,10 @@ export default function VideoShowcase() {
                   {section.projects.map((project) => {
                     const treatmentStyle = getTreatmentStyle(project);
                     const frameMeta = ARCHIVE_FRAME_META[section.frame];
+                    const isInlineReel =
+                      section.frame === "reel" && project.type === "video" && project.videoSrc;
+                    const isReelPreviewActive =
+                      !shouldReduceMotion && activeReelPreviewIds.has(project.id);
 
                     return (
                       <button
@@ -378,13 +527,30 @@ export default function VideoShowcase() {
                         <div
                           className={`absolute overflow-hidden border border-white/10 bg-[#111119] ${frameMeta.imageBoxClassName}`}
                         >
-                          <Image
-                            src={getArchiveThumbnailSrc(project)}
-                            alt={project.mediaAlt}
-                            fill
-                            sizes="(max-width: 768px) 44vw, (max-width: 1200px) 30vw, 20vw"
-                            className={`${frameMeta.mediaClassName} transition-transform ease-[cubic-bezier(0.22,1,0.36,1)] ${frameMeta.hoverScaleClassName}`}
-                          />
+                          {isInlineReel ? (
+                            <video
+                              ref={(node) => setReelPreviewRef(project.id, node)}
+                              data-project-id={project.id}
+                              src={isReelPreviewActive ? project.videoSrc : undefined}
+                              poster={getArchiveThumbnailSrc(project)}
+                              muted
+                              playsInline
+                              loop
+                              preload="metadata"
+                              aria-label={project.mediaAlt}
+                              className={`h-full w-full ${frameMeta.mediaClassName} transition-transform ease-[cubic-bezier(0.22,1,0.36,1)] ${frameMeta.hoverScaleClassName}`}
+                            >
+                              Your browser does not support the video tag.
+                            </video>
+                          ) : (
+                            <Image
+                              src={getArchiveThumbnailSrc(project)}
+                              alt={project.mediaAlt}
+                              fill
+                              sizes="(max-width: 768px) 44vw, (max-width: 1200px) 30vw, 20vw"
+                              className={`${frameMeta.mediaClassName} transition-transform ease-[cubic-bezier(0.22,1,0.36,1)] ${frameMeta.hoverScaleClassName}`}
+                            />
+                          )}
                           <div className="absolute inset-0 bg-gradient-to-t from-[#07070a]/88 via-transparent to-transparent" />
                         </div>
 
