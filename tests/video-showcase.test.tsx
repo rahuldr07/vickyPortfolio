@@ -173,7 +173,8 @@ describe("VideoShowcase", () => {
     expect(source).not.toContain("AnimatePresence");
     expect(source).not.toContain("<motion");
     expect(source).not.toContain("ScrollTrigger");
-    expect(source).not.toContain("useGSAP");
+    expect(source).toContain("useGSAP");
+    expect(source).toContain("IntersectionObserver");
     expect(source).not.toContain("SmartVideoPreview");
   });
 });

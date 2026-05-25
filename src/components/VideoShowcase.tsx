@@ -2,11 +2,14 @@
 
 import {
   useEffect,
+  useRef,
   useState,
   useSyncExternalStore,
   type CSSProperties,
 } from "react";
 import Image from "next/image";
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
 import { ArrowUpRight, Image as ImageIcon, Play, Video, X } from "lucide-react";
 import {
   CONTACT,
@@ -163,6 +166,7 @@ function filterArchiveProjects(
 }
 
 export default function VideoShowcase() {
+  const archiveRef = useRef<HTMLDivElement>(null);
   const [selectedProject, setSelectedProject] = useState<ShowcaseProject | null>(null);
   const shouldReduceMotion = useSyncExternalStore(
     subscribeToReducedMotion,
@@ -176,6 +180,63 @@ export default function VideoShowcase() {
   }));
 
   const closeModal = () => setSelectedProject(null);
+
+  useGSAP(
+    () => {
+      if (shouldReduceMotion || !archiveRef.current) return;
+
+      const sections = Array.from(
+        archiveRef.current.querySelectorAll<HTMLElement>("[data-testid='work-archive-section']")
+      );
+
+      sections.forEach((section) => {
+        const targets = [
+          section.querySelector<HTMLElement>(".work-section-header"),
+          ...Array.from(section.querySelectorAll<HTMLElement>(".archive-card")),
+        ].filter(Boolean);
+
+        if (targets.length) {
+          gsap.set(targets, { opacity: 0, y: 16 });
+        }
+      });
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+
+            const section = entry.target as HTMLElement;
+            const targets = [
+              section.querySelector<HTMLElement>(".work-section-header"),
+              ...Array.from(section.querySelectorAll<HTMLElement>(".archive-card")),
+            ].filter(Boolean);
+
+            if (targets.length) {
+              gsap.to(targets, {
+                opacity: 1,
+                y: 0,
+                duration: 0.46,
+                ease: "power2.out",
+                stagger: 0.045,
+                overwrite: true,
+                onComplete: () => {
+                  gsap.set(targets, { clearProps: "opacity,transform" });
+                },
+              });
+            }
+
+            observer.unobserve(section);
+          });
+        },
+        { rootMargin: "0px 0px -12% 0px", threshold: 0.16 }
+      );
+
+      sections.forEach((section) => observer.observe(section));
+
+      return () => observer.disconnect();
+    },
+    { scope: archiveRef, dependencies: [shouldReduceMotion] }
+  );
 
   useEffect(() => {
     if (!selectedProject) return;
@@ -262,7 +323,7 @@ export default function VideoShowcase() {
         railClassName="lg:pt-2"
         contentClassName="hide-scrollbar"
       >
-        <div className="space-y-10">
+        <div ref={archiveRef} className="space-y-10">
           {sectionGroups.map((section) => (
             <section
               key={section.id}
@@ -272,7 +333,7 @@ export default function VideoShowcase() {
               data-testid="work-archive-section"
               data-archive-frame={section.frame}
             >
-              <header className="mb-4 flex flex-col gap-3 border-t border-white/10 pt-5 sm:flex-row sm:items-end sm:justify-between">
+              <header className="work-section-header mb-4 flex flex-col gap-3 border-t border-white/10 pt-5 sm:flex-row sm:items-end sm:justify-between">
                 <div>
                   <p className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-[var(--color-accent)]">
                     {section.label} / {String(section.projects.length).padStart(2, "0")}
@@ -313,8 +374,8 @@ export default function VideoShowcase() {
                           alt={project.mediaAlt}
                           fill
                           sizes="(max-width: 768px) 44vw, (max-width: 1200px) 30vw, 20vw"
-                          quality={58}
-                          className={frameMeta.mediaClassName}
+                          unoptimized
+                          className={`${frameMeta.mediaClassName} transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] motion-safe:group-hover:scale-[1.08]`}
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-[#07070a]/88 via-transparent to-transparent" />
                       </div>
