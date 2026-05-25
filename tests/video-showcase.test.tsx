@@ -1,8 +1,10 @@
 import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
+import sharp from "sharp";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import VideoShowcase from "@/components/VideoShowcase";
+import { SHOWCASE_PROJECTS } from "@/content/portfolio";
 
 describe("VideoShowcase", () => {
   afterEach(() => {
@@ -15,12 +17,12 @@ describe("VideoShowcase", () => {
 
     expect(
       screen.getByRole("link", {
-        name: /^All projects section 16 projects$/i,
+        name: /^All projects section 27 projects$/i,
       })
     ).toHaveAttribute("href", "#work");
     expect(
       screen.getByRole("link", {
-        name: /^Logos section 3 projects$/i,
+        name: /^Logos section 7 projects$/i,
       })
     ).toHaveAttribute("href", "#work-logos");
     expect(
@@ -30,7 +32,7 @@ describe("VideoShowcase", () => {
     ).toHaveAttribute("href", "#work-menus");
     expect(
       screen.getByRole("link", {
-        name: /^Posters section 7 projects$/i,
+        name: /^Posters section 14 projects$/i,
       })
     ).toHaveAttribute("href", "#work-posters");
     expect(
@@ -45,22 +47,22 @@ describe("VideoShowcase", () => {
     ).toHaveAttribute("href", "#work-reels");
   });
 
-  it("renders category sections with project counts and opens a project dossier modal", () => {
+  it("renders category sections with project counts and opens an image-only project preview", () => {
     render(<VideoShowcase />);
 
     const logosSection = screen.getByRole("region", {
-      name: /Logo Systems/i,
+      name: /Brand Identity & Logos/i,
     });
 
-    expect(within(logosSection).getByText("Logos / 03")).toBeInTheDocument();
+    expect(within(logosSection).getByText("Logos / 07")).toBeInTheDocument();
     expect(
       within(logosSection).getByRole("button", {
-        name: /Open Coastal Cravings Identity/i,
+        name: /Open Coastal Cravings Street Identity/i,
       })
     ).toHaveAttribute("data-archive-frame", "logo");
 
     const menusSection = screen.getByRole("region", {
-      name: /Menu Cards/i,
+      name: /Print Menus & Layouts/i,
     });
     expect(within(menusSection).getByText("Menus / 02")).toBeInTheDocument();
     expect(
@@ -70,47 +72,46 @@ describe("VideoShowcase", () => {
     ).toHaveAttribute("data-archive-frame", "menu");
 
     const projectCard = within(logosSection).getByRole("button", {
-      name: /Open Coastal Cravings Identity/i,
+      name: /Open Coastal Cravings Street Identity/i,
     });
     fireEvent.click(projectCard);
 
-    expect(
-      screen.getByRole("dialog", {
-        name: /Coastal Cravings Identity preview/i,
-      })
-    ).toBeInTheDocument();
-    expect(screen.getByText("Impact")).toBeInTheDocument();
-    expect(
-      screen.getByRole("link", { name: /Discuss this direction/i })
-    ).toHaveAttribute("href", expect.stringContaining("mailto:"));
+    const dialog = screen.getByRole("dialog", {
+      name: /Coastal Cravings Street Identity preview/i,
+    });
+
+    expect(dialog).toBeInTheDocument();
+    expect(within(dialog).getByAltText("Coastal Cravings signage logo mockup")).toBeInTheDocument();
+    expect(screen.queryByText("Impact")).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: /Discuss this direction/i })).not.toBeInTheDocument();
   });
 
   it("uses distinct archive frames for menus, banners, posters, and video reels", () => {
     render(<VideoShowcase />);
 
     const menusSection = screen.getByRole("region", {
-      name: /Menu Cards/i,
+      name: /Print Menus & Layouts/i,
     });
     expect(
       within(menusSection).getByRole("button", { name: /Open Restaurant Menu Layout/i })
     ).toHaveAttribute("data-archive-frame", "menu");
 
     const bannersSection = screen.getByRole("region", {
-      name: /Banners & Hoardings/i,
+      name: /Ads, Banners & Hoardings/i,
     });
     expect(
       within(bannersSection).getByRole("button", { name: /Open Digital Hoarding Design/i })
     ).toHaveAttribute("data-archive-frame", "banner");
 
     const postersSection = screen.getByRole("region", {
-      name: /Poster Campaigns/i,
+      name: /Visual Campaign Posters/i,
     });
     expect(
-      within(postersSection).getByRole("button", { name: /Open Product Campaign Posters/i })
+      within(postersSection).getByRole("button", { name: /Open GreenMonk Gourmet Launch Poster/i })
     ).toHaveAttribute("data-archive-frame", "poster");
 
     const reelsSection = screen.getByRole("region", {
-      name: /^Video Reels$/i,
+      name: /^Motion Edits & Reels$/i,
     });
     const reelCard = within(reelsSection).getByRole("button", {
       name: /Open Cinematic Final Output/i,
@@ -128,24 +129,92 @@ describe("VideoShowcase", () => {
     expect(video).toHaveAttribute("preload", "metadata");
   });
 
+  it("uses normal card-fit media with faster stronger hover zoom only for logo cards", () => {
+    render(<VideoShowcase />);
+
+    const logosSection = screen.getByRole("region", {
+      name: /Brand Identity & Logos/i,
+    });
+    const logoCard = within(logosSection).getByRole("button", {
+      name: /Open BeSuperMind Neural Identity/i,
+    });
+    const logoImage = within(logoCard).getByAltText("BeSuperMind learning logo design");
+    const logoMediaFrame = logoImage.parentElement;
+
+    expect(logoMediaFrame).toHaveClass("inset-3");
+    expect(logoMediaFrame).not.toHaveClass("rounded-full");
+    expect(logoImage).toHaveClass("object-cover");
+    expect(logoImage).toHaveClass("duration-300");
+    expect(logoImage).toHaveClass("motion-safe:group-hover:scale-[1.22]");
+
+    const menusSection = screen.getByRole("region", {
+      name: /Print Menus & Layouts/i,
+    });
+    const menuCard = within(menusSection).getByRole("button", {
+      name: /Open Restaurant Menu Layout/i,
+    });
+    const menuImage = within(menuCard).getByAltText("Menu Card Mockup");
+
+    expect(menuImage.parentElement).not.toHaveClass("rounded-full");
+    expect(menuImage).not.toHaveClass("duration-300");
+    expect(menuImage).not.toHaveClass("motion-safe:group-hover:scale-[1.22]");
+  });
+
   it("shows the complete visual archive by default", () => {
     render(<VideoShowcase />);
 
     expect(
       screen.getByRole("link", {
-        name: /^All projects section 16 projects$/i,
+        name: /^All projects section 27 projects$/i,
       })
     ).toHaveAttribute("href", "#work");
-    expect(screen.getAllByTestId("work-reel-card")).toHaveLength(16);
-    expect(screen.getByText("Visual Work Archive")).toBeInTheDocument();
-    expect(screen.getByText("Logo systems, menus, posters, banners, and reels.")).toBeInTheDocument();
+    expect(screen.getAllByTestId("work-reel-card")).toHaveLength(27);
+    expect(screen.getByText("Creative Portfolio")).toBeInTheDocument();
+    expect(screen.getByText("Brand identity, print layouts, campaigns, ads, and motion reels.")).toBeInTheDocument();
+    expect(screen.getByText("All Work")).toBeInTheDocument();
+    expect(screen.getByText("Brand Identity")).toBeInTheDocument();
+    expect(screen.getByText("Print & Menus")).toBeInTheDocument();
+    expect(screen.getByText("Visual Campaigns")).toBeInTheDocument();
+    expect(screen.getByText("Ads & Banners")).toBeInTheDocument();
+    expect(screen.getByText("Motion & Reels")).toBeInTheDocument();
+  });
+
+  it("uses lightweight project thumbnails for archive card media", () => {
+    render(<VideoShowcase />);
+
+    SHOWCASE_PROJECTS.forEach((project) => {
+      const expectedThumbnail = `/works/thumbs/project-${project.id}.webp`;
+      const encodedThumbnail = encodeURIComponent(expectedThumbnail);
+      const archiveImage = screen.getByAltText(project.mediaAlt);
+      const renderedSources = [
+        archiveImage.getAttribute("src"),
+        archiveImage.getAttribute("srcset"),
+      ].join(" ");
+
+      expect(renderedSources).toContain(encodedThumbnail);
+    });
+  });
+
+  it("keeps new logo thumbnails in the visible archive card aspect ratio", async () => {
+    const newLogoProjectIds = [17, 18, 19, 20, 21];
+
+    await Promise.all(
+      newLogoProjectIds.map(async (projectId) => {
+        const metadata = await sharp(
+          join(process.cwd(), "public", "works", "thumbs", `project-${projectId}.webp`)
+        ).metadata();
+
+        expect(metadata.width).toBe(760);
+        expect(metadata.height).toBe(570);
+      })
+    );
   });
 
   it("opens video dossiers in a contained viewport frame", () => {
     render(<VideoShowcase />);
 
     const reelsSection = screen.getByRole("region", {
-      name: /^Video Reels$/i,
+      name: /^Motion Edits & Reels$/i,
     });
     fireEvent.click(
       within(reelsSection).getByRole("button", {
@@ -175,6 +244,8 @@ describe("VideoShowcase", () => {
     expect(source).not.toContain("ScrollTrigger");
     expect(source).toContain("useGSAP");
     expect(source).toContain("IntersectionObserver");
+    expect(source).not.toContain("scrollArchiveToSection");
+    expect(source).not.toContain("archiveViewportRef");
     expect(source).not.toContain("SmartVideoPreview");
   });
 });
