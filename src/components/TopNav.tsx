@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { Menu, X } from "lucide-react";
-import { CONTACT, NAV_LINKS } from "@/content/portfolio";
+import { NAV_LINKS } from "@/content/portfolio";
 
 const sectionIds = NAV_LINKS.map((link) => link.href.replace("#", ""));
 const SHOW_AT_TOP_OFFSET = 80;

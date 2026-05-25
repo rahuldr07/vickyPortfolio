@@ -26,6 +26,9 @@ export default function Hero() {
   const previousRoleRef = useRef<string>(HERO_ROLES[0]);
 
   useEffect(() => {
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) return;
+
     const timer = window.setInterval(() => {
       setRoleIndex((prev) => (prev + 1) % HERO_ROLES.length);
     }, 5200);
@@ -38,7 +41,6 @@ export default function Hero() {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduced) {
       previousRoleRef.current = target;
-      setDisplayRole(target);
       return;
     }
 
