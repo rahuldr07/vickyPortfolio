@@ -1,27 +1,13 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import {
-  clampScrollTarget,
-  getAnchorScrollTarget,
-  getDirectionalSectionScrollTarget,
-  getKeyboardScrollDestination,
-  getLerpScrollStep,
-  getWheelSectionScrollTarget,
-  isScrollSettled,
-  isEditableTarget,
-  isNativeScrollableTarget,
-  normalizeWheelDelta,
-} from "@/lib/smooth-scroll";
+import { useEffect } from "react";
+import Lenis from "lenis";
+import { ScrollTrigger } from "@/lib/gsap";
 
-const SCROLL_LERP = 0.16;
-const MAX_WHEEL_DELTA = 220;
-
-function getMaxScroll() {
-  return Math.max(
-    document.documentElement.scrollHeight - window.innerHeight,
-    0
-  );
+declare global {
+  interface Window {
+    __lenis?: Lenis;
+  }
 }
 
 function isScrollLocked() {
@@ -31,12 +17,13 @@ function isScrollLocked() {
   );
 }
 
-export default function SmoothScroll() {
-  const currentYRef = useRef(0);
-  const lastFrameTimeRef = useRef(0);
-  const targetYRef = useRef(0);
-  const rafRef = useRef<number | null>(null);
+function shouldPreventLenis(node: HTMLElement) {
+  return Boolean(
+    node.closest("[data-native-scroll='true'], [data-lenis-prevent]")
+  );
+}
 
+export default function SmoothScroll() {
   useEffect(() => {
     const reducedMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
@@ -46,226 +33,47 @@ export default function SmoothScroll() {
     const coarsePointer = window.matchMedia("(pointer: coarse)").matches;
     if (coarsePointer) return;
 
-    const root = document.documentElement;
-    const previousScrollBehavior =
-      root.style.getPropertyValue("scroll-behavior");
-    const previousScrollBehaviorPriority =
-      root.style.getPropertyPriority("scroll-behavior");
-    currentYRef.current = window.scrollY;
-    targetYRef.current = window.scrollY;
-    root.classList.add("lenis-like-scroll");
-    root.style.setProperty("scroll-behavior", "auto", "important");
+    const lenis = new Lenis({
+      autoRaf: true,
+      anchors: { offset: 0 },
+      smoothWheel: true,
+      syncTouch: false,
+      stopInertiaOnNavigate: true,
+      prevent: shouldPreventLenis,
+    });
+    window.__lenis = lenis;
 
-    const stop = () => {
-      if (rafRef.current !== null) {
-        window.cancelAnimationFrame(rafRef.current);
-        rafRef.current = null;
-      }
-    };
+    const unsubscribeScroll = lenis.on("scroll", () => {
+      ScrollTrigger.update();
+    });
 
-    const tick = (now: number) => {
+    const syncScrollLock = () => {
       if (isScrollLocked()) {
-        currentYRef.current = window.scrollY;
-        targetYRef.current = window.scrollY;
-        rafRef.current = null;
+        lenis.stop();
         return;
       }
 
-      const deltaMs = now - lastFrameTimeRef.current;
-      lastFrameTimeRef.current = now;
-
-      const nextY = getLerpScrollStep(
-        currentYRef.current,
-        targetYRef.current,
-        deltaMs,
-        SCROLL_LERP
-      );
-      currentYRef.current = nextY;
-      window.scrollTo(0, nextY);
-
-      if (isScrollSettled(nextY, targetYRef.current)) {
-        currentYRef.current = targetYRef.current;
-        window.scrollTo(0, targetYRef.current);
-        rafRef.current = null;
-        return;
-      }
-
-      rafRef.current = window.requestAnimationFrame(tick);
+      lenis.start();
     };
 
-    const start = (nextTarget: number) => {
-      targetYRef.current = clampScrollTarget(nextTarget, getMaxScroll());
+    syncScrollLock();
 
-      if (rafRef.current === null) {
-        currentYRef.current = window.scrollY;
-        lastFrameTimeRef.current = window.performance.now();
-        rafRef.current = window.requestAnimationFrame(tick);
-      }
-    };
+    const bodyObserver = new MutationObserver(syncScrollLock);
+    bodyObserver.observe(document.body, {
+      attributes: true,
+      attributeFilter: ["class", "style"],
+    });
 
-    const getSectionTops = () =>
-      Array.from(
-        document.querySelectorAll<HTMLElement>('[data-scroll-chapter="true"]')
-      )
-        .map((section) => section.getBoundingClientRect().top + window.scrollY)
-        .sort((left, right) => left - right);
-
-    const onWheel = (event: WheelEvent) => {
-      if (event.defaultPrevented || event.ctrlKey || isScrollLocked()) {
-        return;
-      }
-
-      const delta = normalizeWheelDelta(
-        event.deltaY,
-        event.deltaMode,
-        window.innerHeight
-      );
-
-      if (isNativeScrollableTarget(event.target, delta)) {
-        return;
-      }
-
-      event.preventDefault();
-
-      const sectionTarget = getWheelSectionScrollTarget(
-        getSectionTops(),
-        window.scrollY,
-        delta
-      );
-      if (sectionTarget !== null) {
-        start(sectionTarget);
-        return;
-      }
-
-      const clampedDelta = Math.max(
-        Math.min(delta, MAX_WHEEL_DELTA),
-        -MAX_WHEEL_DELTA
-      );
-      start(targetYRef.current + clampedDelta);
-    };
-
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (
-        event.defaultPrevented ||
-        event.altKey ||
-        event.ctrlKey ||
-        event.metaKey ||
-        isScrollLocked() ||
-        isEditableTarget(event.target)
-      ) {
-        return;
-      }
-
-      const sectionTops = getSectionTops();
-      if (sectionTops.length) {
-        if (event.key === "Home") {
-          event.preventDefault();
-          start(sectionTops[0] ?? 0);
-          return;
-        }
-
-        if (event.key === "End") {
-          event.preventDefault();
-          start(sectionTops[sectionTops.length - 1] ?? getMaxScroll());
-          return;
-        }
-
-        const direction =
-          event.key === "ArrowDown" || event.key === "PageDown" || event.key === " "
-            ? 1
-            : event.key === "ArrowUp" || event.key === "PageUp"
-              ? -1
-              : 0;
-
-        if (direction !== 0) {
-          const sectionTarget = getDirectionalSectionScrollTarget(
-            sectionTops,
-            window.scrollY,
-            direction
-          );
-
-          if (sectionTarget !== null) {
-            event.preventDefault();
-            start(sectionTarget);
-            return;
-          }
-        }
-      }
-
-      const destination = getKeyboardScrollDestination(
-        event.key,
-        targetYRef.current,
-        window.innerHeight,
-        getMaxScroll()
-      );
-
-      if (destination === null) return;
-
-      event.preventDefault();
-      start(destination);
-    };
-
-    const onClick = (event: MouseEvent) => {
-      if (
-        event.defaultPrevented ||
-        event.button !== 0 ||
-        event.metaKey ||
-        event.ctrlKey ||
-        event.shiftKey ||
-        event.altKey
-      ) {
-        return;
-      }
-
-      const link = (event.target as Element | null)?.closest<HTMLAnchorElement>(
-        'a[href^="#"]'
-      );
-      if (!link) return;
-
-      const destination = getAnchorScrollTarget(link.hash, window.scrollY);
-      if (destination === null) return;
-
-      event.preventDefault();
-      window.history.pushState(null, "", link.hash);
-      start(destination);
-    };
-
-    const onResize = () => {
-      const nextY = clampScrollTarget(window.scrollY, getMaxScroll());
-      currentYRef.current = nextY;
-      targetYRef.current = nextY;
-    };
-
-    const onNativeScroll = () => {
-      if (rafRef.current === null) {
-        currentYRef.current = window.scrollY;
-        targetYRef.current = window.scrollY;
-      }
-    };
-
-    window.addEventListener("wheel", onWheel, { passive: false });
-    window.addEventListener("keydown", onKeyDown);
-    window.addEventListener("resize", onResize);
-    window.addEventListener("scroll", onNativeScroll, { passive: true });
-    document.addEventListener("click", onClick);
+    window.addEventListener("resize", syncScrollLock);
 
     return () => {
-      stop();
-      root.classList.remove("lenis-like-scroll");
-      if (previousScrollBehavior) {
-        root.style.setProperty(
-          "scroll-behavior",
-          previousScrollBehavior,
-          previousScrollBehaviorPriority
-        );
-      } else {
-        root.style.removeProperty("scroll-behavior");
+      unsubscribeScroll();
+      bodyObserver.disconnect();
+      window.removeEventListener("resize", syncScrollLock);
+      if (window.__lenis === lenis) {
+        delete window.__lenis;
       }
-      window.removeEventListener("wheel", onWheel);
-      window.removeEventListener("keydown", onKeyDown);
-      window.removeEventListener("resize", onResize);
-      window.removeEventListener("scroll", onNativeScroll);
-      document.removeEventListener("click", onClick);
+      lenis.destroy();
     };
   }, []);
 

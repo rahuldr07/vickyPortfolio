@@ -98,43 +98,43 @@ const ARCHIVE_FRAME_META: Record<
   }
 > = {
   logo: {
-    className: "aspect-[4/3]",
+    className: "aspect-[4/5] sm:aspect-[4/3]",
     imageBoxClassName: "inset-3 rounded-[0.9rem] xl:rounded-t-[999px]",
     mediaClassName: "object-cover opacity-95",
     label: "LOGO",
-    titleClassName: "text-lg md:text-xl",
+    titleClassName: "text-sm sm:text-lg md:text-xl",
     hoverScaleClassName: "duration-300 motion-safe:group-hover:scale-[1.22]",
   },
   menu: {
-    className: "aspect-[4/3]",
+    className: "aspect-[4/5] sm:aspect-[4/3]",
     imageBoxClassName: "inset-3 rotate-[-1deg] rounded-[0.9rem]",
     mediaClassName: "object-cover opacity-92",
     label: "MENU",
-    titleClassName: "text-lg md:text-xl",
+    titleClassName: "text-sm sm:text-lg md:text-xl",
     hoverScaleClassName: "duration-700 motion-safe:group-hover:scale-[1.08]",
   },
   poster: {
-    className: "aspect-[4/3]",
+    className: "aspect-[4/5] sm:aspect-[4/3]",
     imageBoxClassName: "inset-3 rounded-[0.85rem] border-[4px] border-[#17171f]",
     mediaClassName: "object-cover opacity-90",
     label: "POSTER",
-    titleClassName: "text-lg md:text-xl",
+    titleClassName: "text-sm sm:text-lg md:text-xl",
     hoverScaleClassName: "duration-700 motion-safe:group-hover:scale-[1.08]",
   },
   banner: {
-    className: "aspect-[4/3]",
+    className: "aspect-[4/5] sm:aspect-[4/3]",
     imageBoxClassName: "inset-3 rounded-[0.9rem]",
     mediaClassName: "object-contain bg-white opacity-95",
     label: "BANNER",
-    titleClassName: "text-lg md:text-xl",
+    titleClassName: "text-sm sm:text-lg md:text-xl",
     hoverScaleClassName: "duration-700 motion-safe:group-hover:scale-[1.08]",
   },
   reel: {
-    className: "aspect-[4/3]",
+    className: "aspect-[4/5] sm:aspect-[4/3]",
     imageBoxClassName: "inset-3 rounded-[0.9rem]",
     mediaClassName: "object-cover opacity-88",
     label: "REEL",
-    titleClassName: "text-lg md:text-xl",
+    titleClassName: "text-sm sm:text-lg md:text-xl",
     hoverScaleClassName: "duration-700 motion-safe:group-hover:scale-[1.08]",
   },
 };
@@ -196,11 +196,16 @@ export default function VideoShowcase() {
         window.getComputedStyle(target).scrollMarginTop
       );
       const offset = Number.isNaN(scrollMarginTop) ? 0 : scrollMarginTop;
-      const top = target.getBoundingClientRect().top + window.scrollY - offset;
+      const top = target.getBoundingClientRect().top + window.scrollY;
+
+      if (window.__lenis) {
+        window.__lenis?.scrollTo(top, { offset: -offset });
+        return;
+      }
 
       window.scrollTo({
-        top: Math.max(top, 0),
-        behavior: "smooth",
+        top: Math.max(top - offset, 0),
+        behavior: "auto",
       });
     },
     []
@@ -410,7 +415,7 @@ export default function VideoShowcase() {
           aria-current={activeArchiveSectionId === "work" ? "true" : undefined}
           aria-controls="work"
           aria-label={`All projects section ${SHOWCASE_PROJECTS.length} projects`}
-          className="relative rounded-xl border border-[var(--color-accent)]/55 bg-[var(--color-accent)]/14 px-3 py-1.5 text-left text-white transition-[background,border-color,color] duration-200 lg:border-transparent"
+          className="relative min-h-14 rounded-xl border border-[var(--color-accent)]/55 bg-[var(--color-accent)]/14 px-3 py-2 text-left text-white transition-[background,border-color,color] duration-200 lg:min-h-0 lg:border-transparent lg:py-1.5"
         >
           <span className="flex items-start justify-between gap-3">
             <span className="min-w-0">
@@ -437,7 +442,7 @@ export default function VideoShowcase() {
             aria-current={isActive ? "true" : undefined}
             aria-controls={section.id}
             aria-label={`${section.label} section ${section.projects.length} projects`}
-            className={`relative rounded-xl border px-3 py-1.5 text-left transition-[background,border-color,color] duration-200 lg:border-transparent ${
+            className={`relative min-h-14 rounded-xl border px-3 py-2 text-left transition-[background,border-color,color] duration-200 lg:min-h-0 lg:border-transparent lg:py-1.5 ${
               isActive
                 ? "border-[var(--color-accent)]/45 bg-[var(--color-accent)]/12 text-white"
                 : "border-white/10 bg-[#0d0d13] text-white/58 hover:border-white/20 hover:bg-[#14141c] hover:text-white"
@@ -504,7 +509,7 @@ export default function VideoShowcase() {
                   </p>
                 </header>
 
-                <div className="grid w-full min-w-0 grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4 xl:gap-4">
+                <div className="grid w-full min-w-0 grid-cols-2 gap-2.5 sm:gap-3 md:grid-cols-3 lg:grid-cols-4 xl:gap-4">
                   {section.projects.map((project) => {
                     const treatmentStyle = getTreatmentStyle(project);
                     const frameMeta = ARCHIVE_FRAME_META[section.frame];
@@ -583,7 +588,7 @@ export default function VideoShowcase() {
                           </div>
                         )}
 
-                        <div className="absolute inset-x-0 bottom-0 z-20 min-w-0 p-4 md:p-5">
+                        <div className="absolute inset-x-0 bottom-0 z-20 min-w-0 p-3 sm:p-4 md:p-5">
                           <h4 className={`max-w-2xl font-serif font-black leading-tight tracking-normal text-white drop-shadow-[0_8px_22px_rgba(0,0,0,0.5)] ${frameMeta.titleClassName}`}>
                             {project.title}
                           </h4>
@@ -608,6 +613,7 @@ export default function VideoShowcase() {
           <div
             style={getTreatmentStyle(selectedProject)}
             data-native-scroll="true"
+            data-lenis-prevent="true"
             className="relative flex max-h-[calc(100svh-2rem)] w-full max-w-7xl items-center justify-center overflow-hidden rounded-[1.35rem] border border-white/14 bg-[#050507] shadow-[0_40px_120px_rgba(0,0,0,0.74)]"
             onClick={(event) => event.stopPropagation()}
           >

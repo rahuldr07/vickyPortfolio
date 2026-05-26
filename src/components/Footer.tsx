@@ -97,7 +97,7 @@ export default function Footer() {
       ref={footerRef}
       id="contact"
       data-scroll-chapter="true"
-      className="relative min-h-[100svh] scroll-mt-24 overflow-x-clip border-t border-white/5 bg-transparent px-4 pb-10 pt-14 sm:px-6 md:pt-16 lg:px-8 xl:px-10 2xl:px-12"
+      className="relative scroll-mt-24 overflow-x-clip border-t border-white/5 bg-transparent px-4 pb-10 pt-10 sm:min-h-[100svh] sm:px-6 sm:pt-12 md:pt-16 lg:px-8 xl:px-10 2xl:px-12"
     >
       <div className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-[50vh] bg-gradient-to-t from-[var(--color-accent)]/15 to-transparent blur-3xl" />
       <div

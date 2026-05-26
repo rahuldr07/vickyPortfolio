@@ -1,8 +1,28 @@
-import { fireEvent, render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import Hero from "@/components/Hero";
 
+afterEach(() => {
+  cleanup();
+});
+
 describe("Hero", () => {
+  it("keeps the mobile hero focused on CTAs and a compact portrait signal", () => {
+    render(<Hero />);
+
+    const viewWorks = screen.getByRole("link", { name: /view works/i });
+    const contact = screen.getByRole("link", { name: /^contact me$/i });
+    const portraitWrap = screen.getByTestId("hero-portrait-wrap");
+    const proofPoints = screen.getByLabelText(/portfolio proof points/i);
+
+    expect(viewWorks).toHaveAttribute("href", "#work");
+    expect(contact).toHaveAttribute("href", "#contact");
+    expect(portraitWrap).toHaveClass("max-w-[13.6rem]");
+    expect(portraitWrap).toHaveClass("sm:max-w-[34rem]");
+    expect(proofPoints).toHaveClass("hidden");
+    expect(proofPoints).toHaveClass("sm:grid");
+  });
+
   it("tilts the portrait without GSAP reset warnings", () => {
     const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
 

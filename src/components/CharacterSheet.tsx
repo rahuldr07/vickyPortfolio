@@ -273,6 +273,7 @@ export default function CharacterSheet() {
         >
           <div
             data-native-scroll="true"
+            data-lenis-prevent="true"
             className="relative flex h-[82svh] w-full max-w-5xl flex-col overflow-hidden rounded-[1.25rem] border border-white/12 bg-[#0b0b10] shadow-[0_36px_100px_rgba(0,0,0,0.62)]"
             onClick={(event) => event.stopPropagation()}
           >

@@ -246,17 +246,17 @@ export default function Hero() {
       id="home"
       ref={sectionRef}
       data-scroll-chapter="true"
-      className="relative min-h-[100svh] overflow-hidden bg-transparent px-6 md:px-12"
+      className="relative min-h-[100svh] overflow-x-clip bg-transparent px-6 md:px-12"
       aria-label="Hero intro"
     >
       <div
         ref={stageRef}
-        className="relative z-10 mx-auto grid box-border min-h-[100svh] w-full max-w-[calc(100vw_-_3rem)] grid-cols-1 items-center gap-12 overflow-hidden pb-10 pt-28 lg:max-w-7xl lg:grid-cols-12"
+        className="relative z-10 mx-auto grid box-border min-h-[100svh] w-full max-w-[calc(100vw_-_3rem)] grid-cols-1 items-start gap-6 overflow-visible pb-8 pt-24 sm:gap-10 sm:pb-10 sm:pt-28 lg:max-w-7xl lg:grid-cols-12 lg:items-center lg:gap-12 lg:overflow-hidden"
       >
         <div className="hero-copy-lock w-full min-w-0 max-w-[calc(100vw_-_3rem)] lg:col-span-7 lg:max-w-full">
           <h1
             ref={titleRef}
-            className="max-w-full font-serif text-[3.2rem] font-black uppercase leading-[0.8] tracking-normal text-white min-[430px]:text-[3.7rem] sm:text-[4.8rem] md:text-[6rem] lg:text-[7.2rem] xl:text-[8.4rem]"
+            className="max-w-full font-serif text-[2.75rem] font-black uppercase leading-[0.82] tracking-normal text-white min-[380px]:text-[3.05rem] min-[430px]:text-[3.7rem] sm:text-[4.8rem] md:text-[6rem] lg:text-[7.2rem] xl:text-[8.4rem]"
             aria-label="Geetha Krishna"
           >
             <span className="block">Geetha</span>
@@ -265,12 +265,12 @@ export default function Hero() {
 
           <p
             ref={roleRef}
-            className="mt-7 min-h-11 font-sans text-base font-extrabold leading-snug tracking-normal text-white/92 sm:text-lg md:text-xl"
+            className="mt-5 min-h-16 font-sans text-sm font-extrabold leading-snug tracking-normal text-white/92 min-[430px]:min-h-11 sm:mt-7 sm:text-lg md:text-xl"
           >
-            <span className="mr-3 font-mono text-sm uppercase tracking-[0.18em] text-[var(--color-accent)] md:text-base">
+            <span className="mr-2 font-mono text-xs uppercase tracking-[0.18em] text-[var(--color-accent)] sm:mr-3 sm:text-sm md:text-base">
               [ROLE]
             </span>
-            <span aria-hidden="true" className="font-mono uppercase tracking-[0.14em] md:tracking-[0.16em]">
+            <span aria-hidden="true" className="font-mono uppercase tracking-[0.12em] sm:tracking-[0.14em] md:tracking-[0.16em]">
               {displayRole}
             </span>
             <span aria-hidden="true" className="ml-1 inline-block font-mono text-white/45 motion-safe:animate-pulse">
@@ -283,28 +283,28 @@ export default function Hero() {
 
           <p
             ref={bodyRef}
-            className="mt-5 max-w-full text-base leading-relaxed text-white/78 sm:max-w-[68ch] md:text-lg"
+            className="mt-4 max-w-full text-[15px] leading-relaxed text-white/78 sm:mt-5 sm:max-w-[68ch] sm:text-base md:text-lg"
           >
             I translate brand ambition into premium visual systems—from identity and motion to campaign assets—delivering clarity and atmosphere.
           </p>
 
-          <div ref={ctaRef} className="mt-10 flex flex-col items-stretch gap-4 sm:flex-row sm:flex-wrap sm:items-center">
+          <div ref={ctaRef} className="mt-7 flex flex-col items-stretch gap-3 sm:mt-10 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
             <a
               href="#work"
-              className="group scan-sweep relative inline-flex min-h-12 w-full max-w-full items-center justify-center overflow-hidden rounded-full bg-[var(--color-accent)] px-8 py-3 font-sans text-xs font-extrabold uppercase tracking-[0.18em] text-[#050508] transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_12px_34px_rgba(176,132,246,0.35)] sm:w-auto sm:tracking-[0.22em]"
+              className="group scan-sweep relative inline-flex min-h-12 w-full max-w-full items-center justify-center overflow-hidden rounded-full bg-[var(--color-accent)] px-6 py-3 font-sans text-xs font-extrabold uppercase tracking-[0.16em] text-[#050508] transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_12px_34px_rgba(176,132,246,0.35)] sm:w-auto sm:px-8 sm:tracking-[0.22em]"
             >
               View Works
               <ArrowUpRight className="ml-2 h-4 w-4 transition-transform duration-500 group-hover:rotate-45" />
             </a>
             <a
               href="#contact"
-              className="group inline-flex min-h-12 w-full max-w-full items-center justify-center rounded-full border border-white/20 px-8 py-3 font-sans text-xs font-bold uppercase tracking-[0.18em] text-white/90 transition-all duration-500 hover:-translate-y-1 hover:border-white/55 hover:bg-white/[0.08] sm:w-auto sm:tracking-[0.22em]"
+              className="group inline-flex min-h-12 w-full max-w-full items-center justify-center rounded-full border border-white/20 px-6 py-3 font-sans text-xs font-bold uppercase tracking-[0.16em] text-white/90 transition-all duration-500 hover:-translate-y-1 hover:border-white/55 hover:bg-white/[0.08] sm:w-auto sm:px-8 sm:tracking-[0.22em]"
             >
               Contact Me
             </a>
           </div>
 
-          <dl ref={proofRef} className="mt-8 grid gap-3 sm:grid-cols-2" aria-label="Portfolio proof points">
+          <dl ref={proofRef} className="mt-8 hidden gap-3 sm:grid sm:grid-cols-2" aria-label="Portfolio proof points">
             {HERO_PROOF_POINTS.map((item) => (
               <div key={item.label} className="proof-card dossier-panel rounded-2xl px-4 py-4">
                 <dt className="font-mono text-[10px] uppercase tracking-[0.16em] text-white/55">
@@ -322,7 +322,7 @@ export default function Hero() {
           <div
             ref={portraitWrapRef}
             data-testid="hero-portrait-wrap"
-            className="dossier-panel relative mx-auto aspect-[4/5] w-full max-w-[34rem] overflow-hidden rounded-[2rem] shadow-[0_34px_110px_rgba(0,0,0,0.62)] lg:mx-0 lg:ml-auto"
+            className="dossier-panel relative mx-auto aspect-[4/5] w-full max-w-[13.6rem] overflow-hidden rounded-[1.35rem] shadow-[0_24px_70px_rgba(0,0,0,0.52)] sm:max-w-[34rem] sm:rounded-[2rem] sm:shadow-[0_34px_110px_rgba(0,0,0,0.62)] lg:mx-0 lg:ml-auto"
           >
             <div
               ref={portraitTiltRef}

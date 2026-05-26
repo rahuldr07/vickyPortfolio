@@ -41,8 +41,8 @@ const DossierChapter = forwardRef<HTMLElement, DossierChapterProps>(
         data-scroll-chapter={viewportChapter ? "true" : undefined}
         className={cx(
           "relative mx-auto w-full max-w-none scroll-mt-24 bg-transparent px-4 sm:px-6 lg:px-8 xl:px-10 2xl:px-12",
-          "py-14 md:py-16",
-          viewportChapter && "min-h-[100svh]",
+          "py-10 sm:py-12 md:py-16",
+          viewportChapter && "sm:min-h-[100svh]",
           className
         )}
       >
@@ -65,6 +65,7 @@ const DossierChapter = forwardRef<HTMLElement, DossierChapterProps>(
           <div
             data-testid="dossier-chapter-content"
             data-native-scroll={viewportChapter && contentScrollable ? "true" : undefined}
+            data-lenis-prevent={viewportChapter && contentScrollable ? "true" : undefined}
             className={cx(
               "dossier-chapter-pane w-full min-w-0 overflow-x-clip",
               viewportChapter && contentScrollable && "lg:max-h-[calc(100svh-8rem)] lg:overflow-y-auto",

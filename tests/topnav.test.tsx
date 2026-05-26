@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import TopNav from "@/components/TopNav";
 
@@ -34,8 +34,15 @@ describe("TopNav", () => {
     const toggleButton = screen.getByRole("button", { name: /open menu/i });
     fireEvent.click(toggleButton);
 
-    expect(screen.getByRole("dialog", { name: /mobile menu/i })).toBeInTheDocument();
+    const mobileMenu = screen.getByRole("dialog", { name: /mobile menu/i });
+    expect(mobileMenu).toBeInTheDocument();
+    expect(mobileMenu).toHaveClass("max-h-[calc(100svh-6rem)]");
+    expect(mobileMenu).toHaveClass("overflow-y-auto");
     expect(document.body.style.overflow).toBe("hidden");
+
+    expect(within(mobileMenu).getByRole("link", { name: /^Home$/i })).toHaveClass(
+      "min-h-12"
+    );
 
     const closeButton = screen.getByRole("button", { name: /close menu/i });
     fireEvent.click(closeButton);

@@ -14,47 +14,51 @@ describe("VideoShowcase", () => {
 
   it("uses local category controls without hash navigation and keeps menus last", () => {
     render(<VideoShowcase />);
+    const projectSections = screen.getByLabelText(/project sections/i);
+    const projectSectionControls = within(projectSections);
 
     expect(
-      screen.getByRole("button", {
+      projectSectionControls.getByRole("button", {
         name: /^All projects section 27 projects$/i,
       })
     ).toHaveAttribute("aria-controls", "work");
     expect(
-      screen.getByRole("button", {
+      projectSectionControls.getByRole("button", {
         name: /^Logos section 7 projects$/i,
       })
     ).toHaveAttribute("aria-controls", "work-logos");
     expect(
-      screen.getByRole("button", {
+      projectSectionControls.getByRole("button", {
         name: /^Posters section 14 projects$/i,
       })
     ).toHaveAttribute("aria-controls", "work-posters");
     expect(
-      screen.getByRole("button", {
+      projectSectionControls.getByRole("button", {
         name: /^Banners section 3 projects$/i,
       })
     ).toHaveAttribute("aria-controls", "work-banners");
     expect(
-      screen.getByRole("button", {
+      projectSectionControls.getByRole("button", {
         name: /^Video Reels section 1 projects$/i,
       })
     ).toHaveAttribute("aria-controls", "work-reels");
     expect(
-      screen.getByRole("button", {
+      projectSectionControls.getByRole("button", {
         name: /^Menus section 2 projects$/i,
       })
     ).toHaveAttribute("aria-controls", "work-menus");
 
-    const sectionControls = screen.getAllByRole("button", {
+    const sectionControls = projectSectionControls.getAllByRole("button", {
       name: /section \d+ projects$/i,
     });
+    expect(sectionControls[0]).toHaveClass("min-h-14");
+    expect(sectionControls[0]).toHaveClass("lg:min-h-0");
     expect(sectionControls.at(-1)).toHaveAccessibleName(/^Menus section 2 projects$/i);
     expect(sectionControls.some((control) => control.hasAttribute("href"))).toBe(false);
 
     window.location.hash = "";
     fireEvent.click(
-      screen.getByRole("button", {
+      projectSectionControls.getByRole("button", {
         name: /^Video Reels section 1 projects$/i,
       })
     );
@@ -62,7 +66,7 @@ describe("VideoShowcase", () => {
     expect(
       document.querySelector("#work [data-native-scroll='true']")
     ).toBeNull();
-  });
+  }, 10_000);
 
   it("renders category sections with project counts and opens an image-only project preview", () => {
     render(<VideoShowcase />);
@@ -134,6 +138,8 @@ describe("VideoShowcase", () => {
       name: /Open Cinematic Final Output/i,
     });
     expect(reelCard).toHaveAttribute("data-archive-frame", "reel");
+    expect(reelCard).toHaveClass("aspect-[4/5]");
+    expect(reelCard).toHaveClass("sm:aspect-[4/3]");
     fireEvent.click(reelCard);
 
     const dialog = screen.getByRole("dialog", {

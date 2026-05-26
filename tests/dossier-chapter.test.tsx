@@ -50,13 +50,40 @@ describe("DossierChapter", () => {
 
     const section = container.querySelector("#chapter");
     expect(section).toHaveAttribute("data-scroll-chapter", "true");
-    expect(section).toHaveClass("min-h-[100svh]");
+    expect(section).toHaveClass("sm:min-h-[100svh]");
+    expect(section).not.toHaveClass("min-h-[100svh]");
 
     expect(screen.getByTestId("dossier-chapter-content")).not.toHaveAttribute(
       "data-native-scroll"
     );
+    expect(screen.getByTestId("dossier-chapter-content")).not.toHaveAttribute(
+      "data-lenis-prevent"
+    );
     expect(screen.getByTestId("dossier-chapter-content")).not.toHaveClass(
       "lg:overflow-y-auto"
+    );
+  });
+
+  it("marks intentional inner scrollers so Lenis hands them off", () => {
+    render(
+      <DossierChapter
+        id="chapter"
+        labelledBy="chapter-heading"
+        rail={<h2 id="chapter-heading">Chapter Rail</h2>}
+        viewportChapter
+        contentScrollable
+      >
+        <p>Scrollable chapter content</p>
+      </DossierChapter>
+    );
+
+    expect(screen.getByTestId("dossier-chapter-content")).toHaveAttribute(
+      "data-native-scroll",
+      "true"
+    );
+    expect(screen.getByTestId("dossier-chapter-content")).toHaveAttribute(
+      "data-lenis-prevent",
+      "true"
     );
   });
 });

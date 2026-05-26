@@ -226,10 +226,10 @@ export default function TopNav() {
             role="dialog"
             aria-modal="true"
             aria-label="Mobile menu"
-            className="absolute left-3 right-3 top-20 rounded-[1.75rem] border border-white/[0.12] bg-[#0e0e13] p-4 text-white shadow-[0_18px_45px_rgba(0,0,0,0.42)]"
+            className="absolute left-2 right-2 top-20 max-h-[calc(100svh-6rem)] overflow-y-auto rounded-[1.35rem] border border-white/[0.12] bg-[#0e0e13] p-3 text-white shadow-[0_18px_45px_rgba(0,0,0,0.42)]"
             onClick={(event) => event.stopPropagation()}
           >
-            <div className="relative z-10 flex flex-col gap-3 font-sans text-base font-extrabold tracking-normal">
+            <div className="relative z-10 flex flex-col gap-2 font-sans text-base font-extrabold tracking-normal">
               {NAV_LINKS.map((link) => {
                 const section = link.href.replace("#", "");
                 const isActive = activeSection === section;
@@ -243,7 +243,7 @@ export default function TopNav() {
                       setActiveSection(section);
                       setOpen(false);
                     }}
-                    className={`inline-flex min-h-11 items-center rounded-2xl border px-4 py-3 transition-colors ${
+                    className={`inline-flex min-h-12 items-center rounded-[1rem] border px-4 py-3 transition-colors ${
                       isActive
                         ? "border-[var(--color-accent)]/30 bg-[var(--color-accent)]/14 text-white"
                         : "border-white/[0.08] bg-white/[0.06] text-white/76"

@@ -1,174 +1,169 @@
-import { describe, expect, it } from "vitest";
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
-import {
-  clampScrollTarget,
-  getAnchorScrollTarget,
-  getDirectionalSectionScrollTarget,
-  getKeyboardScrollDestination,
-  getLerpScrollStep,
-  getWheelSectionScrollTarget,
-  isScrollSettled,
-  isNativeScrollableTarget,
-  normalizeWheelDelta,
-} from "@/lib/smooth-scroll";
+import { cleanup, render, waitFor } from "@testing-library/react";
+import { createElement } from "react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import SmoothScroll from "@/components/SmoothScroll";
+import { ScrollTrigger } from "@/lib/gsap";
 
-describe("smooth scroll helpers", () => {
-  function setScrollMetrics(
-    element: HTMLElement,
-    {
-      clientHeight,
-      scrollHeight,
-      scrollTop,
-    }: { clientHeight: number; scrollHeight: number; scrollTop: number }
-  ) {
-    Object.defineProperties(element, {
-      clientHeight: { configurable: true, value: clientHeight },
-      scrollHeight: { configurable: true, value: scrollHeight },
-      scrollTop: { configurable: true, writable: true, value: scrollTop },
+const lenisMock = vi.hoisted(() => ({
+  instances: [] as Array<{
+    options: {
+      autoRaf: boolean;
+      anchors: { offset: number };
+      smoothWheel: boolean;
+      syncTouch: boolean;
+      stopInertiaOnNavigate: boolean;
+      prevent: (node: HTMLElement) => boolean;
+    };
+    handlers: Map<string, () => void>;
+    on: ReturnType<typeof vi.fn>;
+    scrollTo: ReturnType<typeof vi.fn>;
+    start: ReturnType<typeof vi.fn>;
+    stop: ReturnType<typeof vi.fn>;
+    destroy: ReturnType<typeof vi.fn>;
+  }>,
+  constructor: vi.fn(),
+  unsubscribe: vi.fn(),
+}));
+
+const scrollTriggerMock = vi.hoisted(() => ({
+  update: vi.fn(),
+}));
+
+vi.mock("lenis", () => {
+  class MockLenis {
+    options;
+    handlers = new Map<string, () => void>();
+    on = vi.fn((event: string, callback: () => void) => {
+      this.handlers.set(event, callback);
+      return lenisMock.unsubscribe;
     });
+    scrollTo = vi.fn();
+    start = vi.fn();
+    stop = vi.fn();
+    destroy = vi.fn();
+
+    constructor(options: MockLenis["options"]) {
+      this.options = options;
+      lenisMock.instances.push(this);
+      lenisMock.constructor(options);
+    }
   }
 
-  it("clamps requested scroll positions to the document range", () => {
-    expect(clampScrollTarget(-80, 900)).toBe(0);
-    expect(clampScrollTarget(420, 900)).toBe(420);
-    expect(clampScrollTarget(1200, 900)).toBe(900);
+  return { default: MockLenis };
+});
+
+vi.mock("@/lib/gsap", () => ({
+  ScrollTrigger: scrollTriggerMock,
+}));
+
+function setMatchMedia(matchesFor: Partial<Record<string, boolean>> = {}) {
+  vi.mocked(window.matchMedia).mockImplementation((query: string) => ({
+    matches: Boolean(matchesFor[query]),
+    media: query,
+    onchange: null,
+    addListener: vi.fn(),
+    removeListener: vi.fn(),
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
+  }));
+}
+
+describe("SmoothScroll", () => {
+  beforeEach(() => {
+    lenisMock.instances.length = 0;
+    lenisMock.constructor.mockClear();
+    lenisMock.unsubscribe.mockClear();
+    scrollTriggerMock.update.mockClear();
+    document.body.style.overflow = "";
+    delete window.__lenis;
+    setMatchMedia();
   });
 
-  it("resolves same-page anchors with scroll-margin-top", () => {
-    document.body.innerHTML = `<section id="work" style="scroll-margin-top: 96px"></section>`;
-    const target = document.getElementById("work") as HTMLElement;
-
-    target.getBoundingClientRect = () =>
-      ({
-        top: 500,
-        bottom: 700,
-        left: 0,
-        right: 0,
-        width: 0,
-        height: 200,
-        x: 0,
-        y: 500,
-        toJSON: () => ({}),
-      }) as DOMRect;
-
-    expect(getAnchorScrollTarget("#work", 120)).toBe(524);
+  afterEach(() => {
+    cleanup();
+    document.body.style.overflow = "";
+    delete window.__lenis;
   });
 
-  it("keeps nested scrollable areas native while they can scroll in the wheel direction", () => {
+  it("initializes Lenis with smooth anchors and ScrollTrigger syncing", () => {
+    render(createElement(SmoothScroll));
+
+    expect(lenisMock.constructor).toHaveBeenCalledTimes(1);
+    const instance = lenisMock.instances[0];
+    expect(instance.options).toMatchObject({
+      autoRaf: true,
+      anchors: { offset: 0 },
+      smoothWheel: true,
+      syncTouch: false,
+      stopInertiaOnNavigate: true,
+    });
+    expect(instance.on).toHaveBeenCalledWith("scroll", expect.any(Function));
+
+    instance.handlers.get("scroll")?.();
+    expect(ScrollTrigger.update).toHaveBeenCalledTimes(1);
+  });
+
+  it("exposes the active Lenis instance and clears it on unmount", () => {
+    const { unmount } = render(createElement(SmoothScroll));
+    const instance = lenisMock.instances[0];
+
+    expect(window.__lenis).toBe(instance);
+
+    unmount();
+
+    expect(window.__lenis).toBeUndefined();
+  });
+
+  it("keeps nested native scroll areas out of Lenis smoothing", () => {
+    render(createElement(SmoothScroll));
+
+    const instance = lenisMock.instances[0];
     document.body.innerHTML = `
       <div>
-        <div data-native-scroll="true"><button id="inside">Filter</button></div>
+        <div data-native-scroll="true"><button id="native-child">Filter</button></div>
+        <div data-lenis-prevent><button id="prevent-child">Modal</button></div>
         <button id="outside">Outside</button>
       </div>
     `;
-    const nativeScroller = document.querySelector("[data-native-scroll='true']") as HTMLElement;
-
-    setScrollMetrics(nativeScroller, {
-      clientHeight: 100,
-      scrollHeight: 300,
-      scrollTop: 80,
-    });
 
     expect(
-      isNativeScrollableTarget(document.getElementById("inside"), 40)
+      instance.options.prevent(document.getElementById("native-child") as HTMLElement)
     ).toBe(true);
     expect(
-      isNativeScrollableTarget(document.getElementById("inside"), -40)
+      instance.options.prevent(document.getElementById("prevent-child") as HTMLElement)
     ).toBe(true);
     expect(
-      isNativeScrollableTarget(document.getElementById("outside"), 40)
+      instance.options.prevent(document.getElementById("outside") as HTMLElement)
     ).toBe(false);
   });
 
-  it("hands off downward wheel scroll when a nested scroller is already at the bottom", () => {
-    document.body.innerHTML = `
-      <div data-native-scroll="true"><button id="inside">Filter</button></div>
-    `;
-    const nativeScroller = document.querySelector("[data-native-scroll='true']") as HTMLElement;
+  it("skips Lenis for reduced motion and coarse pointers", () => {
+    setMatchMedia({ "(prefers-reduced-motion: reduce)": true });
+    const reduced = render(createElement(SmoothScroll));
+    expect(lenisMock.constructor).not.toHaveBeenCalled();
+    reduced.unmount();
 
-    setScrollMetrics(nativeScroller, {
-      clientHeight: 100,
-      scrollHeight: 300,
-      scrollTop: 200,
-    });
-
-    expect(
-      isNativeScrollableTarget(document.getElementById("inside"), 40)
-    ).toBe(false);
+    setMatchMedia({ "(pointer: coarse)": true });
+    render(createElement(SmoothScroll));
+    expect(lenisMock.constructor).not.toHaveBeenCalled();
   });
 
-  it("hands off upward wheel scroll when a nested scroller is already at the top", () => {
-    document.body.innerHTML = `
-      <div data-native-scroll="true"><button id="inside">Filter</button></div>
-    `;
-    const nativeScroller = document.querySelector("[data-native-scroll='true']") as HTMLElement;
+  it("stops Lenis while body scroll is locked and destroys it on unmount", async () => {
+    const { unmount } = render(createElement(SmoothScroll));
+    const instance = lenisMock.instances[0];
 
-    setScrollMetrics(nativeScroller, {
-      clientHeight: 100,
-      scrollHeight: 300,
-      scrollTop: 0,
-    });
+    expect(instance.start).toHaveBeenCalledTimes(1);
 
-    expect(
-      isNativeScrollableTarget(document.getElementById("inside"), -40)
-    ).toBe(false);
-  });
+    document.body.style.overflow = "hidden";
+    await waitFor(() => expect(instance.stop).toHaveBeenCalledTimes(1));
 
-  it("maps keyboard navigation to smooth destinations", () => {
-    expect(getKeyboardScrollDestination("ArrowDown", 100, 800, 2000)).toBe(180);
-    expect(getKeyboardScrollDestination("PageDown", 100, 800, 2000)).toBe(740);
-    expect(getKeyboardScrollDestination("End", 100, 800, 2000)).toBe(2000);
-    expect(getKeyboardScrollDestination("Tab", 100, 800, 2000)).toBeNull();
-  });
+    document.body.style.overflow = "";
+    await waitFor(() => expect(instance.start).toHaveBeenCalledTimes(2));
 
-  it("moves from hero to work when scrolling downward between full-screen chapters", () => {
-    expect(getDirectionalSectionScrollTarget([0, 920, 1840], 0, 1)).toBe(920);
-  });
+    unmount();
 
-  it("moves from work to about when scrolling downward at the work chapter top", () => {
-    expect(getDirectionalSectionScrollTarget([0, 920, 1840], 920, 1)).toBe(1840);
-  });
-
-  it("moves from work back to hero when scrolling upward at the work chapter top", () => {
-    expect(getDirectionalSectionScrollTarget([0, 920, 1840], 920, -1)).toBe(0);
-  });
-
-  it("does not jump to the next chapter on light wheel input", () => {
-    expect(getWheelSectionScrollTarget([0, 920, 1840], 0, 48)).toBeNull();
-  });
-
-  it("jumps to the next chapter on deliberate wheel input", () => {
-    expect(getWheelSectionScrollTarget([0, 920, 1840], 0, 220)).toBe(920);
-  });
-
-  it("normalizes wheel deltas across delta modes", () => {
-    expect(normalizeWheelDelta(3, 1, 800)).toBe(48);
-    expect(normalizeWheelDelta(1, 2, 800)).toBe(800);
-    expect(normalizeWheelDelta(24, 0, 800)).toBe(24);
-  });
-
-  it("calculates frame-rate corrected lerp scroll steps", () => {
-    const firstFrame = getLerpScrollStep(0, 1000, 16.67, 0.15);
-    const slowFrame = getLerpScrollStep(0, 1000, 33.34, 0.15);
-
-    expect(firstFrame).toBeCloseTo(150, 0);
-    expect(slowFrame).toBeGreaterThan(firstFrame);
-    expect(slowFrame).toBeLessThan(1000);
-  });
-
-  it("detects when smooth scroll is close enough to settle", () => {
-    expect(isScrollSettled(199.7, 200)).toBe(true);
-    expect(isScrollSettled(198, 200)).toBe(false);
-  });
-
-  it("keeps desktop wheel smoothing conservative for long work-section scrolls", () => {
-    const source = readFileSync(
-      join(process.cwd(), "src", "components", "SmoothScroll.tsx"),
-      "utf8"
-    );
-
-    expect(source).toContain("const SCROLL_LERP = 0.16;");
-    expect(source).toContain("const MAX_WHEEL_DELTA = 220;");
+    expect(lenisMock.unsubscribe).toHaveBeenCalledTimes(1);
+    expect(instance.destroy).toHaveBeenCalledTimes(1);
   });
 });

@@ -48,8 +48,8 @@ const PinnedDossierChapter = forwardRef<HTMLElement, PinnedDossierChapterProps>(
         data-scroll-chapter={viewportChapter ? "true" : undefined}
         className={cx(
           "relative mx-auto w-full max-w-none scroll-mt-24 bg-transparent px-4 sm:px-6 lg:px-8 xl:px-10 2xl:px-12",
-          "py-14 md:py-16",
-          viewportChapter && "min-h-[100svh]",
+          "py-10 sm:py-12 md:py-16",
+          viewportChapter && "sm:min-h-[100svh]",
           className
         )}
       >
@@ -72,6 +72,9 @@ const PinnedDossierChapter = forwardRef<HTMLElement, PinnedDossierChapterProps>(
           <div
             data-testid="pinned-dossier-chapter-content"
             data-native-scroll={
+              viewportChapter && isContentScrollable ? "true" : undefined
+            }
+            data-lenis-prevent={
               viewportChapter && isContentScrollable ? "true" : undefined
             }
             className={cx(
