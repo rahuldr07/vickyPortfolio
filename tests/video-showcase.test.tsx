@@ -19,7 +19,7 @@ describe("VideoShowcase", () => {
 
     expect(
       projectSectionControls.getByRole("button", {
-        name: /^All projects section 27 projects$/i,
+        name: /^All projects section 32 projects$/i,
       })
     ).toHaveAttribute("aria-controls", "work");
     expect(
@@ -32,6 +32,11 @@ describe("VideoShowcase", () => {
         name: /^Posters section 14 projects$/i,
       })
     ).toHaveAttribute("aria-controls", "work-posters");
+    expect(
+      projectSectionControls.getByRole("button", {
+        name: /^Magazines section 5 projects$/i,
+      })
+    ).toHaveAttribute("aria-controls", "work-magazines");
     expect(
       projectSectionControls.getByRole("button", {
         name: /^Banners section 3 projects$/i,
@@ -130,6 +135,13 @@ describe("VideoShowcase", () => {
     expect(
       within(postersSection).getByRole("button", { name: /Open GreenMonk Gourmet Launch Poster/i })
     ).toHaveAttribute("data-archive-frame", "poster");
+
+    const magazinesSection = screen.getByRole("region", {
+      name: /Magazine & Cover Pages/i,
+    });
+    expect(
+      within(magazinesSection).getByRole("button", { name: /Open Meditation Leaders Cover Page/i })
+    ).toHaveAttribute("data-archive-frame", "magazine");
 
     const reelsSection = screen.getByRole("region", {
       name: /^Motion Edits & Reels$/i,
@@ -243,18 +255,105 @@ describe("VideoShowcase", () => {
 
     expect(
       screen.getByRole("button", {
-        name: /^All projects section 27 projects$/i,
+        name: /^All projects section 32 projects$/i,
       })
     ).toHaveAttribute("aria-controls", "work");
-    expect(screen.getAllByTestId("work-reel-card")).toHaveLength(27);
+    expect(screen.getAllByTestId("work-reel-card")).toHaveLength(32);
     expect(screen.getByText("Creative Portfolio")).toBeInTheDocument();
     expect(screen.getByText("Brand identity, print layouts, campaigns, ads, and motion reels.")).toBeInTheDocument();
     expect(screen.getByText("All Work")).toBeInTheDocument();
     expect(screen.getByText("Brand Identity")).toBeInTheDocument();
     expect(screen.getByText("Print & Menus")).toBeInTheDocument();
     expect(screen.getByText("Visual Campaigns")).toBeInTheDocument();
+    expect(screen.getByText("Editorial")).toBeInTheDocument();
     expect(screen.getByText("Ads & Banners")).toBeInTheDocument();
     expect(screen.getByText("Motion & Reels")).toBeInTheDocument();
+  });
+
+  it("orders the magazine section directly after posters", () => {
+    render(<VideoShowcase />);
+
+    const sectionFrames = screen
+      .getAllByTestId("work-archive-section")
+      .map((section) => section.getAttribute("data-archive-frame"));
+
+    expect(sectionFrames).toEqual([
+      "logo",
+      "poster",
+      "magazine",
+      "banner",
+      "reel",
+      "menu",
+    ]);
+  });
+
+  it("opens magazine PDFs through editorial modal actions", () => {
+    render(<VideoShowcase />);
+
+    const magazinesSection = screen.getByRole("region", {
+      name: /Magazine & Cover Pages/i,
+    });
+    expect(within(magazinesSection).getByText("Magazines / 05")).toBeInTheDocument();
+
+    fireEvent.click(
+      within(magazinesSection).getByRole("button", {
+        name: /Open Buddha CEO Purpose Magazine/i,
+      })
+    );
+
+    const dialog = screen.getByRole("dialog", {
+      name: /Buddha CEO Purpose Magazine preview/i,
+    });
+    expect(within(dialog).getByTestId("magazine-preview")).toBeInTheDocument();
+    expect(within(dialog).getAllByText("Magazine PDF").length).toBeGreaterThan(0);
+    expect(within(dialog).getByAltText("Buddha CEO Purpose Magazine page 1")).toBeInTheDocument();
+    expect(within(dialog).getByAltText("Buddha CEO Purpose Magazine page 84")).toBeInTheDocument();
+
+    const openPdf = within(dialog).getByRole("link", { name: /Open PDF/i });
+
+    expect(openPdf).toHaveAttribute("href", "/works/magazines&coverpages/Magazine 1.pdf");
+    expect(openPdf).toHaveAttribute("target", "_blank");
+    expect(within(dialog).queryByRole("link", { name: /Download PDF/i })).not.toBeInTheDocument();
+    expect(dialog.querySelector("iframe")).not.toBeInTheDocument();
+
+    fireEvent.click(within(dialog).getByRole("button", { name: /Close preview/i }));
+    fireEvent.click(
+      within(magazinesSection).getByRole("button", {
+        name: /Open Buddha CEO Global Peace Magazine/i,
+      })
+    );
+
+    const q6Dialog = screen.getByRole("dialog", {
+      name: /Buddha CEO Global Peace Magazine preview/i,
+    });
+    expect(within(q6Dialog).getByAltText("Buddha CEO Global Peace Magazine page 1")).toBeInTheDocument();
+    expect(within(q6Dialog).getByAltText("Buddha CEO Global Peace Magazine page 80")).toBeInTheDocument();
+    expect(q6Dialog.querySelector("iframe")).not.toBeInTheDocument();
+    expect(within(q6Dialog).getByRole("link", { name: /Open PDF/i })).toHaveAttribute(
+      "href",
+      "/works/magazines&coverpages/Magazine 2.pdf"
+    );
+  });
+
+  it("opens cover-only magazine cards without PDF actions", () => {
+    render(<VideoShowcase />);
+
+    const magazinesSection = screen.getByRole("region", {
+      name: /Magazine & Cover Pages/i,
+    });
+    fireEvent.click(
+      within(magazinesSection).getByRole("button", {
+        name: /Open Editorial Cover Page/i,
+      })
+    );
+
+    const dialog = screen.getByRole("dialog", {
+      name: /Editorial Cover Page preview/i,
+    });
+
+    expect(within(dialog).getByTestId("magazine-preview")).toBeInTheDocument();
+    expect(within(dialog).queryByRole("link", { name: /Open PDF/i })).not.toBeInTheDocument();
+    expect(within(dialog).queryByRole("link", { name: /Download PDF/i })).not.toBeInTheDocument();
   });
 
   it("uses lightweight project thumbnails for archive card media", () => {
@@ -326,6 +425,7 @@ describe("VideoShowcase", () => {
     expect(source).not.toContain("scrollArchiveToSection");
     expect(source).not.toContain("archiveViewportRef");
     expect(source).not.toContain("SmartVideoPreview");
+    expect(source).not.toContain("vimeo");
   });
 
   it("keeps the work archive on page scroll while the chapter rail stays sticky", () => {

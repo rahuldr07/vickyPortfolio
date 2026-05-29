@@ -11,11 +11,18 @@ import {
 import Image from "next/image";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import { Image as ImageIcon, Play, Video, X } from "lucide-react";
+import {
+  ArrowUpRight,
+  FileText,
+  Image as ImageIcon,
+  Play,
+  Video,
+  X,
+} from "lucide-react";
 import { SHOWCASE_PROJECTS, type ShowcaseProject } from "@/content/portfolio";
 import PinnedDossierChapter from "@/components/PinnedDossierChapter";
 
-type WorkArchiveFrame = "logo" | "menu" | "poster" | "banner" | "reel";
+type WorkArchiveFrame = "logo" | "menu" | "poster" | "magazine" | "banner" | "reel";
 
 const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
 
@@ -59,6 +66,14 @@ const WORK_ARCHIVE_SECTIONS: readonly {
     railLabel: "Visual Campaigns",
     title: "Visual Campaign Posters",
     description: "Product posters, event layouts, and promotional campaign frames.",
+  },
+  {
+    id: "work-magazines",
+    frame: "magazine",
+    label: "Magazines",
+    railLabel: "Editorial",
+    title: "Magazine & Cover Pages",
+    description: "Editorial cover pages and publication PDFs opened only on request.",
   },
   {
     id: "work-banners",
@@ -121,6 +136,14 @@ const ARCHIVE_FRAME_META: Record<
     titleClassName: "text-sm sm:text-lg md:text-xl",
     hoverScaleClassName: "duration-700 motion-safe:group-hover:scale-[1.08]",
   },
+  magazine: {
+    className: "aspect-[4/5] sm:aspect-[4/3]",
+    imageBoxClassName: "inset-3 rounded-[0.75rem] border-[5px] border-[#1c1b1f]",
+    mediaClassName: "object-cover opacity-94",
+    label: "EDITORIAL",
+    titleClassName: "text-sm sm:text-lg md:text-xl",
+    hoverScaleClassName: "duration-700 motion-safe:group-hover:scale-[1.08]",
+  },
   banner: {
     className: "aspect-[4/5] sm:aspect-[4/3]",
     imageBoxClassName: "inset-3 rounded-[0.9rem]",
@@ -149,6 +172,7 @@ function getTreatmentStyle(project: ShowcaseProject): CSSProperties {
 function getArchiveFrame(project: ShowcaseProject): WorkArchiveFrame {
   if (project.type === "video") return "reel";
   if (project.category === "Brand Identity") return "logo";
+  if (project.pdfSrc || project.visualTreatment.frame === "COVER") return "magazine";
   if (project.title.toLowerCase().includes("menu")) return "menu";
   if (project.category === "Digital & UI") return "banner";
   return "poster";
@@ -163,6 +187,17 @@ function filterArchiveProjects(
   frame: WorkArchiveFrame
 ) {
   return projects.filter((project) => getArchiveFrame(project) === frame);
+}
+
+function isMagazineProject(
+  project: ShowcaseProject
+): project is ShowcaseProject & { imgSrc: string } {
+  return Boolean(project.pdfSrc || project.visualTreatment.frame === "COVER") && Boolean(project.imgSrc);
+}
+
+function getPdfPagePreviewSrc(project: ShowcaseProject, pageIndex: number) {
+  const pageNumber = String(pageIndex + 1).padStart(3, "0");
+  return `${project.pdfPagePreviewBase}/page-${pageNumber}.webp`;
 }
 
 export default function VideoShowcase() {
@@ -184,7 +219,13 @@ export default function VideoShowcase() {
     projects: filterArchiveProjects(SHOWCASE_PROJECTS, section.frame),
   }));
 
-  const closeModal = () => setSelectedProject(null);
+  const openProject = (project: ShowcaseProject) => {
+    setSelectedProject(project);
+  };
+
+  const closeModal = () => {
+    setSelectedProject(null);
+  };
   const goToArchiveSection = useCallback(
     (sectionId: string) => {
       setActiveArchiveSectionId(sectionId);
@@ -526,7 +567,7 @@ export default function VideoShowcase() {
                         data-archive-frame={section.frame}
                         data-testid="work-reel-card"
                         className={`archive-card group relative isolate flex min-w-0 cursor-pointer flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#0b0b10] text-left opacity-100 shadow-[0_10px_28px_rgba(0,0,0,0.26)] transition-[border-color,background-color] duration-200 hover:border-[var(--project-accent)]/50 hover:bg-[#101018] ${frameMeta.className}`}
-                        onClick={() => setSelectedProject(project)}
+                        onClick={() => openProject(project)}
                         type="button"
                       >
                         <div
@@ -571,6 +612,8 @@ export default function VideoShowcase() {
                           <span className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-[#0b0b10] text-white/72">
                             {project.type === "video" ? (
                               <Video className="h-4 w-4" aria-hidden="true" />
+                            ) : section.frame === "magazine" ? (
+                              <FileText className="h-4 w-4" aria-hidden="true" />
                             ) : (
                               <ImageIcon className="h-4 w-4" aria-hidden="true" />
                             )}
@@ -617,17 +660,120 @@ export default function VideoShowcase() {
             className="relative flex max-h-[calc(100svh-2rem)] w-full max-w-7xl items-center justify-center overflow-hidden rounded-[1.35rem] border border-white/14 bg-[#050507] shadow-[0_40px_120px_rgba(0,0,0,0.74)]"
             onClick={(event) => event.stopPropagation()}
           >
-            <button
-              type="button"
-              onClick={closeModal}
-              className="absolute right-3 top-3 z-20 flex h-10 w-10 items-center justify-center rounded-full border border-white/18 bg-black/70 text-white shadow-[0_12px_34px_rgba(0,0,0,0.42)] backdrop-blur transition-colors hover:border-white/40 sm:right-4 sm:top-4"
-              aria-label="Close preview"
-            >
-              <X className="h-4 w-4" />
-            </button>
+            {!selectedProject.pdfSrc && (
+              <button
+                type="button"
+                onClick={closeModal}
+                className="absolute right-3 top-3 z-20 flex h-10 w-10 items-center justify-center rounded-full border border-white/18 bg-black/70 text-white shadow-[0_12px_34px_rgba(0,0,0,0.42)] backdrop-blur transition-colors hover:border-white/40 sm:right-4 sm:top-4"
+                aria-label="Close preview"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
 
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_8%,var(--project-tint),transparent_38%)] opacity-70" />
-            <div className="relative h-[min(82svh,840px)] w-full overflow-hidden bg-black/72">
+            {isMagazineProject(selectedProject) ? (
+              <div
+                data-testid="magazine-preview"
+                className={`relative flex w-full flex-col overflow-hidden bg-[#0b0b10] ${
+                  selectedProject.pdfSrc ? "h-[min(90svh,920px)]" : "h-[min(82svh,840px)]"
+                }`}
+              >
+                {selectedProject.pdfSrc ? (
+                  <div className="relative z-10 flex items-center justify-between gap-3 border-b border-white/10 px-3 py-2 sm:px-4">
+                    <div className="min-w-0">
+                      <p className="font-mono text-[9px] uppercase tracking-[0.18em] text-[var(--project-accent)]">
+                        Magazine PDF
+                      </p>
+                      <h3 className="mt-0.5 truncate font-serif text-base font-black text-white sm:text-lg">
+                        {selectedProject.title}
+                      </h3>
+                    </div>
+                    <div className="flex shrink-0 items-center gap-2">
+                      <a
+                        href={selectedProject.pdfSrc}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex min-h-9 items-center rounded-full border border-white/12 px-3 py-2 font-mono text-[9px] font-extrabold uppercase tracking-[0.12em] text-white/72 transition-colors hover:border-[var(--project-accent)]/50 hover:text-white sm:px-4"
+                      >
+                        Open PDF
+                        <ArrowUpRight className="ml-2 h-3.5 w-3.5" aria-hidden="true" />
+                      </a>
+                      <button
+                        type="button"
+                        onClick={closeModal}
+                        className="flex h-9 w-9 items-center justify-center rounded-full border border-white/18 bg-black/50 text-white transition-colors hover:border-white/40"
+                        aria-label="Close preview"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                ) : null}
+
+                <div
+                  className={
+                    selectedProject.pdfSrc
+                      ? "relative z-10 min-h-0 flex-1 overflow-y-auto bg-[#15151c] px-2 py-3 sm:px-3"
+                      : "relative h-full overflow-hidden bg-black/72"
+                  }
+                >
+                  {selectedProject.pdfSrc ? (
+                    <div className="mx-auto grid w-full max-w-[760px] gap-3">
+                      {selectedProject.pdfPagePreviewBase && selectedProject.pdfPageCount ? (
+                        Array.from({ length: selectedProject.pdfPageCount }, (_, pageIndex) => (
+                          <figure
+                            key={pageIndex}
+                            className="overflow-hidden rounded-lg bg-white shadow-[0_18px_56px_rgba(0,0,0,0.32)]"
+                          >
+                            <Image
+                              src={getPdfPagePreviewSrc(selectedProject, pageIndex)}
+                              alt={`${selectedProject.title} page ${pageIndex + 1}`}
+                              width={selectedProject.pdfPagePreviewWidth ?? 900}
+                              height={selectedProject.pdfPagePreviewHeight ?? 1160}
+                              className="h-auto w-full"
+                              priority={pageIndex === 0}
+                              unoptimized
+                            />
+                          </figure>
+                        ))
+                      ) : (
+                        <div className="overflow-hidden rounded-xl bg-white shadow-[0_24px_80px_rgba(0,0,0,0.45)]">
+                          <Image
+                            src={selectedProject.imgSrc}
+                            alt={selectedProject.mediaAlt}
+                            width={1200}
+                            height={1500}
+                            className="h-auto w-full"
+                            priority
+                          />
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <>
+                      <Image
+                        src={selectedProject.imgSrc}
+                        alt=""
+                        fill
+                        sizes="100vw"
+                        className="object-cover opacity-[0.16] blur-3xl saturate-150"
+                        aria-hidden="true"
+                      />
+                      <Image
+                        src={selectedProject.imgSrc}
+                        alt={selectedProject.mediaAlt}
+                        fill
+                        sizes="(max-width: 768px) 96vw, (max-width: 1280px) 88vw, 1180px"
+                        className="z-10 object-contain opacity-100"
+                        priority
+                      />
+                    </>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="relative h-[min(82svh,840px)] w-full overflow-hidden bg-black/72">
               {selectedProject.type === "video" && selectedProject.videoSrc ? (
                 <video
                   src={selectedProject.videoSrc}
@@ -661,7 +807,8 @@ export default function VideoShowcase() {
                   />
                 </>
               )}
-            </div>
+              </div>
+            )}
           </div>
         </div>
       )}

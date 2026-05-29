@@ -48,6 +48,11 @@ export interface ShowcaseProject {
   type: ProjectType;
   videoSrc?: string;
   imgSrc?: string;
+  pdfSrc?: string;
+  pdfPagePreviewBase?: string;
+  pdfPageCount?: number;
+  pdfPagePreviewWidth?: number;
+  pdfPagePreviewHeight?: number;
   bentoSize: "large" | "medium";
   brief: string;
   deliverables: readonly string[];
@@ -798,6 +803,141 @@ function getAdditionalShowcaseProjects(): readonly ShowcaseProject[] {
       frame: "POSTER",
     },
   },
+  {
+    id: 32,
+    title: "Meditation Leaders Cover Page",
+    category: "Print Design",
+    gradient: "from-yellow-500/20 via-zinc-950/40 to-transparent",
+    accent: "#FACC15",
+    tags: ["Cover Page", "Editorial"],
+    summary: "Conference-led cover page with strong editorial hierarchy and publication polish.",
+    outcome: "Created a refined cover page as a standalone editorial design asset.",
+    type: "image",
+    imgSrc: "/works/magazines&coverpages/cover-page-march-preview.webp",
+    bentoSize: "medium",
+    brief: "Design a premium cover page that carries the publication identity at first glance.",
+    deliverables: ["Cover page", "Editorial layout", "Presentation asset"],
+    impact: "Added a professional editorial piece to the print portfolio.",
+    role: "Cover design",
+    mediaAlt: "Meditation leaders conference cover page design",
+    visualTreatment: {
+      code: "EDT-01",
+      signal: "Cover Design",
+      texture: "editorial print",
+      tint: "rgba(250, 204, 21, 0.18)",
+      frame: "COVER",
+    },
+  },
+  {
+    id: 33,
+    title: "Q6 Cover Page",
+    category: "Print Design",
+    gradient: "from-sky-500/20 via-zinc-950/40 to-transparent",
+    accent: "#38BDF8",
+    tags: ["Cover Page", "Publication"],
+    summary: "Clean publication cover with structured editorial hierarchy.",
+    outcome: "Delivered a standalone cover page for editorial presentation.",
+    type: "image",
+    imgSrc: "/works/magazines&coverpages/q6-cover-page-preview.webp",
+    bentoSize: "medium",
+    brief: "Build a cover direction that feels organized, readable, and publication-ready.",
+    deliverables: ["Cover page", "Layout system", "Presentation asset"],
+    impact: "Expanded the editorial showcase with another print-ready cover.",
+    role: "Editorial cover design",
+    mediaAlt: "Q6 editorial magazine cover page",
+    visualTreatment: {
+      code: "EDT-02",
+      signal: "Publication Cover",
+      texture: "magazine stock",
+      tint: "rgba(56, 189, 248, 0.2)",
+      frame: "COVER",
+    },
+  },
+  {
+    id: 34,
+    title: "Editorial Cover Page",
+    category: "Print Design",
+    gradient: "from-rose-500/20 via-zinc-950/40 to-transparent",
+    accent: "#FB7185",
+    tags: ["Cover Page", "Editorial"],
+    summary: "Standalone cover-page concept designed for strong visual entry.",
+    outcome: "Created a cover-only editorial asset for portfolio presentation.",
+    type: "image",
+    imgSrc: "/works/magazines&coverpages/editorial-cover-preview.webp",
+    bentoSize: "medium",
+    brief: "Create a standalone cover design with clear editorial presence.",
+    deliverables: ["Cover design", "Editorial art", "Presentation asset"],
+    impact: "Added a cover-focused piece without loading a heavy PDF by default.",
+    role: "Cover design",
+    mediaAlt: "Standalone editorial cover page design",
+    visualTreatment: {
+      code: "EDT-03",
+      signal: "Cover Design",
+      texture: "cover proof",
+      tint: "rgba(251, 113, 133, 0.18)",
+      frame: "COVER",
+    },
+  },
+  {
+    id: 35,
+    title: "Buddha CEO Purpose Magazine",
+    category: "Print Design",
+    gradient: "from-emerald-500/20 via-zinc-950/40 to-transparent",
+    accent: "#34D399",
+    tags: ["Magazine PDF", "Editorial"],
+    summary: "Full magazine PDF edition with a purpose-led Buddha CEO cover.",
+    outcome: "Added the complete PDF publication as its own document item.",
+    type: "image",
+    imgSrc: "/works/magazines&coverpages/magazine-1-preview.webp",
+    pdfSrc: "/works/magazines&coverpages/Magazine 1.pdf",
+    pdfPagePreviewBase: "/works/magazines&coverpages/magazine-1-pages",
+    pdfPageCount: 84,
+    pdfPagePreviewWidth: 806,
+    pdfPagePreviewHeight: 1036,
+    bentoSize: "medium",
+    brief: "Present the full PDF as a separate publication instead of tying it to an unrelated cover.",
+    deliverables: ["Magazine PDF", "Publication preview", "Downloadable document"],
+    impact: "Keeps the portfolio accurate while avoiding default PDF embedding.",
+    role: "Editorial layout",
+    mediaAlt: "Buddha CEO purpose magazine PDF cover preview",
+    visualTreatment: {
+      code: "EDT-04",
+      signal: "Magazine PDF",
+      texture: "publication proof",
+      tint: "rgba(52, 211, 153, 0.18)",
+      frame: "MAGAZINE",
+    },
+  },
+  {
+    id: 36,
+    title: "Buddha CEO Global Peace Magazine",
+    category: "Print Design",
+    gradient: "from-violet-500/20 via-zinc-950/40 to-transparent",
+    accent: "#A78BFA",
+    tags: ["Magazine PDF", "Editorial"],
+    summary: "Full magazine PDF edition with a global peace and meditation theme.",
+    outcome: "Added the second PDF publication as an independent document item.",
+    type: "image",
+    imgSrc: "/works/magazines&coverpages/magazine-2-preview.webp",
+    pdfSrc: "/works/magazines&coverpages/Magazine 2.pdf",
+    pdfPagePreviewBase: "/works/magazines&coverpages/magazine-2-pages",
+    pdfPageCount: 80,
+    pdfPagePreviewWidth: 784,
+    pdfPagePreviewHeight: 1014,
+    bentoSize: "medium",
+    brief: "Showcase this PDF with its own preview and document actions.",
+    deliverables: ["Magazine PDF", "Publication preview", "Downloadable document"],
+    impact: "Separates PDF publications from the standalone cover-page designs.",
+    role: "Editorial layout",
+    mediaAlt: "Buddha CEO global peace magazine PDF cover preview",
+    visualTreatment: {
+      code: "EDT-05",
+      signal: "Magazine PDF",
+      texture: "publication proof",
+      tint: "rgba(167, 139, 250, 0.18)",
+      frame: "MAGAZINE",
+    },
+  },
   ];
 }
 
@@ -828,9 +968,34 @@ export const CONTACT = {
   ],
 } as const;
 
+const deployedSiteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL
+    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+    : process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : "http://localhost:3000");
+
 export const SITE_META = {
-  title: "Geetha Krishna | Cinematic Visual Dossier",
+  title: "Geetha Krishna — Cinematic Visual Portfolio",
   description:
-    "Premium visual portfolio for Geetha Krishna, a graphic designer and video editor building brand systems, cinematic edits, and digital storytelling assets.",
-  siteUrl: process.env.NEXT_PUBLIC_SITE_URL ?? "https://example.com",
+    "Senior Graphic Designer focused on branding, cinematic visuals, and video editing for memorable campaigns, polished identities, motion edits, and digital storytelling.",
+  siteName: "Geetha Krishna Portfolio",
+  creator: "Geetha Krishna",
+  siteUrl: deployedSiteUrl.replace(/\/$/, ""),
+  ogImage: "/opengraph-image",
+  keywords: [
+    "Geetha Krishna",
+    "Geetha Krishna portfolio",
+    "senior graphic designer",
+    "graphic designer portfolio",
+    "branding designer",
+    "cinematic visual portfolio",
+    "video editing portfolio",
+    "brand identity design",
+    "poster design",
+    "campaign design",
+    "visual designer",
+    "digital storytelling",
+  ],
 } as const;
