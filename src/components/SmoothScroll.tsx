@@ -45,6 +45,7 @@ export default function SmoothScroll() {
 
     const unsubscribeScroll = lenis.on("scroll", () => {
       ScrollTrigger.update();
+      window.dispatchEvent(new Event("portfolio:scroll"));
     });
 
     const syncScrollLock = () => {

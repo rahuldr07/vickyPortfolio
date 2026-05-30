@@ -631,11 +631,6 @@ export default function VideoShowcase() {
                           </div>
                         )}
 
-                        <div className="absolute inset-x-0 bottom-0 z-20 min-w-0 p-3 sm:p-4 md:p-5">
-                          <h4 className={`max-w-2xl font-serif font-black leading-tight tracking-normal text-white drop-shadow-[0_8px_22px_rgba(0,0,0,0.5)] ${frameMeta.titleClassName}`}>
-                            {project.title}
-                          </h4>
-                        </div>
                       </button>
                     );
                   })}

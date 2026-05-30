@@ -38,8 +38,11 @@ export default function Footer() {
 
   useGSAP(
     () => {
+      const root = footerRef.current;
+      if (!root) return;
+
       const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      if (reduced) return;
+      const finePointer = window.matchMedia("(pointer: fine)").matches;
 
       const revealItems = [
         railRef.current,
@@ -50,44 +53,136 @@ export default function Footer() {
         ...(checklistRef.current ? Array.from(checklistRef.current.children) : []),
       ].filter(Boolean);
 
-      ScrollTrigger.create({
-        trigger: footerRef.current,
-        start: "top 86%",
-        once: true,
-        onEnter: () => {
-          if (topLineRef.current) {
-            gsap.fromTo(
-              topLineRef.current,
-              { scaleX: 0 },
-              {
-                scaleX: 1,
-                transformOrigin: "center",
-                duration: 0.8,
-                ease: "power2.out",
-                onComplete: () => {
-                  gsap.set(topLineRef.current, { clearProps: "transform" });
-                },
-              }
-            );
-          }
+      let cleanupPointerEffects = () => {};
 
-          if (revealItems.length) {
-            gsap.fromTo(
-              revealItems,
-              { y: 18 },
-              {
-                y: 0,
-                duration: 0.55,
-                ease: "power2.out",
-                stagger: 0.055,
-                onComplete: () => {
-                  gsap.set(revealItems, { clearProps: "transform" });
+      const ctx = gsap.context(() => {
+        gsap.set(root, { "--contact-x": "62%", "--contact-y": "36%" });
+
+        ScrollTrigger.create({
+          trigger: root,
+          start: "top 86%",
+          once: true,
+          onEnter: () => {
+            const timeline = gsap.timeline({ defaults: { ease: "power3.out" } });
+
+            if (topLineRef.current) {
+              timeline.fromTo(
+                topLineRef.current,
+                { scaleX: 0, opacity: 0.25 },
+                {
+                  scaleX: 1,
+                  opacity: 1,
+                  transformOrigin: "center",
+                  duration: reduced ? 0.2 : 0.9,
+                  onComplete: () => {
+                    gsap.set(topLineRef.current, { clearProps: "transform,opacity" });
+                  },
                 },
-              }
+                0
+              );
+            }
+
+            timeline.fromTo(
+              ".contact-aura",
+              { autoAlpha: 0, scale: 0.96 },
+              {
+                autoAlpha: 1,
+                scale: 1,
+                duration: reduced ? 0.2 : 1.2,
+              },
+              0
             );
-          }
-        },
-      });
+
+            if (revealItems.length) {
+              timeline.fromTo(
+                revealItems,
+                { y: reduced ? 0 : 26, opacity: 0, filter: "blur(10px)" },
+                {
+                  y: 0,
+                  opacity: 1,
+                  filter: "blur(0px)",
+                  duration: reduced ? 0.2 : 0.72,
+                  stagger: reduced ? 0 : 0.065,
+                  onComplete: () => {
+                    gsap.set(revealItems, {
+                      clearProps: "transform,opacity,filter",
+                    });
+                  },
+                },
+                0.12
+              );
+            }
+          },
+        });
+
+        if (reduced || !finePointer) return;
+
+        const moveContactGlow = (event: PointerEvent) => {
+          const rect = root.getBoundingClientRect();
+          gsap.to(root, {
+            "--contact-x": `${event.clientX - rect.left}px`,
+            "--contact-y": `${event.clientY - rect.top}px`,
+            duration: 0.55,
+            ease: "power3.out",
+            overwrite: "auto",
+          });
+        };
+
+        root.addEventListener("pointermove", moveContactGlow);
+
+        const magneticTargets = Array.from(
+          root.querySelectorAll<HTMLElement>("[data-contact-magnet='true']")
+        );
+
+        const handleMagnetMove = (event: PointerEvent) => {
+          const target = event.currentTarget as HTMLElement;
+          const rect = target.getBoundingClientRect();
+          const x = event.clientX - rect.left - rect.width / 2;
+          const y = event.clientY - rect.top - rect.height / 2;
+
+          gsap.to(target, {
+            x: x * 0.09,
+            y: y * 0.12,
+            rotateX: y * -0.04,
+            rotateY: x * 0.035,
+            scale: 1.018,
+            duration: 0.45,
+            ease: "power3.out",
+            overwrite: "auto",
+          });
+        };
+
+        const handleMagnetLeave = (event: PointerEvent) => {
+          gsap.to(event.currentTarget, {
+            x: 0,
+            y: 0,
+            rotateX: 0,
+            rotateY: 0,
+            scale: 1,
+            duration: 0.65,
+            ease: "elastic.out(1, 0.55)",
+            overwrite: "auto",
+          });
+        };
+
+        magneticTargets.forEach((target) => {
+          target.addEventListener("pointermove", handleMagnetMove);
+          target.addEventListener("pointerleave", handleMagnetLeave);
+        });
+
+        cleanupPointerEffects = () => {
+          root.removeEventListener("pointermove", moveContactGlow);
+          magneticTargets.forEach((target) => {
+            target.removeEventListener("pointermove", handleMagnetMove);
+            target.removeEventListener("pointerleave", handleMagnetLeave);
+          });
+        };
+      }, footerRef);
+
+      return () => {
+        cleanupPointerEffects();
+        ctx.revert();
+      };
     },
     { scope: footerRef }
   );
@@ -97,8 +192,13 @@ export default function Footer() {
       ref={footerRef}
       id="contact"
       data-scroll-chapter="true"
+      data-contact-effects="premium"
       className="relative scroll-mt-24 overflow-x-clip border-t border-white/5 bg-transparent px-4 pb-10 pt-10 sm:min-h-[100svh] sm:px-6 sm:pt-12 md:pt-16 lg:px-8 xl:px-10 2xl:px-12"
     >
+      <div className="contact-aura" aria-hidden="true">
+        <span className="contact-orbit" />
+        <span className="contact-scanline" />
+      </div>
       <div className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-[50vh] bg-gradient-to-t from-[var(--color-accent)]/15 to-transparent blur-3xl" />
       <div
         ref={topLineRef}
@@ -141,7 +241,8 @@ export default function Footer() {
                 <a
                   href={briefHref}
                   aria-label="Start project brief email template"
-                  className="inline-flex min-h-12 items-center justify-center rounded-full bg-[var(--color-accent)] px-5 py-2 font-mono text-[11px] font-extrabold uppercase tracking-[0.16em] text-[#07070A] transition-colors hover:bg-white"
+                  data-contact-magnet="true"
+                  className="contact-premium-cta inline-flex min-h-12 items-center justify-center rounded-full bg-[var(--color-accent)] px-5 py-2 font-mono text-[11px] font-extrabold uppercase tracking-[0.16em] text-[#07070A] transition-colors hover:bg-white"
                 >
                   Start project brief
                   <ArrowUpRight className="ml-2 h-4 w-4" aria-hidden="true" />
@@ -150,7 +251,8 @@ export default function Footer() {
                   type="button"
                   aria-label="Copy email address"
                   onClick={() => void copyToClipboard(CONTACT.email, "Email")}
-                  className="inline-flex min-h-12 items-center justify-center rounded-full border border-white/12 px-5 py-2 font-mono text-[11px] font-extrabold uppercase tracking-[0.16em] text-white/78 transition-colors hover:border-[var(--color-accent)]/50 hover:text-white"
+                  data-contact-magnet="true"
+                  className="contact-premium-ghost inline-flex min-h-12 items-center justify-center rounded-full border border-white/12 px-5 py-2 font-mono text-[11px] font-extrabold uppercase tracking-[0.16em] text-white/78 transition-colors hover:border-[var(--color-accent)]/50 hover:text-white"
                 >
                   Copy email
                 </button>
@@ -170,7 +272,7 @@ export default function Footer() {
                 const copyValue = item.label === "Phone" ? CONTACT.phone : CONTACT.email;
                 const canCopy = item.label !== "Reply window";
                 const cardClassName =
-                  "group flex min-w-0 items-center gap-4 rounded-2xl border border-white/10 bg-[#0d0d13] p-4 text-left transition-colors hover:border-[var(--color-accent)]/45 hover:bg-[#111119]";
+                  "contact-premium-card group flex min-w-0 items-center gap-4 rounded-2xl border border-white/10 bg-[#0d0d13] p-4 text-left transition-colors hover:border-[var(--color-accent)]/45 hover:bg-[#111119]";
                 const cardContent = (
                   <>
                     <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-[#15151d] text-[var(--color-accent)]">
@@ -198,6 +300,7 @@ export default function Footer() {
                     type="button"
                     aria-label={`Copy ${item.label.toLowerCase()}: ${item.value}`}
                     onClick={() => void copyToClipboard(copyValue, item.label)}
+                    data-contact-magnet="true"
                     className={cardClassName}
                   >
                     {cardContent}
@@ -206,6 +309,7 @@ export default function Footer() {
                   <div
                     key={item.label}
                     aria-label={`${item.label}: ${item.value}`}
+                    data-contact-magnet="true"
                     className={cardClassName}
                   >
                     {cardContent}

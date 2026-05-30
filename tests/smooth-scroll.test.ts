@@ -87,6 +87,7 @@ describe("SmoothScroll", () => {
   });
 
   it("initializes Lenis with smooth anchors and ScrollTrigger syncing", () => {
+    const dispatchSpy = vi.spyOn(window, "dispatchEvent");
     render(createElement(SmoothScroll));
 
     expect(lenisMock.constructor).toHaveBeenCalledTimes(1);
@@ -102,6 +103,7 @@ describe("SmoothScroll", () => {
 
     instance.handlers.get("scroll")?.();
     expect(ScrollTrigger.update).toHaveBeenCalledTimes(1);
+    expect(dispatchSpy).toHaveBeenCalledWith(expect.objectContaining({ type: "portfolio:scroll" }));
   });
 
   it("exposes the active Lenis instance and clears it on unmount", () => {

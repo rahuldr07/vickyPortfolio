@@ -109,7 +109,7 @@ export default function ExperiencePath() {
     <>
       <h2
         id="experience-heading"
-        className="text-glow text-4xl font-serif md:text-5xl"
+        className="text-glow font-serif text-4xl font-black leading-[0.94] tracking-normal text-white md:text-5xl"
       >
         Experience
       </h2>
@@ -122,19 +122,19 @@ export default function ExperiencePath() {
       </p>
       <div className="mt-7 grid max-w-sm grid-cols-3 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03]">
         <div className="border-r border-white/10 p-3">
-          <p className="font-serif text-2xl text-white">3</p>
+          <p className="font-serif text-2xl font-black text-white">3</p>
           <p className="mt-1 font-mono text-[9px] uppercase tracking-[0.18em] text-white/48">
             Stops
           </p>
         </div>
         <div className="border-r border-white/10 p-3">
-          <p className="font-serif text-2xl text-white">5+</p>
+          <p className="font-serif text-2xl font-black text-white">5+</p>
           <p className="mt-1 font-mono text-[9px] uppercase tracking-[0.18em] text-white/48">
             Years
           </p>
         </div>
         <div className="p-3">
-          <p className="font-serif text-2xl text-white">2</p>
+          <p className="font-serif text-2xl font-black text-white">2</p>
           <p className="mt-1 font-mono text-[9px] uppercase tracking-[0.18em] text-white/48">
             Tracks
           </p>
@@ -212,10 +212,10 @@ export default function ExperiencePath() {
                           </span>
                         ) : null}
                       </div>
-                      <h3 className="mt-2 font-serif text-[1.65rem] leading-tight text-white md:text-3xl">
+                      <h3 className="mt-2 font-serif text-[1.65rem] font-black leading-tight tracking-normal text-white md:text-3xl">
                         {experience.role}
                       </h3>
-                      <h4 className="mt-1 text-base font-semibold text-[var(--color-soft)] md:text-lg">
+                      <h4 className="mt-1 font-sans text-base font-semibold text-[var(--color-soft)] md:text-lg">
                         {experience.company}
                       </h4>
                     </div>

@@ -8,6 +8,7 @@ const sectionIds = NAV_LINKS.map((link) => link.href.replace("#", ""));
 const SHOW_AT_TOP_OFFSET = 80;
 const HIDE_DELTA = 10;
 const SHOW_DELTA = -6;
+const ACTIVE_SECTION_OFFSET = 170;
 
 export default function TopNav() {
   const [open, setOpen] = useState(false);
@@ -146,26 +147,68 @@ export default function TopNav() {
 
     if (!sections.length) return;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+    let frameId = 0;
 
-        if (visible[0]) {
-          setActiveSection(visible[0].target.id);
+    const updateActiveSection = () => {
+      frameId = 0;
+      let nextSection = sections[0]?.id ?? sectionIds[0] ?? "";
+      let strongestVisibleHeight = 0;
+      const viewportHeight =
+        window.innerHeight || document.documentElement.clientHeight;
+
+      for (const section of sections) {
+        const rect = section.getBoundingClientRect();
+        const visibleTop = Math.max(0, rect.top);
+        const visibleBottom = Math.min(viewportHeight, rect.bottom);
+        const visibleHeight = Math.max(0, visibleBottom - visibleTop);
+
+        if (visibleHeight > strongestVisibleHeight) {
+          strongestVisibleHeight = visibleHeight;
+          nextSection = section.id;
         }
-      },
-      {
-        root: null,
-        rootMargin: "-42% 0px -45% 0px",
-        threshold: [0.1, 0.25, 0.4, 0.6],
       }
-    );
 
-    sections.forEach((section) => observer.observe(section));
+      if (strongestVisibleHeight <= 0) {
+        const activationLine = window.scrollY + ACTIVE_SECTION_OFFSET;
 
-    return () => observer.disconnect();
+        for (const section of sections) {
+          const rect = section.getBoundingClientRect();
+          const sectionTop = rect.top + window.scrollY;
+
+          if (sectionTop <= activationLine) {
+            nextSection = section.id;
+            continue;
+          }
+
+          break;
+        }
+      }
+
+      setActiveSection((currentSection) =>
+        currentSection === nextSection ? currentSection : nextSection
+      );
+    };
+
+    const scheduleUpdate = () => {
+      if (frameId) return;
+      frameId = window.requestAnimationFrame(updateActiveSection);
+    };
+
+    scheduleUpdate();
+    window.addEventListener("scroll", scheduleUpdate, { passive: true });
+    window.addEventListener("portfolio:scroll", scheduleUpdate);
+    window.addEventListener("wheel", scheduleUpdate, { passive: true });
+    window.addEventListener("touchmove", scheduleUpdate, { passive: true });
+    window.addEventListener("resize", scheduleUpdate);
+
+    return () => {
+      if (frameId) window.cancelAnimationFrame(frameId);
+      window.removeEventListener("scroll", scheduleUpdate);
+      window.removeEventListener("portfolio:scroll", scheduleUpdate);
+      window.removeEventListener("wheel", scheduleUpdate);
+      window.removeEventListener("touchmove", scheduleUpdate);
+      window.removeEventListener("resize", scheduleUpdate);
+    };
   }, []);
 
   const navHidden = Boolean(isHidden && !open);
