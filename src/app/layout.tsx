@@ -1,4 +1,6 @@
 import type { Metadata, Viewport } from "next";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Montserrat, Nunito_Sans } from "next/font/google";
 import "lenis/dist/lenis.css";
 import "./globals.css";
@@ -131,6 +133,8 @@ export default function RootLayout({
           Skip to content
         </a>
         {children}
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
