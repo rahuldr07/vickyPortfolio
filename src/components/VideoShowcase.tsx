@@ -16,13 +16,21 @@ import {
   FileText,
   Image as ImageIcon,
   Play,
+  Sparkles,
   Video,
   X,
 } from "lucide-react";
 import { SHOWCASE_PROJECTS, type ShowcaseProject } from "@/content/portfolio";
 import PinnedDossierChapter from "@/components/PinnedDossierChapter";
 
-type WorkArchiveFrame = "logo" | "menu" | "poster" | "magazine" | "banner" | "reel";
+type WorkArchiveFrame =
+  | "logo"
+  | "aivideo"
+  | "menu"
+  | "poster"
+  | "magazine"
+  | "banner"
+  | "reel";
 
 const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
 
@@ -58,6 +66,14 @@ const WORK_ARCHIVE_SECTIONS: readonly {
     railLabel: "Brand Identity",
     title: "Brand Identity & Logos",
     description: "Identity marks, primary logo mockups, and scalable brand assets.",
+  },
+  {
+    id: "work-ai-videos",
+    frame: "aivideo",
+    label: "AI Videos",
+    railLabel: "AI Generated",
+    title: "AI Generated Videos",
+    description: "Prompt-directed product films and ad cuts, generated then edited and graded.",
   },
   {
     id: "work-posters",
@@ -120,6 +136,14 @@ const ARCHIVE_FRAME_META: Record<
     titleClassName: "text-sm sm:text-lg md:text-xl",
     hoverScaleClassName: "duration-300 motion-safe:group-hover:scale-[1.22]",
   },
+  aivideo: {
+    className: "aspect-[4/5] sm:aspect-[4/3]",
+    imageBoxClassName: "inset-3 rounded-[0.9rem] border border-[var(--project-accent)]/25",
+    mediaClassName: "object-cover opacity-92",
+    label: "AI VIDEO",
+    titleClassName: "text-sm sm:text-lg md:text-xl",
+    hoverScaleClassName: "duration-700 motion-safe:group-hover:scale-[1.08]",
+  },
   menu: {
     className: "aspect-[4/5] sm:aspect-[4/3]",
     imageBoxClassName: "inset-3 rotate-[-1deg] rounded-[0.9rem]",
@@ -170,6 +194,7 @@ function getTreatmentStyle(project: ShowcaseProject): CSSProperties {
 }
 
 function getArchiveFrame(project: ShowcaseProject): WorkArchiveFrame {
+  if (project.aiGenerated && project.type === "video") return "aivideo";
   if (project.type === "video") return "reel";
   if (project.category === "Brand Identity") return "logo";
   if (project.pdfSrc || project.visualTreatment.frame === "COVER") return "magazine";
@@ -442,7 +467,7 @@ export default function VideoShowcase() {
           Creative Portfolio
         </h2>
         <p className="mt-3 max-w-full text-sm leading-relaxed text-white/70 sm:max-w-md">
-          Brand identity, print layouts, campaigns, ads, and motion reels.
+          Brand identity, print layouts, campaigns, ads, AI videos, and motion reels.
         </p>
       </div>
 
@@ -555,7 +580,9 @@ export default function VideoShowcase() {
                     const treatmentStyle = getTreatmentStyle(project);
                     const frameMeta = ARCHIVE_FRAME_META[section.frame];
                     const isInlineReel =
-                      section.frame === "reel" && project.type === "video" && project.videoSrc;
+                      (section.frame === "reel" || section.frame === "aivideo") &&
+                      project.type === "video" &&
+                      project.videoSrc;
                     const isReelPreviewActive =
                       !shouldReduceMotion && activeReelPreviewIds.has(project.id);
 
@@ -610,7 +637,9 @@ export default function VideoShowcase() {
 
                         <div className="absolute left-4 top-4 z-20 flex items-center gap-2">
                           <span className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-[#0b0b10] text-white/72">
-                            {project.type === "video" ? (
+                            {section.frame === "aivideo" ? (
+                              <Sparkles className="h-4 w-4" aria-hidden="true" />
+                            ) : project.type === "video" ? (
                               <Video className="h-4 w-4" aria-hidden="true" />
                             ) : section.frame === "magazine" ? (
                               <FileText className="h-4 w-4" aria-hidden="true" />

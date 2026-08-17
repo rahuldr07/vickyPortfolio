@@ -19,7 +19,7 @@ describe("VideoShowcase", () => {
 
     expect(
       projectSectionControls.getByRole("button", {
-        name: /^All projects section 32 projects$/i,
+        name: /^All projects section 35 projects$/i,
       })
     ).toHaveAttribute("aria-controls", "work");
     expect(
@@ -27,6 +27,11 @@ describe("VideoShowcase", () => {
         name: /^Logos section 7 projects$/i,
       })
     ).toHaveAttribute("aria-controls", "work-logos");
+    expect(
+      projectSectionControls.getByRole("button", {
+        name: /^AI Videos section 3 projects$/i,
+      })
+    ).toHaveAttribute("aria-controls", "work-ai-videos");
     expect(
       projectSectionControls.getByRole("button", {
         name: /^Posters section 14 projects$/i,
@@ -219,6 +224,48 @@ describe("VideoShowcase", () => {
     window.IntersectionObserver = originalIntersectionObserver;
   });
 
+  it("keeps AI generated videos in their own section right after logos", () => {
+    render(<VideoShowcase />);
+
+    const aiSection = screen.getByRole("region", {
+      name: /^AI Generated Videos$/i,
+    });
+
+    expect(within(aiSection).getByText("AI Videos / 03")).toBeInTheDocument();
+
+    const aiCard = within(aiSection).getByRole("button", {
+      name: /Open New Day Organics Serum Commercial/i,
+    });
+    expect(aiCard).toHaveAttribute("data-archive-frame", "aivideo");
+
+    const inlineVideo = aiCard.querySelector("video");
+    expect(inlineVideo).toHaveAttribute("poster", "/works/thumbs/project-37.webp");
+    expect(inlineVideo).toHaveAttribute("preload", "metadata");
+    expect(inlineVideo).not.toHaveAttribute("src");
+
+    const sections = screen.getAllByTestId("work-archive-section");
+    expect(sections[1]).toBe(aiSection);
+
+    const reelsSection = screen.getByRole("region", {
+      name: /^Motion Edits & Reels$/i,
+    });
+    expect(
+      within(reelsSection).queryByRole("button", {
+        name: /Open New Day Organics Serum Commercial/i,
+      })
+    ).toBeNull();
+
+    fireEvent.click(aiCard);
+
+    const dialog = screen.getByRole("dialog", {
+      name: /New Day Organics Serum Commercial preview/i,
+    });
+    expect(dialog.querySelector("video")).toHaveAttribute(
+      "src",
+      "/works/ai-videos/skincare-commercial-edit.mp4"
+    );
+  });
+
   it("uses normal card-fit media with faster stronger hover zoom only for logo cards", () => {
     render(<VideoShowcase />);
 
@@ -255,14 +302,19 @@ describe("VideoShowcase", () => {
 
     expect(
       screen.getByRole("button", {
-        name: /^All projects section 32 projects$/i,
+        name: /^All projects section 35 projects$/i,
       })
     ).toHaveAttribute("aria-controls", "work");
-    expect(screen.getAllByTestId("work-reel-card")).toHaveLength(32);
+    expect(screen.getAllByTestId("work-reel-card")).toHaveLength(35);
     expect(screen.getByText("Creative Portfolio")).toBeInTheDocument();
-    expect(screen.getByText("Brand identity, print layouts, campaigns, ads, and motion reels.")).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        "Brand identity, print layouts, campaigns, ads, AI videos, and motion reels."
+      )
+    ).toBeInTheDocument();
     expect(screen.getByText("All Work")).toBeInTheDocument();
     expect(screen.getByText("Brand Identity")).toBeInTheDocument();
+    expect(screen.getByText("AI Generated")).toBeInTheDocument();
     expect(screen.getByText("Print & Menus")).toBeInTheDocument();
     expect(screen.getByText("Visual Campaigns")).toBeInTheDocument();
     expect(screen.getByText("Editorial")).toBeInTheDocument();
@@ -279,6 +331,7 @@ describe("VideoShowcase", () => {
 
     expect(sectionFrames).toEqual([
       "logo",
+      "aivideo",
       "poster",
       "magazine",
       "banner",
