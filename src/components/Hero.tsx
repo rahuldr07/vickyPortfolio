@@ -285,7 +285,7 @@ export default function Hero() {
             ref={bodyRef}
             className="mt-4 max-w-full text-[15px] leading-relaxed text-white/78 sm:mt-5 sm:max-w-[68ch] sm:text-base md:text-lg"
           >
-            I translate brand ambition into premium visual systems—from identity and motion to campaign assets—delivering clarity and atmosphere.
+            Freelance graphic designer and video editor based in Bengaluru, India. I translate brand ambition into premium visual systems—from logo and identity to posters, social creatives and motion—delivering clarity and atmosphere.
           </p>
 
           <div ref={ctaRef} className="mt-7 flex flex-col items-stretch gap-3 sm:mt-10 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">

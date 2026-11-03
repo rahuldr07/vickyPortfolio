@@ -68,7 +68,7 @@ export default function Image() {
                 textTransform: "uppercase",
               }}
             >
-              Cinematic Visual Portfolio
+              Freelance Graphic Designer · Bengaluru
             </div>
             <div
               style={{
@@ -95,8 +95,8 @@ export default function Image() {
                   lineHeight: 1.25,
                 }}
               >
-                Senior Graphic Designer focused on branding, cinematic visuals,
-                and video editing.
+                Logo, brand identity, posters, social media creatives, video
+                editing and motion graphics.
               </div>
             </div>
             <div
@@ -108,9 +108,9 @@ export default function Image() {
                 gap: 28,
               }}
             >
-              <span>Brand Identity</span>
-              <span>Campaign Design</span>
-              <span>Motion Edits</span>
+              <span>Graphic Design</span>
+              <span>Branding</span>
+              <span>Video Editing</span>
             </div>
           </div>
           <div

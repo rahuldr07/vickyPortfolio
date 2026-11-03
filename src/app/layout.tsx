@@ -4,7 +4,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Montserrat, Nunito_Sans } from "next/font/google";
 import "lenis/dist/lenis.css";
 import "./globals.css";
-import { SITE_META } from "@/content/portfolio";
+import { CONTACT, SITE_META, TOOLS } from "@/content/portfolio";
 import WebVitals from "@/components/WebVitals";
 import SmoothScroll from "@/components/SmoothScroll";
 import MobileDesktopNotice from "@/components/MobileDesktopNotice";
@@ -35,12 +35,13 @@ export const metadata: Metadata = {
   generator: "Next.js",
   keywords: [...SITE_META.keywords],
   referrer: "origin-when-cross-origin",
-  category: "portfolio",
-  classification: "Graphic Design Portfolio",
+  category: "design",
+  classification: "Freelance Graphic Designer Portfolio, Bengaluru",
   alternates: {
     canonical: "/",
     languages: {
-      "en-US": "/",
+      "en-IN": "/",
+      "x-default": "/",
     },
   },
   robots: {
@@ -66,7 +67,7 @@ export const metadata: Metadata = {
     title: SITE_META.title,
     description: SITE_META.description,
     siteName: SITE_META.siteName,
-    locale: "en_US",
+    locale: "en_IN",
     images: [
       {
         url: SITE_META.ogImage,
@@ -103,8 +104,93 @@ export const metadata: Metadata = {
   other: {
     "profile:first_name": "Geetha",
     "profile:last_name": "Krishna",
-    "portfolio:focus": "Branding, cinematic visuals, video editing",
+    "portfolio:focus": SITE_META.services.join(", "),
+    "geo.region": SITE_META.location.regionCode,
+    "geo.placename": `${SITE_META.location.city}, ${SITE_META.location.region}, ${SITE_META.location.country}`,
+    "geo.position": `${SITE_META.location.latitude};${SITE_META.location.longitude}`,
+    ICBM: `${SITE_META.location.latitude}, ${SITE_META.location.longitude}`,
   },
+};
+
+const { location } = SITE_META;
+const personId = `${SITE_META.siteUrl}/#person`;
+const businessId = `${SITE_META.siteUrl}/#business`;
+const postalAddress = {
+  "@type": "PostalAddress",
+  addressLocality: location.city,
+  addressRegion: location.region,
+  addressCountry: location.countryCode,
+};
+const areaServed = [
+  { "@type": "City", name: location.city, alternateName: location.altCity },
+  { "@type": "State", name: location.region },
+  { "@type": "Country", name: location.country },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Person",
+      "@id": personId,
+      name: SITE_META.creator,
+      url: SITE_META.siteUrl,
+      image: `${SITE_META.siteUrl}/profile.png`,
+      jobTitle: SITE_META.jobTitle,
+      description: SITE_META.description,
+      email: `mailto:${CONTACT.email}`,
+      telephone: CONTACT.phone,
+      address: postalAddress,
+      homeLocation: { "@type": "City", name: location.city },
+      knowsAbout: [...SITE_META.services, ...TOOLS],
+      worksFor: { "@id": businessId },
+    },
+    {
+      "@type": "ProfessionalService",
+      "@id": businessId,
+      name: `${SITE_META.creator} — Freelance Graphic Designer in ${location.city}`,
+      url: SITE_META.siteUrl,
+      image: `${SITE_META.siteUrl}/profile.png`,
+      description: SITE_META.description,
+      email: CONTACT.email,
+      telephone: CONTACT.phone,
+      priceRange: "₹₹",
+      address: postalAddress,
+      geo: {
+        "@type": "GeoCoordinates",
+        latitude: location.latitude,
+        longitude: location.longitude,
+      },
+      areaServed,
+      founder: { "@id": personId },
+      hasOfferCatalog: {
+        "@type": "OfferCatalog",
+        name: "Graphic design and video services",
+        itemListElement: SITE_META.services.map((service) => ({
+          "@type": "Offer",
+          itemOffered: { "@type": "Service", name: service, areaServed },
+        })),
+      },
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${SITE_META.siteUrl}/#website`,
+      url: SITE_META.siteUrl,
+      name: SITE_META.siteName,
+      description: SITE_META.description,
+      inLanguage: "en-IN",
+      publisher: { "@id": personId },
+    },
+    {
+      "@type": "ProfilePage",
+      "@id": `${SITE_META.siteUrl}/#profile`,
+      url: SITE_META.siteUrl,
+      name: SITE_META.title,
+      inLanguage: "en-IN",
+      mainEntity: { "@id": personId },
+      isPartOf: { "@id": `${SITE_META.siteUrl}/#website` },
+    },
+  ],
 };
 
 export const viewport: Viewport = {
@@ -119,10 +205,16 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      lang="en-IN"
       className={`${montserrat.variable} ${nunitoSans.variable} antialiased`}
     >
       <body className="min-h-screen bg-background font-sans text-foreground selection:bg-accent/30 selection:text-accent">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
+          }}
+        />
         <WebVitals />
         <SmoothScroll />
         <MobileDesktopNotice />
