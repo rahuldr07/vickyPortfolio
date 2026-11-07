@@ -37,24 +37,8 @@ export const metadata: Metadata = {
   referrer: "origin-when-cross-origin",
   category: "design",
   classification: "Freelance Graphic Designer Portfolio, Bengaluru",
-  alternates: {
-    canonical: "/",
-    languages: {
-      "en-IN": "/",
-      "x-default": "/",
-    },
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-    },
-  },
+  // The public pages are static HTML in /site-pages with their own canonical/robots tags.
+  // This layout now only wraps the 404 page, so it must not declare a canonical or "index".
   icons: {
     icon: [{ url: "/favicon.ico", sizes: "any" }],
     shortcut: ["/favicon.ico"],
