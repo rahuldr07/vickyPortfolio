@@ -15,6 +15,8 @@ const eslintConfig = defineConfig([
     // Local agent/runtime artifacts
     ".pi/**",
     "coverage/**",
+    // Vendored third-party bundles (Webflow, GSAP, Lottie) mirrored for the static site
+    "public/gk/**",
   ]),
 ]);
 

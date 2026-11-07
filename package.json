@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "site:build": "sh scripts/site/build.sh",
     "lint": "eslint",
     "test": "vitest",
     "test:ci": "vitest run --coverage --passWithNoTests"
