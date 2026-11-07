@@ -17,6 +17,8 @@ const eslintConfig = defineConfig([
     "coverage/**",
     // Vendored third-party bundles (Webflow, GSAP, Lottie) mirrored for the static site
     "public/gk/**",
+    // Agent skills kept with the project (third-party tooling, not app code)
+    ".claude/**",
   ]),
 ]);
 
