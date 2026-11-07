@@ -100,6 +100,13 @@
   .gk-card:hover .gk-c-item{rotate:calc(var(--r) * 1.6);scale:1.02}
 }
 @media (min-width:480px){.stack-height.gk-stack{height:400vh}}
+/* gentle idle float on collage pieces (CSS translate composes with the GSAP transform) */
+@keyframes gkFloat{0%,100%{translate:0 0}50%{translate:0 -10px}}
+@media (prefers-reduced-motion:no-preference){
+  .gk-c-item{animation:gkFloat 6s ease-in-out infinite}
+  .gk-c-item:nth-child(2){animation-duration:7s;animation-delay:-2s}
+  .gk-c-item:nth-child(3){animation-duration:8s;animation-delay:-4s}
+}
 @media screen and (max-width:479px){
   .hero-mobile{display:flex;justify-content:center;align-items:center}
   .gk-reel{width:auto;height:100%;max-width:100%}
@@ -829,16 +836,29 @@ window.addEventListener("DOMContentLoaded", () => {
     gsap.matchMedia().add('(min-width: 480px) and (prefers-reduced-motion: no-preference)', function(){
       var cards=gsap.utils.toArray(h.querySelectorAll('.gk-card'));
       var vh=function(v){return function(){return window.innerHeight*v;};};
+      var items=function(c){return c.querySelectorAll('.gk-c-item');};
+      var texts=function(c){return c.querySelectorAll('.text-elements > *');};
+      // the first card's collage flies in when the section arrives
+      gsap.from(items(cards[0]),{y:120,x:function(k){return k%2?60:-60;},opacity:0,scale:.9,duration:1.2,stagger:.1,ease:'expo.out',
+        scrollTrigger:{trigger:h,start:'top 78%',once:true}});
+      gsap.from(texts(cards[0]),{y:40,opacity:0,duration:1,stagger:.08,ease:'expo.out',scrollTrigger:{trigger:h,start:'top 78%',once:true}});
       cards.forEach(function(c,i){
         gsap.set(c,{zIndex:500-i,transformOrigin:'50% 50%'});
-        if(i>0) gsap.set(c,{scale:.8,y:vh(.1),opacity:i===1?.28:0});
+        if(i>0){
+          // waiting cards sit behind, small and out of focus
+          gsap.set(c,{scale:.8,y:vh(.1),opacity:i===1?.32:0,filter:'blur(14px) brightness(.7)'});
+          gsap.set(items(c),{y:function(k){return 90+k*50;},x:function(k){return k%2?70:-70;},opacity:0,scale:.9});
+          gsap.set(texts(c),{y:50,opacity:0});
+        }
       });
       var tl=gsap.timeline({scrollTrigger:{trigger:h,start:'top top',end:'bottom bottom',scrub:.6,invalidateOnRefresh:true}});
       var pos=.34;
       for(var i=0;i<cards.length-1;i++){
-        tl.to(cards[i],{y:vh(-1),duration:.31,ease:'none'},pos)
-          .to(cards[i+1],{scale:1,y:0,duration:.31,ease:'none'},pos)
-          .to(cards[i+1],{opacity:1,duration:.11,ease:'none'},pos);
+        tl.to(cards[i],{y:vh(-1),scale:.96,filter:'blur(6px) brightness(.75)',duration:.31,ease:'none'},pos)
+          .to(cards[i+1],{scale:1,y:0,filter:'blur(0px) brightness(1)',duration:.31,ease:'none'},pos)
+          .to(cards[i+1],{opacity:1,duration:.11,ease:'none'},pos)
+          .to(items(cards[i+1]),{y:0,x:0,opacity:1,scale:1,duration:.24,stagger:.05,ease:'power3.out'},pos+.08)
+          .to(texts(cards[i+1]),{y:0,opacity:1,duration:.2,stagger:.04,ease:'power3.out'},pos+.12);
         if(cards[i+2]) tl.to(cards[i+2],{opacity:.28,duration:.31,ease:'none'},pos);
         pos+=.31+.35;
       }
