@@ -54,6 +54,8 @@ Photoshop, Illustrator, Premiere Pro, After Effects, DaVinci Resolve, Figma, Ado
 - [Home](${site}/): overview, featured work, services
 - [Work](${site}/work): all ${work.length} projects, filterable by category
 - [About](${site}/about): bio, tools and experience
+- [Freelance Graphic Designer in Bangalore](${site}/freelance-graphic-designer-bangalore): hire a senior freelance graphic designer in Bangalore (Bengaluru) for logos, branding, posters, social media and print
+- [Freelance Video Editor in Bangalore](${site}/freelance-video-editor-bangalore): hire a freelance video editor in Bangalore (Bengaluru) for product films, reels, motion graphics, AI video and UGC ads
 
 ## Projects
 ${sections}

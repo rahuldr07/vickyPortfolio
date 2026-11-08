@@ -36,5 +36,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "yearly",
       priority: 0.7,
     },
+    // Local landing pages for "freelance graphic designer / video editor in Bangalore" searches
+    ...[
+      { slug: "freelance-graphic-designer-bangalore", cats: ["Brand Identity", "Posters & Campaigns", "Editorial & Print"] },
+      { slug: "freelance-video-editor-bangalore", cats: ["Video & Motion"] },
+    ].map(({ slug, cats }) => ({
+      url: `${SITE_META.siteUrl}/${slug}`,
+      lastModified: modified(`${slug}.html`),
+      changeFrequency: "monthly" as const,
+      priority: 0.9,
+      images: work.filter((item) => cats.includes(item.category)).slice(0, 6).map((item) => abs(item.thumb)),
+    })),
   ];
 }
