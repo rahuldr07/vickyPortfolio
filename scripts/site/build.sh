@@ -15,4 +15,5 @@ python3 -I "$HERE/work.py" "$ROOT" "$G"                # /work grid, optimised m
 python3 -I "$HERE/seo.py" "$ROOT" "$G"                 # head tags, JSON-LD, nav; moves pages to site-pages/
 python3 -I "$HERE/project.py" "$ROOT"                  # one page per project
 python3 -I "$HERE/polish.py" "$ROOT" "$HERE/icons"     # icons, fonts, contact form, lazy video, a11y
+python3 -I "$HERE/seo_reach.py" "$ROOT"                  # hire-me SEO: titles, JSON-LD (sameAs, occupations, worldwide)
 echo "site pages rebuilt. Run 'npm run build' to prerender them."

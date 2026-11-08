@@ -30,11 +30,29 @@ function fileFor(parts: string[]) {
   return null;
 }
 
+// Search-engine ownership codes, set on the host (no HTML edits needed):
+//   GOOGLE_SITE_VERIFICATION (Google Search Console), BING_SITE_VERIFICATION (Bing Webmaster Tools),
+//   YANDEX_SITE_VERIFICATION (Yandex Webmaster)
+const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
+function verificationTags() {
+  const tags: [string, string | undefined][] = [
+    ["google-site-verification", process.env.GOOGLE_SITE_VERIFICATION],
+    ["msvalidate.01", process.env.BING_SITE_VERIFICATION],
+    ["yandex-verification", process.env.YANDEX_SITE_VERIFICATION],
+  ];
+  return tags
+    .filter(([, v]) => v && v.trim())
+    .map(([name, v]) => `<meta name="${name}" content="${esc(v!.trim())}"/>`)
+    .join("");
+}
+
 export async function GET(_request: Request, { params }: { params: Promise<{ path: string[] }> }) {
   const { path: parts } = await params;
   const file = fileFor(parts);
   if (!file) return notFoundResponse();
-  const html = (await readFile(file, "utf8")).replaceAll("{{SITE_URL}}", SITE_META.siteUrl);
+  let html = (await readFile(file, "utf8")).replaceAll("{{SITE_URL}}", SITE_META.siteUrl);
+  const verify = verificationTags();
+  if (verify) html = html.replace("</head>", `${verify}</head>`);
 
   return new Response(html, {
     headers: { "content-type": "text/html; charset=utf-8" },
