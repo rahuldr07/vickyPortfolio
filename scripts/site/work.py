@@ -211,7 +211,6 @@ for n, it in enumerate(items):
 
 WORK_MAIN = f"""<main class="main gk-work-main">
 <section class="gk-work-head">
-  <p class="gk-avail"><span class="gk-avail-dot" aria-hidden="true"></span>Available for freelance projects</p>
   <h1 class="gk-work-h1">Work<span class="gk-sr">: graphic design and video portfolio of Geetha Krishna, freelance designer in Bengaluru</span></h1>
   <p class="gk-work-lede">Brand identity, posters, editorial design and video by Geetha Krishna, a freelance graphic designer and video editor in Bengaluru. {len(items)} projects for {len({i["client"] for i in items if i["client"]})} brands.</p>
   <div class="gk-chips" role="toolbar" aria-label="Filter work by category">{"".join(chips)}</div>
@@ -239,7 +238,7 @@ WORK_MAIN = f"""<main class="main gk-work-main">
 CSS = """<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600&display=swap" rel="stylesheet"/>
 <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
 <style>
-.gk-work-main{color:#f4f2f6;background:#0c0b0c}
+.gk-work-main{color:#f4f2f6;background:#0c0b0c}.gk-work-main{position:relative;isolation:isolate}.gk-work-main>section{position:relative;z-index:1}.gk-work-main::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(40vw 60vh at -8% 22%,rgba(124,58,237,.24),transparent 70%),radial-gradient(36vw 58vh at 108% 64%,rgba(99,102,241,.2),transparent 70%),radial-gradient(26vw 38vh at 106% 6%,rgba(74,222,128,.09),transparent 70%);-webkit-mask-image:linear-gradient(90deg,#000 0,#000 5%,transparent 15%,transparent 85%,#000 95%,#000 100%);mask-image:linear-gradient(90deg,#000 0,#000 5%,transparent 15%,transparent 85%,#000 95%,#000 100%)}.gk-work-head::before{content:"";position:absolute;top:0;bottom:0;left:50%;width:100vw;transform:translateX(-50%);z-index:-1;pointer-events:none;background-image:linear-gradient(rgba(244,242,246,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(244,242,246,.055) 1px,transparent 1px);background-size:64px 64px;background-position:center top;-webkit-mask-image:radial-gradient(110% 95% at 50% 0%,#000 25%,transparent 78%);mask-image:radial-gradient(110% 95% at 50% 0%,#000 25%,transparent 78%)}.gk-work-head::after{content:"";position:absolute;z-index:-1;pointer-events:none;top:40px;left:0;width:min(70vw,820px);height:85%;background:radial-gradient(closest-side,rgba(139,92,246,.22),transparent)}@media (max-width:767px){.gk-work-main::before{display:none}}
 .gk-work-head{max-width:1280px;margin:0 auto;padding:150px 6vw 36px;display:grid;gap:18px}
 .gk-work-h1{margin:0;font:500 clamp(64px,9vw,140px)/.95 "Wix Madefor Display",sans-serif;letter-spacing:-.05em}
 .gk-work-lede{margin:0;max-width:640px;font-size:17px;line-height:1.55;color:rgba(244,242,246,.72)}
@@ -477,7 +476,7 @@ json.dump(items, open(os.path.join(ROOT, "site-pages", "work.json"), "w"), inden
 idx_path = os.path.join(OUT, "index.html")
 idx = open(idx_path, encoding="utf-8").read()
 k = idx.index('</section>', idx.index('<section id="work" class="stack-sc">')) + len('</section>')
-ALL = (f'<div class="gk-all-work"><a class="gk-btn gk-btn-ghost" href="/work">See all {len(items)} projects'
+ALL = (f'<div class="gk-all-work"><a class="gk-btn gk-btn-ghost" href="/work" aria-label="Show more: all {len(items)} projects">Show more'
        '<i class="ph ph-arrow-right"></i></a></div>')
 idx = idx[:k] + ALL + idx[k:]
 idx = idx.replace('</head>', '<style>.gk-all-work{display:flex;justify-content:center;padding:10px 0 90px}</style></head>', 1)

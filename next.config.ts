@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
     qualities: [58, 75],
   },
   // Geetha Krishna portfolio: pages live in /site-pages (assets in public/gk) and are served
-  // by the prerendered route handler at src/app/p/[page]/route.ts.
+  // by the prerendered route handler at src/app/p/[...path]/route.ts.
   async redirects() {
     return [
       { source: "/mission", destination: "/about", permanent: true },

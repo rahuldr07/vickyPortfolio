@@ -54,6 +54,7 @@ def shared(d, n_footer_name=1):
           'width:100%;height:100%;font-family:"Wix Madefor Display",sans-serif;font-weight:700;'
           'font-size:0.95rem;letter-spacing:-0.02em;line-height:1;color:#fff}'
           '.gk-nw{display:inline-block;white-space:nowrap}'
+          '.brand-logo,.brand-logo-desk{transform:none!important}.nav-link,.brand{border-radius:8px;transition:background-color .3s ease,box-shadow .3s ease,opacity .3s ease}@media (min-width:480px){.nav-links:has(.w--current) .nav-link:not(.w--current){opacity:.62}.nav-links .nav-link:hover{opacity:1}.nav-link.w--current,.brand.w--current{background-color:rgba(255,255,255,.16);box-shadow:inset 0 0 0 1px rgba(255,255,255,.22)}}@media (max-width:479px){.nav-links:has(.w--current) .nav-link:not(.w--current){opacity:.45}.nav-link.w--current .hover-link-mask::before{content:"";position:absolute;left:-.6em;top:50%;width:.16em;height:.16em;border-radius:50%;background:#a78bfa;transform:translateY(-50%)}}'
           '@media (max-width:479px){.footer-mail-link{font-size:clamp(1.15rem,5.6vw,2rem);overflow-wrap:anywhere}}'
           '</style></head>')
     # Nav links
@@ -70,7 +71,7 @@ def shared(d, n_footer_name=1):
     d.rep('href="https://www.instagram.com/superconscious.io" target="_blank"', f'href="mailto:{EMAIL}"', 2)
     d.rep('href="https://www.tiktok.com/@superconscious.io"', f'href="{WA}"', 2)
     d.rep('href="https://www.twitter.com/superconsciousx" target="_blank"', 'href="#"', 2)  # TODO: Behance URL
-    d.rep('href="https://www.linkedin.com/company/superconscious/" target="_blank"', 'href="#"', 2)  # TODO: LinkedIn URL
+    d.rep('href="https://www.linkedin.com/company/superconscious/" target="_blank"', 'href="https://www.linkedin.com/in/krishnadezyner" target="_blank" rel="noopener noreferrer"', 2)
     d.rep('>Instagram<', '>Email<', 3)
     d.rep('>Tik Tok<', '>WhatsApp<', 3)
     d.rep('>Twitter X<', '>Behance<', 3)
@@ -80,7 +81,7 @@ def shared(d, n_footer_name=1):
     d.rep('Be the first in line! Join the waitlist', 'Leave your name and email to send me a quick note.')
     d.rep('Thanks for Joining!', 'Thank You!')
     d.rep('We’ll send updates as soon as we’re ready for you',
-          'Your email app is opening. Send the note and I’ll get back to you.')
+          'Your enquiry is on its way. I’ll reply by email soon.')
     d.rep("if (!formErrors) $(this).parents('form').submit()",
           "if (!formErrors) gkSendEnquiry($(this).parents('form'))")
     d.rep('</body>', '<script>function gkSendEnquiry(f){var n=f.find(\'[name="Name"]\').val()||"",'
@@ -192,6 +193,8 @@ d.rep('>Download Superconscious and begin manifesting your dream reality today.<
 index_html = d.h
 
 # ---------------- About page (was /mission) ----------------
+ABOUT_FIT_CSS = '<style>@media (min-width:480px){.container.mission-hero-s{height:auto;padding-top:clamp(110px,10vw,150px);padding-bottom:clamp(64px,7vw,110px)}}@media (max-width:479px){.container.mission-hero-s{padding-top:120px;padding-bottom:56px}}.team-sc .container.team-s{padding-top:0}.team-sc .name-headline-wrap.team-s{width:auto;max-width:100%}@media (min-width:992px){.team-sc .team-headline{white-space:nowrap}}</style>'
+
 m = Doc("mission.html")
 m.rep('<title>Mission</title>', f'<title>About | {TITLE}</title><meta content="{DESC}" name="description"/>')
 m.rep('content="Mission" property="og:title"', 'content="About Geetha Krishna" property="og:title"')
@@ -199,6 +202,7 @@ m.rep('content="Mission" name="twitter:title"', 'content="About Geetha Krishna" 
 shared(m, n_footer_name=1)
 m.rep('class="heading-2">Mission<', 'class="heading-2">About<')
 m.rep('>Elevating Global Consciousness<', '>Designer, Editor, Storyteller<')
+m.rep('</head>', ABOUT_FIT_CSS + '</head>')  # tighter hero, one-line headline
 m.rep('<span class="span-padding">O</span>ur mission is to elevate global consciousness.',
       '<span class="gk-nw"><span class="span-padding">D</span>esign</span> '
       '<span class="gk-nw">that</span> <span class="gk-nw">makes</span> <span class="gk-nw">brands</span> <span class="gk-nw">easy</span> <span class="gk-nw">to</span> <span class="gk-nw">remember.</span>')
@@ -207,12 +211,19 @@ m.rx(r'>Humanity is at a crossroads\..*?consciously create their reality\.<',
      'For 5+ years I have worked across graphic design, visual content creation, motion edits '
      'and brand storytelling, with 100+ projects across print, digital and motion.'
      '  <br/>‍<br/>My production stack is Photoshop, Illustrator, Premiere Pro, After Effects '
-     'and DaVinci Resolve, with Figma, Adobe XD, Wix and Articulate 360 for UI, web and e-learning work.<')
+     'and DaVinci Resolve, with Figma, Adobe XD and Wix for UI and web work.<')
 m.rx(r'>As the ultimate tool for manifestation.*?the future\s+of humanity itself\.<',
      '>Logos and brand identities, posters and social creatives, magazines and cover pages, '
      'menu cards, hoardings and web banners, plus product films and AI video edits.'
      '  <br/>‍<br/>Every project starts with a clear brief and ends with files that are ready '
      'for print, web and social.<')
+
+PS_LOGO = '<style>.team-avatar{container-type:inline-size}.gk-ps-logo{width:100%;height:100%;display:grid;place-content:center;justify-items:center;gap:2.6cqw;background:#f4f2f6;color:#0c0b0c;font-family:"Wix Madefor Display",sans-serif;text-align:center}.gk-ps-px{display:grid;grid-template-columns:repeat(2,6.4cqw);gap:1.5cqw;margin-bottom:1.4cqw}.gk-ps-px span{width:6.4cqw;height:6.4cqw;border-radius:1.3cqw;background:#0c0b0c}.gk-ps-px span:nth-child(2){background:#4ade80}.gk-ps-w{font-weight:800;font-size:16.5cqw;line-height:.84;letter-spacing:-.055em}.gk-ps-s{font-weight:600;font-size:4.6cqw;letter-spacing:.34em;text-transform:uppercase;color:rgba(12,11,12,.6);margin:1.2cqw -.34em 0 0}</style><div class="gk-ps-logo" role="img" aria-label="Pixel Scoop Studios logo"><span class="gk-ps-px" aria-hidden="true"><span></span><span></span><span></span><span></span></span><span class="gk-ps-w" aria-hidden="true">pixel<br/>scoop</span><span class="gk-ps-s" aria-hidden="true">Studios</span></div>'
+
+GM_LOGO = '<style>.gk-gm-logo{width:100%;height:100%;display:grid;place-content:center;justify-items:center;gap:2.4cqw;background:#0d0f0a;color:#b6f23a;font-family:"Wix Madefor Display",sans-serif;text-align:center}.gk-gm-bolt{width:13cqw;height:13cqw;margin-bottom:1cqw}.gk-gm-w{font-weight:800;font-size:15cqw;line-height:.86;letter-spacing:-.02em;text-transform:uppercase}.gk-gm-s{font-weight:600;font-size:4.4cqw;letter-spacing:.34em;text-transform:uppercase;color:rgba(182,242,58,.62);margin:1.4cqw -.34em 0 0}</style><div class="gk-gm-logo" role="img" aria-label="GreenMonk Energy Drink logo"><svg class="gk-gm-bolt" viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 2 5 13.5h6L10 22l9-12.5h-6.2z" fill="#b6f23a"/></svg><span class="gk-gm-w" aria-hidden="true">Green<br/>Monk</span><span class="gk-gm-s" aria-hidden="true">Energy drink</span></div>'
+# Buddha-CEO: their real mark (public/gk/images/clients, from buddhaceo.org) with the wordmark as text
+BC_LOGO = '<style>.gk-bc-logo{width:100%;height:100%;display:grid;place-content:center;justify-items:center;gap:1.4cqw;background:#fff;color:#1d1d22;text-align:center}.gk-bc-mark{width:33cqw;height:auto;margin-bottom:2.4cqw}.gk-bc-w{font-family:"Wix Madefor Display",sans-serif;font-weight:600;font-size:11.5cqw;line-height:1;letter-spacing:-.02em}.gk-bc-s{font-family:Georgia,"Times New Roman",serif;font-style:italic;font-size:6.4cqw;line-height:1.1;color:#2c2c33}</style><div class="gk-bc-logo" role="img" aria-label="Buddha-CEO Quantum Foundation logo"><img class="gk-bc-mark" src="/gk/images/clients/buddha-ceo-mark.webp" alt="" width="210" height="224" loading="lazy"/><span class="gk-bc-w" aria-hidden="true">Buddha-CEO</span><span class="gk-bc-s" aria-hidden="true">Quantum Foundation</span></div>'
+TYPE_LOGOS = {"Pixel Scoop Studios": PS_LOGO, "GreenMonk Energy Drink": GM_LOGO, "Buddha-CEO Quantum Foundation": BC_LOGO}
 
 CARDS = [  # (pristine linkedin url, image, title, role line 1, role line 2)
     ("https://www.linkedin.com/in/tommy-mccarthy", "/gk/work/geetha-portrait.webp",
@@ -234,6 +245,8 @@ for (url, img, title, r1, r2), (oname, orole) in zip(CARDS, OLD):
     seg, k = re.subn(r'<img src="[^"]*team-person[^"]*"[^>]*class="image-cover"/>',
                      f'<img src="{img}" loading="lazy" width="720" height="900" alt="{"Geetha Krishna" if "portrait" in img else title + " work by Geetha Krishna"}" class="image-cover"/>', seg)
     assert k == 1, title
+    if title in TYPE_LOGOS:  # no logo files: a type logo in each avatar circle
+        seg = re.sub(r'<img src="[^"]*" loading="lazy" width="720" height="900" alt="[^"]*" class="image-cover"/>', lambda _m: TYPE_LOGOS[title], seg, count=1)
     seg = seg.replace(f'>{oname}<', f'>{title}<', 1)
     assert title in seg, oname
     seg = seg.replace(f'>{orole}<br/>Co-Founder<', f'>{r1}<br/>{r2}<', 1)
@@ -243,6 +256,11 @@ for (url, img, title, r1, r2), (oname, orole) in zip(CARDS, OLD):
     m.h = m.h[:start] + seg + m.h[end:]
 m.rep('class="image-cover"/></div><div class="team-person-info">',
       'class="image-cover"/></div><div class="team-person-info">', 3)
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import about_path  # experience cards -> scroll-filled career path
+import about_me  # portrait + bio as one "About me" group
+m.h = about_me.build(m.h)
+m.h = about_path.build(m.h)
 about_html = m.h
 
 with open(os.path.join(OUT, "index.html"), "w", encoding="utf-8") as f:

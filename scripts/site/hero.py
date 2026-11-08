@@ -31,9 +31,12 @@ SLIDES = [
     ("New Day Organics Serum", "AI Video &amp; Editing",
      f'<video src="{W}serum-edit-loop.mp4" poster="{W}serum-edit-poster.webp" autoplay muted loop playsinline '
      'aria-label="New Day Organics serum commercial"></video>'),
+    ("Magnetic Tool Mat", "AI UGC Video Ad",  # 3.6 MB: loads only when it comes to the front
+     f'<video data-src="{W}all/magnetic-tool-mat-ugc-ad.mp4" poster="{W}all/magnetic-tool-mat-ugc-ad.webp" '
+     'muted loop playsinline preload="none" aria-label="Magnetic Tool Mat UGC video ad"></video>'),
 ]
 slides = "".join(
-    f'<figure class="gk-slide" data-title="{t}" data-kind="{k}">{m}</figure>' for t, k, m in SLIDES)
+    f'<figure class="gk-slide{" gk-slide-glass" if t == "GK Constructions" else ""}" data-title="{t}" data-kind="{k}">{m}</figure>' for t, k, m in SLIDES)
 dots = "".join(
     f'<button type="button" class="gk-dot" aria-label="Show {t}"></button>' for t, _, _ in SLIDES)
 
@@ -42,27 +45,26 @@ HERO = f"""<section id="home" class="gk-hero">
 <div class="gk-hero-grid">
   <div class="gk-hero-copy">
     <div class="gk-lockup gk-in"><span class="gk-lock-mark">GK</span><span class="gk-lock-name">Geetha<br/>Krishna</span></div>
-    <h1 class="gk-tagline gk-in">Graphic Designer &amp; Video Editor, Bengaluru</h1>
+    <h1 class="gk-tagline gk-in">Senior Graphic Designer &amp; Video Editor, Bengaluru</h1>
     <p class="gk-bio gk-in">Posters, brand identities, magazines and motion edits for brands that want to be noticed. <b>5+ years. 100+ projects.</b></p>
     <div class="gk-hero-btns gk-in">
       <a href="#contacts" class="gk-btn gk-btn-primary" data-gk-talk>Let’s Talk</a>
       <a href="#work" class="gk-btn gk-btn-ghost">View Work</a>
     </div>
     <div class="gk-icons gk-in">
-      <a href="mailto:{EMAIL}" aria-label="Email"><i class="ph ph-envelope-simple"></i></a>
       <a href="https://wa.me/917989228383" target="_blank" rel="noopener" aria-label="WhatsApp"><i class="ph ph-whatsapp-logo"></i></a>
-      <a href="#" aria-label="Behance"><i class="ph ph-behance-logo"></i></a>
-      <a href="#" aria-label="LinkedIn"><i class="ph ph-linkedin-logo"></i></a>
+      <a href="mailto:{EMAIL}" aria-label="Email"><i class="ph ph-envelope-simple"></i></a>
+      <a href="https://www.linkedin.com/in/krishnadezyner" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="ph ph-linkedin-logo"></i></a>
     </div>
     <div class="gk-clients gk-in"><small>Worked with</small>
-      <div><span>GreenMonk</span><span>Buddha-CEO</span><span>Coastal Cravings</span><span>New Day Organics</span></div>
+      <div><span>Pixel Scoop Studios</span><span>GreenMonk</span><span>Buddha-CEO</span><span class="gk-clients-more">&amp; more clients</span></div>
     </div>
   </div>
   <div class="gk-carousel" role="region" aria-roledescription="carousel" aria-label="Featured work">
     <div class="gk-stage">{slides}</div>
     <div class="gk-caption" aria-live="polite"><span class="gk-cap-title"></span><span class="gk-cap-kind"></span></div>
     <div class="gk-dots">{dots}</div>
-    <button type="button" class="gk-reel-btn" data-gk-reel><i class="ph-fill ph-play"></i>Play showreel</button>
+    <button type="button" class="gk-reel-btn" data-gk-reel hidden><i class="ph-fill ph-play"></i>Play showreel</button>
   </div>
 </div>
 </section>"""
@@ -105,7 +107,7 @@ HEAD = """<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;6
 .gk-icons a{color:#f4f2f6;display:inline-flex;transition:opacity .2s;text-decoration:none}
 .brand,.brand *{text-decoration:none}
 .gk-icons a:hover{opacity:.7}
-.gk-clients{display:grid;gap:10px;border-top:1px solid rgba(244,242,246,.14);padding-top:16px}
+.gk-clients{display:grid;gap:10px;border-top:1px solid rgba(244,242,246,.14);padding-top:16px}.gk-clients .gk-clients-more{font-weight:400;opacity:.55}
 .gk-clients small{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:rgba(244,242,246,.6)}
 .gk-clients div{display:flex;gap:8px 18px;flex-wrap:wrap;font-weight:600;font-size:15px}
 .gk-carousel{position:relative;height:min(74vh,640px);display:grid;grid-template-rows:1fr auto auto auto;justify-items:center;gap:18px}
@@ -113,14 +115,14 @@ HEAD = """<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;6
 .gk-slide{--w:min(25vw,330px);position:absolute;left:50%;top:50%;width:var(--w);aspect-ratio:3/4;
   margin:calc(var(--w) * -2 / 3) 0 0 calc(var(--w) / -2);border-radius:12px;overflow:hidden;background:#111;
   box-shadow:0 40px 90px -30px rgba(80,20,200,.7),0 0 0 1px rgba(255,255,255,.08);will-change:transform}
-.gk-slide img,.gk-slide video{width:100%;height:100%;object-fit:cover;display:block}
+.gk-slide img,.gk-slide video{width:100%;height:100%;object-fit:cover;display:block}.gk-slide.gk-slide-glass{background:linear-gradient(150deg,rgba(255,255,255,.9) 0%,rgba(255,255,255,.74) 45%,rgba(246,243,255,.66) 100%);-webkit-backdrop-filter:blur(18px) saturate(1.5);backdrop-filter:blur(18px) saturate(1.5);box-shadow:inset 0 1px 0 rgba(255,255,255,.85),inset 0 0 0 1px rgba(255,255,255,.5),0 40px 90px -30px rgba(80,20,200,.7)}.gk-slide.gk-slide-glass img{object-fit:contain}
 .gk-caption{display:flex;gap:10px;align-items:baseline;font-size:15px;min-height:22px}
 .gk-cap-title{font-weight:600}
 .gk-cap-kind{color:rgba(244,242,246,.6)}
 .gk-dots{display:flex;gap:8px}
 .gk-dot{width:28px;height:4px;border:0;border-radius:4px;background:rgba(244,242,246,.25);cursor:pointer;padding:0;transition:background .3s,width .3s}
 .gk-dot.on{background:#f4f2f6;width:44px}
-.gk-reel-btn{display:inline-flex;align-items:center;gap:8px;background:none;border:0;color:#f4f2f6;font:500 14px/1 "Wix Madefor Display",sans-serif;
+.gk-reel-btn[hidden]{display:none!important}.gk-reel-btn{display:inline-flex;align-items:center;gap:8px;background:none;border:0;color:#f4f2f6;font:500 14px/1 "Wix Madefor Display",sans-serif;
   cursor:pointer;opacity:.85;padding:6px 8px;border-radius:12px}
 .gk-reel-btn:hover{opacity:1}
 .gk-reel-btn:focus-visible{outline:2px solid #a78bfa;outline-offset:3px}
@@ -153,7 +155,8 @@ JS = """<script>
     var wide=window.innerWidth>=768;
     if(d===0) return {xPercent:0,rotation:0,scale:1,zIndex:3,opacity:1,filter:'brightness(1)'};
     if(d===1) return {xPercent:wide?46:40,rotation:11,scale:.84,zIndex:2,opacity:.95,filter:'brightness(.62)'};
-    return {xPercent:wide?-46:-40,rotation:-11,scale:.84,zIndex:1,opacity:.95,filter:'brightness(.62)'};
+    if(d===n-1) return {xPercent:wide?-46:-40,rotation:-11,scale:.84,zIndex:1,opacity:.95,filter:'brightness(.62)'};
+    return {xPercent:0,rotation:0,scale:.7,zIndex:0,opacity:0,filter:'brightness(.5)'}; // waiting behind the front card
   }
   function render(animate){
     slides.forEach(function(s,k){
@@ -164,6 +167,11 @@ JS = """<script>
     });
     dots.forEach(function(d,k){ d.classList.toggle('on',k===active); d.setAttribute('aria-current',k===active?'true':'false'); });
     capT.textContent=slides[active].dataset.title; capK.textContent=slides[active].dataset.kind;
+    // only the front card's video plays; a video with data-src loads the first time it comes to the front
+    slides.forEach(function(s,k){ var v=s.querySelector('video'); if(!v) return;
+      if(k===active){ if(v.dataset.src&&!v.getAttribute('src')){ v.src=v.dataset.src; v.preload='auto'; }
+        var p=v.play(); if(p&&p.catch) p.catch(function(){}); }
+      else if(!v.paused) v.pause(); });
   }
   function go(k){ active=(k+n)%n; render(true); }
   function start(){ if(reduce) return; stop(); timer=setInterval(function(){ if(!paused) go(active+1); },3200); }

@@ -1041,8 +1041,7 @@ export const CONTACT = {
   email: "geethakrishna.designer@gmail.com",
   phone: "+917989228383",
   socials: [
-    { label: "LinkedIn", href: undefined },
-    { label: "Behance", href: undefined },
+    { label: "LinkedIn", href: "https://www.linkedin.com/in/krishnadezyner" },
     { label: "Instagram", href: undefined },
   ],
 } as const;
