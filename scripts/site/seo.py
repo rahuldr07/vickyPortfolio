@@ -139,8 +139,8 @@ for name, cfg in PAGES.items():
         assert 'h1 class="gk-lockup' in h
         # fill the lockup's spare space with the pen-tool curve art
         h = h.replace('</head>', LOCK_ROLES_CSS + '</head>', 1).replace('</body>', LOCK_ROLES_JS + '</body>', 1)
-        h = h.replace('<h1 class="gk-tagline gk-in">Senior Graphic Designer &amp; Video Editor, Bengaluru</h1>',
-                      '<p class="gk-tagline gk-in">Senior Graphic Designer &amp; Video Editor, Bengaluru</p>', 1)
+        h = h.replace('<h1 class="gk-tagline gk-in">Senior Graphic Designer</h1>',
+                      '<p class="gk-tagline gk-in">Senior Graphic Designer</p>', 1)
         # open-to-work signal above the lockup
         # availability now lives in the pinned top-right badge (polish.py), not in the hero
         h = h.replace('</head>', '<style>.gk-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}'

@@ -45,11 +45,13 @@ HERO = f"""<section id="home" class="gk-hero">
 <div class="gk-hero-grid">
   <div class="gk-hero-copy">
     <div class="gk-lockup gk-in"><span class="gk-lock-mark">GK</span><span class="gk-lock-name">Geetha<br/>Krishna</span></div>
-    <h1 class="gk-tagline gk-in">Senior Graphic Designer &amp; Video Editor, Bengaluru</h1>
-    <p class="gk-bio gk-in">Posters, brand identities, magazines and motion edits for brands that want to be noticed. <b>5+ years. 100+ projects.</b></p>
+    <h1 class="gk-tagline gk-in">Senior Graphic Designer</h1>
+    <p class="gk-subtitle gk-in">Visual Designer <span aria-hidden="true">|</span> UI Designer <span aria-hidden="true">|</span> Video Editor</p>
+    <p class="gk-bio gk-in">I’m Geetha Krishna, a creative professional with <b>5+ years</b> of experience in graphic design and visual communication. I specialize in <em>branding</em>, <em>digital design</em>, <em>UI interfaces</em>, <em>editorial design</em> and <em>video editing</em>, transforming ideas into impactful visual experiences.</p>
+    <p class="gk-open gk-in"><span class="gk-open-dot" aria-hidden="true"></span>Open to Full-time Opportunities &amp; Freelance Projects</p>
     <div class="gk-hero-btns gk-in">
-      <a href="#contacts" class="gk-btn gk-btn-primary" data-gk-talk>Let’s Talk</a>
-      <a href="#work" class="gk-btn gk-btn-ghost">View Work</a>
+      <a href="#contacts" class="gk-btn gk-btn-primary" data-gk-talk>Let’s Connect</a>
+      <a href="#work" class="gk-btn gk-btn-ghost">Explore My Work</a>
     </div>
     <div class="gk-icons gk-in">
       <a href="https://wa.me/917989228383" target="_blank" rel="noopener" aria-label="WhatsApp"><i class="ph ph-whatsapp-logo"></i></a>
@@ -91,9 +93,21 @@ HEAD = """<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;6
 .gk-lockup{display:inline-grid;grid-template-columns:auto 1fr;border:3px solid #f4f2f6;border-radius:12px;overflow:hidden;justify-self:start;min-width:340px}
 .gk-lock-mark{background:#f4f2f6;color:#0c0b0c;font-weight:800;font-size:46px;letter-spacing:-.05em;padding:14px 18px;display:grid;place-items:center}
 .gk-lock-name{font-weight:600;font-size:34px;letter-spacing:-.045em;line-height:.95;padding:12px 18px;display:grid;align-content:center}
+.gk-subtitle{margin:-18px 0 0;font-size:15px;font-weight:500;letter-spacing:.01em;color:rgba(244,242,246,.72)}
+.gk-subtitle span{margin:0 6px;color:#a78bfa}
+.gk-open{display:flex;align-items:center;gap:9px;margin:-6px 0 -8px;font-size:14px;font-weight:600;color:#f4f2f6}
+.gk-open-dot{flex:none;width:8px;height:8px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 4px rgba(34,197,94,.18)}
+/* hero colour hierarchy */
+.gk-hero .gk-tagline{color:#c4b5fd}
+.gk-hero .gk-subtitle{color:#e9e7ec}
+.gk-hero .gk-subtitle span{color:#a78bfa}
+.gk-hero .gk-bio{color:rgba(244,242,246,.62)}
+.gk-hero .gk-bio b{color:#c4b5fd}
+.gk-hero .gk-bio em{font-style:normal;color:#f4f2f6;font-weight:500}
+.gk-hero .gk-open{color:#86efac}
 .gk-tagline{margin:-14px 0 0;font-family:Oswald,sans-serif;font-weight:600;font-size:18.5px;letter-spacing:.02em;
   text-transform:uppercase;line-height:1.15}
-.gk-bio{margin:0;font-size:16px;line-height:1.55;color:rgba(244,242,246,.72);max-width:400px}
+.gk-bio{margin:0;font-size:16px;line-height:1.55;color:rgba(244,242,246,.72);max-width:440px}
 .gk-bio b{color:#f4f2f6;font-weight:600}
 .gk-hero-btns{display:flex;gap:12px;flex-wrap:wrap}
 .gk-btn{display:inline-flex;align-items:center;gap:10px;padding:13px 22px;border-radius:12px;font:600 15px/1 "Wix Madefor Display",sans-serif;
