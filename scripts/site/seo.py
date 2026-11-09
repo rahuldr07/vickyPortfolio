@@ -125,7 +125,7 @@ for name, cfg in PAGES.items():
     about_link = re.search(r'<a text-hover-trigger="" href="/about"[^>]*class="nav-link w-inline-block[^"]*"[^>]*>.*?</a>', h, re.S)
     assert about_link, name
     talk = (re.sub(r' aria-current="page"| w--current', '', about_link.group(0)).replace('href="/about"', 'href="#contacts"')
-            .replace('>About<', '>Let’s Talk<'))
+            .replace('>About<', '>Let’s Connect<'))
     h = h.replace(about_link.group(0), about_link.group(0) + talk, 1)
 
     if name == "index":
