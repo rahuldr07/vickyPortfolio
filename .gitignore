@@ -41,3 +41,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Local editor and assistant config
+CLAUDE.md
+AGENTS.md
+GEMINI.md
+.claude/
+.agents/
+.cursor/
+.github/copilot-instructions.md
