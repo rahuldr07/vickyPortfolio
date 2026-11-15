@@ -9,6 +9,9 @@ const nextConfig: NextConfig = {
   // by the prerendered route handler at src/app/p/[...path]/route.ts.
   async redirects() {
     return [
+      // AI chat answers sometimes glue markdown bold onto links (e.g. https://www.krshna.me/**),
+      // so strip trailing asterisks instead of serving a 404. The query string (utm_*) is kept.
+      { source: "/:path(.*?):stars(\\*+)", destination: "/:path", permanent: true },
       { source: "/mission", destination: "/about", permanent: true },
       { source: "/p/index", destination: "/", permanent: true },
       { source: "/p/:page(work|about|freelance-graphic-designer-bangalore|freelance-video-editor-bangalore)", destination: "/:page", permanent: true },
