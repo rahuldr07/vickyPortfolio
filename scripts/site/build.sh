@@ -17,4 +17,5 @@ python3 -I "$HERE/project.py" "$ROOT"                  # one page per project
 python3 -I "$HERE/polish.py" "$ROOT" "$HERE/icons"     # icons, fonts, contact form, lazy video, a11y
 python3 -I "$HERE/seo_reach.py" "$ROOT"                  # hire-me SEO: titles, JSON-LD (sameAs, occupations, worldwide)
 python3 -I "$HERE/landing.py" "$ROOT"                    # Bangalore landing pages + footer links
+python3 -I "$HERE/home_seo.py" "$ROOT"                   # homepage about, skills, FAQ, video JSON-LD
 echo "site pages rebuilt. Run 'npm run build' to prerender them."
