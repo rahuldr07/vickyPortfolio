@@ -35,6 +35,7 @@ PAGES = [
               'I design logos and brand identities, campaign posters, social media creatives, magazines, menu cards, '
               'hoardings and web banners for brands in Bangalore, across India and worldwide.'),
         service='Freelance graphic design',
+        place='in Bangalore',
         services=[('Logo design & brand identity', 'Logos, marks and identity systems that are easy to remember.'),
                   ('Posters & campaign key visuals', 'Product posters and campaigns built to stop the scroll.'),
                   ('Social media creatives', 'Post and story designs for consistent, on-brand feeds.'),
@@ -66,6 +67,7 @@ PAGES = [
               'projects. I edit product films, social reels, motion graphics, AI video and UGC-style ads for brands '
               'in Bangalore, across India and worldwide.'),
         service='Freelance video editing',
+        place='in Bangalore',
         services=[('Product films & commercials', 'Short brand films with clean pacing and studio-quality finish.'),
                   ('Reels & social video', 'Vertical edits for Instagram, YouTube Shorts and ads.'),
                   ('Motion graphics', 'Animated titles, captions and graphics that carry the story.'),
@@ -90,6 +92,133 @@ PAGES = [
     ),
 ]
 
+# Location-free pages for clients anywhere who search "freelance graphic designer", "hire a freelancer",
+# "freelance logo designer" or "freelance video editor": an individual freelancer, not an agency.
+WHY_FREELANCER = [
+    ('You work directly with the designer', 'No account managers or hand-offs: the person you brief is the person designing.'),
+    ('One-off or ongoing', 'A single logo or poster, a campaign, or a monthly retainer for social and print.'),
+    ('Remote, worldwide', 'Brief, feedback and delivery happen online, so location is never a problem.'),
+    ('Ready-to-use files', 'Final files prepared for print, web and every social platform.'),
+]
+PROCESS = [
+    ('Share your brief', 'Tell me what you need, who it is for, and your deadline.'),
+    ('Concepts', 'I share first directions based on your brand and goals.'),
+    ('Refine', 'We polish the chosen direction together with your feedback.'),
+    ('Final files', 'You get production-ready files in the formats you need.'),
+]
+PAGES += [
+    dict(
+        slug='freelance-graphic-designer',
+        title='Freelance Graphic Designer for Hire | Geetha Krishna',
+        desc=('Hire Geetha Krishna, an independent freelance graphic designer (5+ years, 100+ projects) for logos, '
+              'branding, posters, social media and print. Remote for clients worldwide, based in India.'),
+        eyebrow='Independent freelance graphic designer · Remote worldwide',
+        h1='Freelance Graphic Designer for Hire',
+        lede=('Looking for a freelance graphic designer? I’m Geetha Krishna, an independent senior designer with 5+ years '
+              'and 100+ projects. I design logos, brand identities, posters, social media creatives, magazines and print '
+              'for startups, small businesses and brands across India and worldwide, working with you directly.'),
+        service='Freelance graphic design',
+        place='for clients worldwide',
+        services=[('Logo design & brand identity', 'Logos, marks and identity systems that are easy to remember.'),
+                  ('Social media creatives', 'Post, story and ad designs for consistent, on-brand feeds.'),
+                  ('Posters & campaigns', 'Product posters and campaign key visuals built to stop the scroll.'),
+                  ('Brochures, flyers & print', 'Brochures, flyers, standees, menus and print-ready artwork.'),
+                  ('Magazine & editorial design', 'Covers and inner layouts for print and digital issues.'),
+                  ('Banners & hoardings', 'Web banners, billboards and hoardings in every size.')],
+        tools='Photoshop, Illustrator, Figma, Adobe XD and Wix',
+        cats=['Brand Identity', 'Posters & Campaigns', 'Editorial & Print', 'Digital & Outdoor'],
+        max_cards=9,
+        why=WHY_FREELANCER, process=PROCESS,
+        faq=[('Are you an individual freelancer or an agency?',
+              'I’m an individual, independent freelance graphic designer. You work with me directly from brief to final files.'),
+             ('Do you work with clients outside India?',
+              'Yes. I work remotely with clients worldwide. Briefs, feedback and file delivery all happen online.'),
+             ('What can I hire you for?',
+              'Logo design and brand identity, social media creatives, posters and campaigns, brochures, flyers and print, '
+              'magazine and editorial layouts, and web banners and hoardings.'),
+             ('Can I hire you for a single small project?',
+              'Yes. I take on one-off projects like a logo or a poster, as well as ongoing monthly design work.'),
+             ('Which tools do you use?',
+              'Adobe Photoshop, Illustrator, Figma, Adobe XD and Wix, plus Premiere Pro, After Effects and DaVinci Resolve for video.'),
+             ('How do I hire you?',
+              f'Use the Let’s Talk form on this page, message me on WhatsApp, or email {EMAIL} with your brief and deadline.')],
+    ),
+    dict(
+        slug='freelance-logo-designer',
+        title='Freelance Logo Designer & Brand Identity Designer | Geetha Krishna',
+        desc=('Hire Geetha Krishna, a freelance logo designer and brand identity designer for startups and small '
+              'businesses. Logos, emblems and brand marks, remote for clients worldwide.'),
+        eyebrow='Freelance logo & brand identity designer',
+        h1='Freelance Logo Designer',
+        lede=('I’m Geetha Krishna, an independent graphic designer who creates logos and brand identities for startups, '
+              'restaurants, construction firms and growing brands. From a single logo to a full identity with signage '
+              'and print, you work with me directly, remotely from anywhere.'),
+        service='Freelance logo design',
+        place='for startups and small businesses',
+        services=[('Logo design', 'Wordmarks, symbols and combination marks that stay clear at every size.'),
+                  ('Emblems & crests', 'Badge and crest logos for firms, clubs and institutions.'),
+                  ('Brand identity', 'Colours, type and usage so the brand looks the same everywhere.'),
+                  ('Signage & applications', 'Logos applied to signboards, menus, packaging and stationery.'),
+                  ('Logo refresh', 'Modernising an existing logo without losing recognition.'),
+                  ('Brand launch creatives', 'Launch posters and social posts that introduce the new identity.')],
+        tools='Illustrator, Photoshop and Figma',
+        cats=['Brand Identity'],
+        max_cards=7,
+        why=WHY_FREELANCER, process=PROCESS,
+        faq=[('Are you a freelance logo designer?',
+              'Yes. I’m an independent freelance graphic designer, and logo design and brand identity are a core part of my work.'),
+             ('What kinds of logos have you designed?',
+              'Restaurant and food brand logos, construction firm emblems, tech marks and editorial brand marks. '
+              'See the projects on this page.'),
+             ('What files do I get with my logo?',
+              'Print and web ready files of the final logo for signage, packaging, documents and social media.'),
+             ('Do you design logos for clients outside India?',
+              'Yes. I work remotely with clients worldwide.'),
+             ('How do I start a logo project?',
+              f'Use the Let’s Talk form on this page, message me on WhatsApp, or email {EMAIL} with your business name, '
+              'what you do and any references you like.')],
+    ),
+    dict(
+        slug='freelance-video-editor',
+        title='Freelance Video Editor for Hire | Geetha Krishna',
+        desc=('Hire Geetha Krishna, an independent freelance video editor for product films, reels, YouTube videos, '
+              'motion graphics, AI video and UGC ads. Remote for clients worldwide.'),
+        eyebrow='Independent freelance video editor · Remote worldwide',
+        h1='Freelance Video Editor for Hire',
+        lede=('Looking for a freelance video editor? I’m Geetha Krishna, an independent video editor and graphic designer '
+              'with 5+ years and 100+ projects. I edit product films, Instagram reels, YouTube videos, motion graphics, '
+              'AI video and UGC-style ads for brands and creators worldwide, working with you directly.'),
+        service='Freelance video editing',
+        place='for brands and creators',
+        services=[('Reels & shorts', 'Vertical edits for Instagram Reels, YouTube Shorts and ads.'),
+                  ('YouTube videos', 'Edits with pacing, captions, titles and thumbnails.'),
+                  ('Product films & commercials', 'Short brand films with clean pacing and a polished finish.'),
+                  ('Motion graphics', 'Animated titles, captions and graphics that carry the story.'),
+                  ('AI video & UGC ads', 'AI-assisted product shots and creator-style ads built to convert.'),
+                  ('Colour & finishing', 'Colour, sound clean-up and exports for every platform.')],
+        tools='Premiere Pro, After Effects and DaVinci Resolve',
+        cats=['Video & Motion'],
+        max_cards=6,
+        why=WHY_FREELANCER,
+        process=[('Share your footage', 'Send your clips, brief, references and deadline.'),
+                 ('First cut', 'I edit a first version with pacing, music and captions.'),
+                 ('Revisions', 'We refine the edit together with your feedback.'),
+                 ('Final export', 'You get final videos sized for every platform.')],
+        faq=[('Are you an individual freelance video editor?',
+              'Yes. I’m an independent freelance video editor, so you work with me directly from footage to final export.'),
+             ('What videos do you edit?',
+              'Instagram reels and YouTube Shorts, YouTube videos, product films and commercials, motion graphics, '
+              'AI video and UGC-style ads.'),
+             ('Which video editing software do you use?',
+              'Premiere Pro, After Effects and DaVinci Resolve, with Photoshop and Illustrator for graphics and thumbnails.'),
+             ('Do you edit for international clients?',
+              'Yes. I work remotely with brands and creators worldwide.'),
+             ('How do I hire you for video editing?',
+              f'Use the Let’s Talk form on this page, message me on WhatsApp, or email {EMAIL} with your footage, '
+              'brief and deadline.')],
+    ),
+]
+
 CSS = """<style>
 .gk-lp{max-width:1280px;margin:0 auto;padding:0 6vw 40px}
 .gk-lp-eyebrow{margin:0;font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:#a78bfa}
@@ -111,6 +240,9 @@ CSS = """<style>
 .gk-lp-faq details[open] summary::after{transform:rotate(45deg)}
 .gk-lp-faq p{margin:10px 0 0;color:rgba(244,242,246,.75);line-height:1.6}
 .gk-lp-more{margin-top:18px}
+.gk-lp-steps{counter-reset:s}.gk-lp-steps li{counter-increment:s}
+.gk-lp-steps h3::before{content:counter(s,decimal-leading-zero) "  ";color:#a78bfa}
+.gk-lp-related{display:flex;flex-wrap:wrap;gap:10px;margin:0;padding:0;list-style:none}
 @media (max-width:479px){.gk-lp{padding:0 20px 24px}}
 </style>"""
 
@@ -138,7 +270,16 @@ def build(p):
     grid = ''.join(CARDS[w['slug']] for w in items if w['slug'] in CARDS)
     services = ''.join(f'<li><h3>{esc(t)}</h3><p>{esc(d)}</p></li>' for t, d in p['services'])
     faq = ''.join(f'<details><summary>{esc(q)}</summary><p>{esc(a)}</p></details>' for q, a in p['faq'])
-    other = PAGES[1] if p is PAGES[0] else PAGES[0]
+    related = ''.join(f'<li><a class="gk-btn gk-btn-ghost" href="/{o["slug"]}">{esc(o["h1"])}</a></li>'
+                      for o in PAGES if o is not p)
+    local = p['place'] == 'in Bangalore'
+    extra = ''
+    if p.get('why'):
+        extra += ('<section class="gk-lp-sec"><h2>Why hire an independent freelancer</h2><ul class="gk-lp-services">'
+                  + ''.join(f'<li><h3>{esc(t)}</h3><p>{esc(d)}</p></li>' for t, d in p['why']) + '</ul></section>')
+    if p.get('process'):
+        extra += ('<section class="gk-lp-sec"><h2>How it works</h2><ul class="gk-lp-services gk-lp-steps">'
+                  + ''.join(f'<li><h3>{esc(t)}</h3><p>{esc(d)}</p></li>' for t, d in p['process']) + '</ul></section>')
     main = (
         '<main class="main gk-work-main">'
         '<section class="gk-work-head">'
@@ -151,10 +292,11 @@ def build(p):
         '<a class="gk-btn gk-btn-ghost" href="/work">See all work</a></div></section>'
         '<div class="gk-lp">'
         '<section class="gk-lp-sec"><ul class="gk-lp-facts">'
-        '<li><b>5+</b>years</li><li><b>100+</b>projects</li><li><b>Bengaluru</b>Bangalore based</li>'
-        '<li><b>Worldwide</b>remote clients</li></ul></section>'
-        f'<section class="gk-lp-sec"><h2>{esc(p["service"].capitalize())} services in Bangalore</h2>'
-        f'<ul class="gk-lp-services">{services}</ul></section>'
+        '<li><b>5+</b>years</li><li><b>100+</b>projects</li>'
+        + ('<li><b>Bengaluru</b>Bangalore based</li>' if local else '<li><b>1:1</b>you work directly with me</li>')
+        + '<li><b>Worldwide</b>remote clients</li></ul></section>'
+        f'<section class="gk-lp-sec"><h2>{esc(p["service"].capitalize())} services {esc(p["place"])}</h2>'
+        f'<ul class="gk-lp-services">{services}</ul></section>' + extra +
         f'<section class="gk-lp-sec"><h2>Selected work</h2></section></div>'
         f'<section class="gk-work-grid-wrap"><ul class="gk-work-grid">{grid}</ul>'
         '<p class="gk-lp-more"><a class="gk-btn gk-btn-ghost" href="/work">See all projects</a></p></section>'
@@ -166,13 +308,14 @@ def build(p):
         f'<section class="gk-lp-sec"><h2>Frequently asked questions</h2><div class="gk-lp-faq">{faq}</div></section>'
         '<section class="gk-lp-sec"><h2>Start your project</h2>'
         '<p class="gk-lp-text">Available now for freelance projects, and open to full-time and part-time roles, '
-        f'remote worldwide or on-site in Bengaluru. Also see: <a href="/{other["slug"]}" style="color:#a78bfa">'
-        f'{esc(other["h1"])}</a>.</p>'
+        'remote worldwide or on-site in Bengaluru.</p>'
         '<div class="gk-lp-ctas" style="margin-top:18px">'
         f'<a class="gk-btn gk-btn-primary" data-gk-talk href="mailto:{EMAIL}?subject=Project%20enquiry">Let’s Talk</a>'
         f'<a class="gk-btn gk-btn-ghost" href="mailto:{EMAIL}">Email</a>'
         f'<a class="gk-btn gk-btn-ghost" href="{LINKEDIN}" target="_blank" rel="noopener noreferrer">LinkedIn</a>'
-        '</div></section></div></main>')
+        '</div></section>'
+        f'<section class="gk-lp-sec"><h2>Related services</h2><ul class="gk-lp-related">{related}</ul></section>'
+        '</div></main>')
     a, b = h.index('<main class="main gk-work-main">'), h.index('</main>') + len('</main>')
     h = h[:a] + main + h[b:]
     # drop the Work page's filter/lightbox script and dialog (not on this page)
@@ -189,11 +332,11 @@ def build(p):
         h = re.sub(r'(<meta ' + attr + r' content=")[^"]*(")', lambda m: m.group(1) + esc(val) + m.group(2), h, count=1)
     h = re.sub(r'<link rel="canonical" href="[^"]*"/>', f'<link rel="canonical" href="{url}"/>', h, count=1)
     ld = {'@context': 'https://schema.org', '@graph': [
-        {'@type': 'Service', '@id': url + '#service', 'name': f'{p["service"]} in Bangalore',
+        {'@type': 'Service', '@id': url + '#service', 'name': f'{p["service"]} {p["place"]}',
          'serviceType': p['service'], 'url': url, 'description': p['desc'],
          'provider': {'@id': SITE + '/#person'},
-         'areaServed': [{'@type': 'City', 'name': 'Bengaluru', 'alternateName': 'Bangalore'},
-                        {'@type': 'Country', 'name': 'India'}, {'@type': 'Place', 'name': 'Worldwide'}],
+         'areaServed': ([{'@type': 'City', 'name': 'Bengaluru', 'alternateName': 'Bangalore'}] if local else [])
+                       + [{'@type': 'Country', 'name': 'India'}, {'@type': 'Place', 'name': 'Worldwide'}],
          'hasOfferCatalog': {'@type': 'OfferCatalog', 'name': p['service'], 'itemListElement': [
              {'@type': 'Offer', 'itemOffered': {'@type': 'Service', 'name': t, 'description': d}} for t, d in p['services']]}},
         {'@type': 'Person', '@id': SITE + '/#person', 'name': 'Geetha Krishna',
@@ -219,13 +362,18 @@ for p in PAGES:
     print(f'landing: /{p["slug"]} ({n} project cards, {len(p["faq"])} FAQs)')
 
 # footer links to the landing pages on every page (internal links help them rank)
-LINKS = ''.join(f'<a href="/{p["slug"]}" class="policy-link">{esc(p["h1"].replace(" in Bangalore", ", Bangalore"))}</a>'
-                for p in PAGES)
+FOOTER = [('freelance-graphic-designer', 'Hire a Freelance Designer'),
+          ('freelance-graphic-designer-bangalore', 'Freelance Graphic Designer, Bangalore'),
+          ('freelance-video-editor-bangalore', 'Freelance Video Editor, Bangalore')]
+LINKS = ''.join(f'<a href="/{slug}" class="policy-link">{esc(label)}</a>' for slug, label in FOOTER)
 n = 0
 for f in glob.glob(os.path.join(SP, '*.html')) + glob.glob(os.path.join(SP, 'work', '*.html')):
     h = open(f, encoding='utf-8').read()
-    if 'href="/freelance-graphic-designer-bangalore" class="policy-link"' in h:
+    if 'href="/freelance-graphic-designer" class="policy-link"' in h:
         continue
+    # replace any older set of landing-page footer links
+    h = re.sub(r'(<div class="footer-policy-links">)(?:<a href="/freelance-[a-z-]+" class="policy-link">[^<]*</a>)+',
+               r'\1', h)
     o = '<div class="footer-policy-links">'
     if o in h:
         h = h.replace(o, o + LINKS, 1)

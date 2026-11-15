@@ -14,7 +14,7 @@ const nextConfig: NextConfig = {
       { source: "/:path(.*?):stars(\\*+)", destination: "/:path", permanent: true },
       { source: "/mission", destination: "/about", permanent: true },
       { source: "/p/index", destination: "/", permanent: true },
-      { source: "/p/:page(work|about|freelance-graphic-designer-bangalore|freelance-video-editor-bangalore)", destination: "/:page", permanent: true },
+      { source: "/p/:page(work|about|freelance-graphic-designer-bangalore|freelance-video-editor-bangalore|freelance-graphic-designer|freelance-logo-designer|freelance-video-editor)", destination: "/:page", permanent: true },
       { source: "/p/work/:slug", destination: "/work/:slug", permanent: true },
     ];
   },
@@ -35,7 +35,7 @@ const nextConfig: NextConfig = {
         { source: "/work/:slug", destination: "/p/work/:slug" },
         { source: "/about", destination: "/p/about" },
         {
-          source: "/:page(freelance-graphic-designer-bangalore|freelance-video-editor-bangalore)",
+          source: "/:page(freelance-graphic-designer-bangalore|freelance-video-editor-bangalore|freelance-graphic-designer|freelance-logo-designer|freelance-video-editor)",
           destination: "/p/:page",
         },
       ],

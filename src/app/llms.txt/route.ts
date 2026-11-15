@@ -26,6 +26,7 @@ export function GET() {
   const body = `# Geetha Krishna: Senior Graphic Designer & Video Editor
 
 > Senior graphic designer and video editor based in Bengaluru, India, with 5+ years and 100+ projects.
+> An independent, individual freelancer (not an agency): clients work with Geetha directly.
 > Available for freelance projects and for full-time or part-time roles, remote worldwide or on-site in Bengaluru.
 
 ## Hire / contact
@@ -54,6 +55,9 @@ Photoshop, Illustrator, Premiere Pro, After Effects, DaVinci Resolve, Figma, Ado
 - [Home](${site}/): overview, featured work, services
 - [Work](${site}/work): all ${work.length} projects, filterable by category
 - [About](${site}/about): bio, tools and experience
+- [Freelance Graphic Designer for Hire](${site}/freelance-graphic-designer): hire an independent freelance graphic designer, remote for clients worldwide: logos, branding, posters, social media, print
+- [Freelance Logo Designer](${site}/freelance-logo-designer): freelance logo and brand identity design for startups and small businesses
+- [Freelance Video Editor for Hire](${site}/freelance-video-editor): hire an independent freelance video editor, remote worldwide: reels, YouTube videos, product films, motion graphics, AI video, UGC ads
 - [Freelance Graphic Designer in Bangalore](${site}/freelance-graphic-designer-bangalore): hire a senior freelance graphic designer in Bangalore (Bengaluru) for logos, branding, posters, social media and print
 - [Freelance Video Editor in Bangalore](${site}/freelance-video-editor-bangalore): hire a freelance video editor in Bangalore (Bengaluru) for product films, reels, motion graphics, AI video and UGC ads
 

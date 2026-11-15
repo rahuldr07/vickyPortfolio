@@ -10,7 +10,8 @@ import { notFoundResponse } from "../not-found-response";
 // One handler for both keeps `next dev` fast: with two route handlers, switching between a main page
 // and a project page reloaded the other handler (~0.7 s per click).
 // {{SITE_URL}} becomes the deployed origin so canonical, Open Graph and JSON-LD URLs are absolute.
-const PAGES = ["index", "work", "about", "freelance-graphic-designer-bangalore", "freelance-video-editor-bangalore"];
+const PAGES = ["index", "work", "about", "freelance-graphic-designer-bangalore", "freelance-video-editor-bangalore",
+  "freelance-graphic-designer", "freelance-logo-designer", "freelance-video-editor"];
 const SLUGS = work.map((item) => item.slug);
 const SLUG_SET = new Set(SLUGS);
 
