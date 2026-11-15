@@ -112,7 +112,7 @@ for name, cfg in PAGES.items():
             '<meta name="twitter:card" content="summary_large_image"/>'
             f'<meta name="twitter:title" content="{cfg["title"]}"/><meta name="twitter:description" content="{cfg["desc"]}"/>'
             f'<meta name="twitter:image" content="{OG}"/>'
-            '<link rel="icon" href="/favicon.ico" sizes="any"/><link rel="manifest" href="/manifest.webmanifest"/>'
+            '<link rel="icon" href="/favicon.ico?v=2" sizes="any"/><link rel="icon" href="/icon.svg?v=2" type="image/svg+xml"/><link rel="apple-touch-icon" href="/apple-touch-icon.png?v=2"/><link rel="manifest" href="/manifest.webmanifest"/>'
             f'<script type="application/ld+json">{ld}</script>')
     assert h.count('<meta charset="utf-8"/>') == 1, name
     h = h.replace('<meta charset="utf-8"/>', '<meta charset="utf-8"/>' + head, 1)

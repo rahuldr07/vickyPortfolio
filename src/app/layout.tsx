@@ -39,9 +39,12 @@ export const metadata: Metadata = {
   // The public pages are static HTML in /site-pages with their own canonical/robots tags.
   // This layout now only wraps the 404 page, so it must not declare a canonical or "index".
   icons: {
-    icon: [{ url: "/favicon.ico", sizes: "any" }],
-    shortcut: ["/favicon.ico"],
-    apple: [{ url: "/profile.png", type: "image/png" }],
+    icon: [
+      { url: "/favicon.ico?v=2", sizes: "any" },
+      { url: "/icon.svg?v=2", type: "image/svg+xml" },
+    ],
+    shortcut: ["/favicon.ico?v=2"],
+    apple: [{ url: "/apple-touch-icon.png?v=2", sizes: "180x180", type: "image/png" }],
   },
   manifest: "/manifest.webmanifest",
   openGraph: {
