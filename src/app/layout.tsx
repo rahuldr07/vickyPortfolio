@@ -7,7 +7,6 @@ import "./globals.css";
 import { CONTACT, SITE_META, TOOLS } from "@/content/portfolio";
 import WebVitals from "@/components/WebVitals";
 import SmoothScroll from "@/components/SmoothScroll";
-import MobileDesktopNotice from "@/components/MobileDesktopNotice";
 
 const montserrat = Montserrat({
   weight: ["400", "500", "600", "700", "800", "900"],
@@ -201,7 +200,6 @@ export default function RootLayout({
         />
         <WebVitals />
         <SmoothScroll />
-        <MobileDesktopNotice />
         <a
           href="#main-content"
           className="sr-only focus:not-sr-only focus:fixed focus:left-6 focus:top-6 focus:z-50 focus:rounded-full focus:bg-[var(--color-accent)] focus:px-4 focus:py-2 focus:text-sm focus:font-bold focus:text-[#0B0B0F]"
