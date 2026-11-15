@@ -29,17 +29,18 @@ def esc(s):
 
 ABOUT = ('I’m Geetha Krishna, an independent senior graphic designer and video editor based in Bengaluru (Bangalore), '
          'India, with 5+ years and 100+ projects. I design logos and brand identities, posters, social media creatives, '
-         'magazines, menu cards, hoardings and web banners, and I edit product films, reels, motion graphics, AI video '
-         'and UGC ads. I work directly with startups, small businesses, creators and brands in Bangalore, across India '
+         'magazines, menu cards, hoardings and web banners, and as a freelance video editor I edit reels, product films '
+         'and motion graphics and create AI UGC ads and AI video ads. I work directly with startups, small businesses, creators and brands in Bangalore, across India '
          'and worldwide. Available for freelance projects, and open to full-time and part-time roles.')
 LINKS = [('freelance-graphic-designer', 'Hire a freelance graphic designer'),
          ('freelance-logo-designer', 'Freelance logo designer'),
          ('freelance-video-editor', 'Freelance video editor'),
+         ('ai-ugc-ads', 'AI UGC ads & AI video editing'),
          ('freelance-graphic-designer-bangalore', 'Graphic designer in Bangalore'),
          ('freelance-video-editor-bangalore', 'Video editor in Bangalore')]
 SKILLS = ['Logo design', 'Brand identity', 'Poster design', 'Social media creatives', 'Magazine & editorial design',
           'Menu cards & print', 'Hoardings & web banners', 'Video editing', 'Reels & shorts', 'Motion graphics',
-          'AI video', 'UGC ads', 'Photoshop', 'Illustrator', 'Premiere Pro', 'After Effects', 'DaVinci Resolve',
+          'AI video editing', 'AI UGC ads', 'AI product commercials', 'Photoshop', 'Illustrator', 'Premiere Pro', 'After Effects', 'DaVinci Resolve',
           'Figma', 'Adobe XD', 'Wix']
 FAQ = [
     ('Are you a freelance graphic designer in Bangalore available for new projects?',
@@ -54,6 +55,9 @@ FAQ = [
     ('How much does a freelance graphic designer charge?',
      'It depends on the scope: a single logo or poster costs less than a full brand identity or a monthly content '
      'plan. Share your brief and deadline and I’ll send a clear quote.'),
+    ('Do you make AI UGC ads?',
+     'Yes. I create AI-generated UGC-style ads and AI product commercials for brands, then edit them with hooks, '
+     'captions, music and colour, ready for Reels, Shorts and paid social.'),
     ('Do you work with clients outside Bangalore and India?',
      'Yes. Most projects run remotely, so I work with clients across India and worldwide.'),
     ('Which tools do you use?',
@@ -86,7 +90,7 @@ CSS = """<style id="gk-home-seo-css">
 section = (
     '<section class="gk-hs" id="hire" aria-labelledby="gk-hs-title">'
     '<p class="gk-hs-eyebrow">Available for freelance · Remote · Bengaluru</p>'
-    '<h2 id="gk-hs-title">Freelance graphic designer &amp; video editor in Bengaluru</h2>'
+    '<h2 id="gk-hs-title">Freelance graphic designer, video editor &amp; AI UGC ads creator in Bengaluru</h2>'
     f'<p class="gk-hs-text">{esc(ABOUT)}</p>'
     '<ul class="gk-hs-links">' + ''.join(f'<li><a href="/{s}">{esc(t)}</a></li>' for s, t in LINKS) + '</ul>'
     '<ul class="gk-hs-skills" aria-label="Skills">' + ''.join(f'<li>{esc(s)}</li>' for s in SKILLS) + '</ul>'
@@ -99,7 +103,7 @@ section = (
 videos = [w for w in work if w['type'] == 'video']
 ld = {'@context': 'https://schema.org', '@graph': [
     {'@type': 'WebPage', '@id': SITE + '/#webpage', 'url': SITE + '/',
-     'name': 'Freelance Graphic Designer & Video Editor, Bengaluru | Geetha Krishna',
+     'name': 'Freelance Graphic Designer, Video Editor & AI UGC Ads | Geetha Krishna',
      'description': re.search(r'<meta name="description" content="([^"]*)"', h).group(1).replace('&amp;', '&'),
      'inLanguage': 'en-IN', 'isPartOf': {'@id': SITE + '/#website'}, 'about': {'@id': SITE + '/#person'},
      'primaryImageOfPage': {'@type': 'ImageObject', 'url': SITE + '/gk/og.jpg', 'width': 1200, 'height': 630}},
@@ -114,7 +118,7 @@ ld = {'@context': 'https://schema.org', '@graph': [
 LD = '<script type="application/ld+json" id="gk-home-seo-ld">' + json.dumps(ld, ensure_ascii=False).replace('</', '<\\/') + '</script>'
 KEYWORDS = ('freelance graphic designer, freelance graphic designer Bangalore, freelance graphic designer Bengaluru, '
             'graphic designer for hire, independent graphic designer, freelance logo designer, brand identity designer, '
-            'freelance video editor, freelance video editor Bangalore, social media designer, poster designer, '
+            'freelance video editor, freelance video editor Bangalore, AI UGC ads, AI UGC ad creator, AI video ads, AI video editing, social media designer, poster designer, '
             'AI video editor, UGC ad editor, Geetha Krishna')
 
 # idempotent: drop anything a previous run added

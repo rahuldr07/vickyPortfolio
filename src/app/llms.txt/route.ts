@@ -23,7 +23,7 @@ export function GET() {
     )
     .join("\n\n");
 
-  const body = `# Geetha Krishna: Senior Graphic Designer & Video Editor
+  const body = `# Geetha Krishna: Freelance Graphic Designer, Video Editor & AI UGC Ads Creator
 
 > Senior graphic designer and video editor based in Bengaluru, India, with 5+ years and 100+ projects.
 > An independent, individual freelancer (not an agency): clients work with Geetha directly.
@@ -41,7 +41,8 @@ export function GET() {
 - Posters, campaign key visuals and social media creatives
 - Magazine, editorial and print design (covers, inner layouts, menu cards)
 - Hoardings, billboards and web banners
-- Video editing, motion graphics, product films and AI video / UGC ads
+- Video editing: reels, YouTube videos, product films and motion graphics
+- AI video editing: AI UGC ads, AI-generated product commercials and AI ad variants
 
 ## Tools
 Photoshop, Illustrator, Premiere Pro, After Effects, DaVinci Resolve, Figma, Adobe XD, Wix
@@ -57,7 +58,8 @@ Photoshop, Illustrator, Premiere Pro, After Effects, DaVinci Resolve, Figma, Ado
 - [About](${site}/about): bio, tools and experience
 - [Freelance Graphic Designer for Hire](${site}/freelance-graphic-designer): hire an independent freelance graphic designer, remote for clients worldwide: logos, branding, posters, social media, print
 - [Freelance Logo Designer](${site}/freelance-logo-designer): freelance logo and brand identity design for startups and small businesses
-- [Freelance Video Editor for Hire](${site}/freelance-video-editor): hire an independent freelance video editor, remote worldwide: reels, YouTube videos, product films, motion graphics, AI video, UGC ads
+- [Freelance Video Editor & AI Video Editor for Hire](${site}/freelance-video-editor): hire an independent freelance video editor and AI video editor, remote worldwide: reels, YouTube videos, product films, motion graphics, AI video ads, UGC ads
+- [AI UGC Ads & AI Video Editing](${site}/ai-ugc-ads): AI UGC ads, AI-generated product commercials and AI ad variants for brands, edited and captioned; freelance, remote worldwide
 - [Freelance Graphic Designer in Bangalore](${site}/freelance-graphic-designer-bangalore): hire a senior freelance graphic designer in Bangalore (Bengaluru) for logos, branding, posters, social media and print
 - [Freelance Video Editor in Bangalore](${site}/freelance-video-editor-bangalore): hire a freelance video editor in Bangalore (Bengaluru) for product films, reels, motion graphics, AI video and UGC ads
 

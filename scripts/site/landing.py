@@ -58,14 +58,14 @@ PAGES = [
     ),
     dict(
         slug='freelance-video-editor-bangalore',
-        title='Freelance Video Editor in Bangalore | Geetha Krishna',
-        desc=('Hire Geetha Krishna, a freelance video editor in Bangalore (Bengaluru): product films, reels, '
-              'motion graphics, AI video and UGC ads for brands. Remote worldwide too.'),
-        eyebrow='Freelance video editor · Bangalore',
-        h1='Freelance Video Editor in Bangalore',
-        lede=('I’m Geetha Krishna, a video editor and graphic designer based in Bengaluru with 5+ years and 100+ '
-              'projects. I edit product films, social reels, motion graphics, AI video and UGC-style ads for brands '
-              'in Bangalore, across India and worldwide.'),
+        title='Freelance Video Editor & AI Video Editor in Bangalore | Geetha Krishna',
+        desc=('Hire Geetha Krishna, a freelance video editor and AI video editor in Bangalore (Bengaluru): reels, '
+              'product films, motion graphics, AI video ads and UGC ads for brands. Remote worldwide too.'),
+        eyebrow='Freelance video editor & AI video editor · Bangalore',
+        h1='Freelance Video Editor & AI Video Editor in Bangalore',
+        lede=('I’m Geetha Krishna, a freelance video editor and AI video editor based in Bengaluru with 5+ years and '
+              '100+ projects. I edit reels, product films and motion graphics, and I create AI-generated video ads and '
+              'UGC-style ads for brands in Bangalore, across India and worldwide.'),
         service='Freelance video editing',
         place='in Bangalore',
         services=[('Product films & commercials', 'Short brand films with clean pacing and studio-quality finish.'),
@@ -81,6 +81,9 @@ PAGES = [
               'Yes. I’m based in Bengaluru (Bangalore) and edit for brands in Bangalore, across India and worldwide, remotely or on-site.'),
              ('What kind of videos do you edit?',
               'Product films and commercials, social reels and shorts, motion graphics, AI video and UGC-style ads.'),
+             ('Do you do AI video editing in Bangalore?',
+              'Yes. I create AI-generated product commercials and UGC-style ads from prompt-driven shots, then edit, '
+              'caption and finish them like any other video.'),
              ('Which software do you use for video editing?',
               'Premiere Pro, After Effects and DaVinci Resolve, alongside Photoshop and Illustrator for graphics.'),
              ('Do you work with international clients?',
@@ -180,14 +183,15 @@ PAGES += [
     ),
     dict(
         slug='freelance-video-editor',
-        title='Freelance Video Editor for Hire | Geetha Krishna',
-        desc=('Hire Geetha Krishna, an independent freelance video editor for product films, reels, YouTube videos, '
-              'motion graphics, AI video and UGC ads. Remote for clients worldwide.'),
-        eyebrow='Independent freelance video editor · Remote worldwide',
-        h1='Freelance Video Editor for Hire',
-        lede=('Looking for a freelance video editor? I’m Geetha Krishna, an independent video editor and graphic designer '
-              'with 5+ years and 100+ projects. I edit product films, Instagram reels, YouTube videos, motion graphics, '
-              'AI video and UGC-style ads for brands and creators worldwide, working with you directly.'),
+        title='Freelance Video Editor & AI Video Editor for Hire | Geetha Krishna',
+        desc=('Hire Geetha Krishna, an independent freelance video editor and AI video editor: reels, YouTube videos, '
+              'product films, motion graphics, AI video ads and UGC ads. Remote for clients worldwide.'),
+        eyebrow='Independent freelance video editor & AI video editor · Remote worldwide',
+        h1='Freelance Video Editor & AI Video Editor for Hire',
+        lede=('Looking for a freelance video editor or an AI video editor? I’m Geetha Krishna, an independent video '
+              'editor and graphic designer with 5+ years and 100+ projects. I edit Instagram reels, YouTube videos, '
+              'product films and motion graphics, and I create AI-generated video ads and UGC-style ads for brands and '
+              'creators worldwide, working with you directly.'),
         service='Freelance video editing',
         place='for brands and creators',
         services=[('Reels & shorts', 'Vertical edits for Instagram Reels, YouTube Shorts and ads.'),
@@ -209,12 +213,62 @@ PAGES += [
              ('What videos do you edit?',
               'Instagram reels and YouTube Shorts, YouTube videos, product films and commercials, motion graphics, '
               'AI video and UGC-style ads.'),
+             ('Are you also an AI video editor?',
+              'Yes. Alongside regular editing, I create AI-generated product commercials and UGC-style ads, directing '
+              'the AI shots and editing them into finished, captioned videos.'),
              ('Which video editing software do you use?',
               'Premiere Pro, After Effects and DaVinci Resolve, with Photoshop and Illustrator for graphics and thumbnails.'),
              ('Do you edit for international clients?',
               'Yes. I work remotely with brands and creators worldwide.'),
              ('How do I hire you for video editing?',
               f'Use the Let’s Talk form on this page, message me on WhatsApp, or email {EMAIL} with your footage, '
+              'brief and deadline.')],
+    ),
+    dict(
+        slug='ai-ugc-ads',
+        title='AI UGC Ads Creator & AI Video Editor for Hire | Geetha Krishna',
+        desc=('Hire Geetha Krishna to create AI UGC ads and AI video ads for your brand: AI-generated UGC-style ads, '
+              'product commercials and ad variants, edited and captioned. Freelance, remote worldwide.'),
+        eyebrow='AI UGC ads · AI video editing · Freelance',
+        h1='AI UGC Ads & AI Video Editing',
+        lede=('Need AI UGC ads for your brand? I’m Geetha Krishna, a freelance video editor and AI video editor based '
+              'in Bengaluru. I create AI-generated UGC-style ads and product commercials, then edit them into finished '
+              'ads with hooks, captions, music and colour, without a film shoot or hiring creators.'),
+        service='AI UGC ads and AI video editing',
+        place='for brands worldwide',
+        services=[('AI UGC ads', 'Creator-style AI ads with a host, a strong hook and caption pacing.'),
+                  ('AI product commercials', 'Prompt-driven product shots edited into short, polished commercials.'),
+                  ('AI ad variants', 'Several hooks and cuts of one ad, ready to test on social.'),
+                  ('AI + real footage edits', 'AI shots combined with your real product footage and graphics.'),
+                  ('Captions & motion graphics', 'Animated captions, titles and graphics that keep viewers watching.'),
+                  ('Exports for every platform', 'Vertical, square and wide versions for Reels, Shorts and ads.')],
+        tools='Premiere Pro, After Effects and DaVinci Resolve, with AI video generation tools',
+        cats=['Video & Motion'],
+        max_cards=6,
+        ai_first=True,
+        why=WHY_FREELANCER,
+        process=[('Share your product', 'Send product photos, your brief, references and deadline.'),
+                 ('AI shots', 'I direct and generate the AI product shots or UGC-style scenes.'),
+                 ('Edit', 'I edit everything with pacing, captions, music and colour.'),
+                 ('Final export', 'You get finished ads sized for every platform.')],
+        faq=[('What are AI UGC ads?',
+              'AI UGC ads are user-generated-content style video ads, like a creator talking about a product, made '
+              'with AI video generation instead of filming real creators. They are fast to make and easy to test in '
+              'several versions.'),
+             ('What is an AI video editor?',
+              'An AI video editor uses AI video generation for shots or scenes, then edits them like regular footage: '
+              'pacing, captions, music, colour and exports.'),
+             ('What AI videos have you made?',
+              'AI-generated skincare commercials for New Day Organics and an AI UGC-style ad for a magnetic tool mat. '
+              'See the projects on this page.'),
+             ('Can you make AI UGC ads for my brand?',
+              'Yes. Send your product photos and brief, and I’ll create UGC-style AI ads with hooks and captions.'),
+             ('Do you also edit normal video footage?',
+              'Yes. I’m a freelance video editor too: reels, YouTube videos, product films and motion graphics.'),
+             ('Do you work with clients outside Bangalore and India?',
+              'Yes. I work remotely with brands worldwide.'),
+             ('How do I start an AI video project?',
+              f'Use the Let’s Talk form on this page, message me on WhatsApp, or email {EMAIL} with your product, '
               'brief and deadline.')],
     ),
 ]
@@ -266,7 +320,10 @@ CARDS = card_html()
 
 def build(p):
     h = shell
-    items = [w for w in work if w['category'] in p['cats']][:p['max_cards']]
+    items = [w for w in work if w['category'] in p['cats']]
+    if p.get('ai_first'):
+        items.sort(key=lambda w: not w.get('ai'))
+    items = items[:p['max_cards']]
     grid = ''.join(CARDS[w['slug']] for w in items if w['slug'] in CARDS)
     services = ''.join(f'<li><h3>{esc(t)}</h3><p>{esc(d)}</p></li>' for t, d in p['services'])
     faq = ''.join(f'<details><summary>{esc(q)}</summary><p>{esc(a)}</p></details>' for q, a in p['faq'])
@@ -295,7 +352,7 @@ def build(p):
         '<li><b>5+</b>years</li><li><b>100+</b>projects</li>'
         + ('<li><b>Bengaluru</b>Bangalore based</li>' if local else '<li><b>1:1</b>you work directly with me</li>')
         + '<li><b>Worldwide</b>remote clients</li></ul></section>'
-        f'<section class="gk-lp-sec"><h2>{esc(p["service"].capitalize())} services {esc(p["place"])}</h2>'
+        f'<section class="gk-lp-sec"><h2>{esc(p["service"][:1].upper() + p["service"][1:])} services {esc(p["place"])}</h2>'
         f'<ul class="gk-lp-services">{services}</ul></section>' + extra +
         f'<section class="gk-lp-sec"><h2>Selected work</h2></section></div>'
         f'<section class="gk-work-grid-wrap"><ul class="gk-work-grid">{grid}</ul>'
@@ -364,15 +421,16 @@ for p in PAGES:
 # footer links to the landing pages on every page (internal links help them rank)
 FOOTER = [('freelance-graphic-designer', 'Hire a Freelance Designer'),
           ('freelance-graphic-designer-bangalore', 'Freelance Graphic Designer, Bangalore'),
-          ('freelance-video-editor-bangalore', 'Freelance Video Editor, Bangalore')]
+          ('freelance-video-editor', 'Freelance Video Editor'),
+          ('ai-ugc-ads', 'AI UGC Ads')]
 LINKS = ''.join(f'<a href="/{slug}" class="policy-link">{esc(label)}</a>' for slug, label in FOOTER)
 n = 0
 for f in glob.glob(os.path.join(SP, '*.html')) + glob.glob(os.path.join(SP, 'work', '*.html')):
     h = open(f, encoding='utf-8').read()
-    if 'href="/freelance-graphic-designer" class="policy-link"' in h:
+    if 'href="/ai-ugc-ads" class="policy-link"' in h:
         continue
     # replace any older set of landing-page footer links
-    h = re.sub(r'(<div class="footer-policy-links">)(?:<a href="/freelance-[a-z-]+" class="policy-link">[^<]*</a>)+',
+    h = re.sub(r'(<div class="footer-policy-links">)(?:<a href="/(?:freelance|ai)-[a-z-]+" class="policy-link">[^<]*</a>)+',
                r'\1', h)
     o = '<div class="footer-policy-links">'
     if o in h:

@@ -22,9 +22,9 @@ LINKEDIN = 'https://www.linkedin.com/in/krishnadezyner'
 
 PAGES = {
     'index.html': (
-        'Freelance Graphic Designer & Video Editor, Bengaluru | Geetha Krishna',
-        'Geetha Krishna is an independent freelance graphic designer and video editor in Bengaluru, India. Logos, '
-        'branding, posters, social media and video for clients worldwide.'),
+        'Freelance Graphic Designer, Video Editor & AI UGC Ads | Geetha Krishna',
+        'Independent freelance graphic designer, video editor and AI UGC ads creator in Bengaluru, India. Logos, '
+        'branding, reels, video editing and AI video ads for clients worldwide.'),
     'about.html': (
         'About Geetha Krishna | Senior Graphic Designer & Video Editor',
         'Geetha Krishna, senior graphic designer & video editor (5+ years, 100+ projects). Open to freelance, '

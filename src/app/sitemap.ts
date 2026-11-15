@@ -44,6 +44,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       { slug: "freelance-graphic-designer", cats: ["Brand Identity", "Posters & Campaigns", "Editorial & Print"] },
       { slug: "freelance-logo-designer", cats: ["Brand Identity"] },
       { slug: "freelance-video-editor", cats: ["Video & Motion"] },
+      { slug: "ai-ugc-ads", cats: ["Video & Motion"] },
     ].map(({ slug, cats }) => ({
       url: `${SITE_META.siteUrl}/${slug}`,
       lastModified: modified(`${slug}.html`),

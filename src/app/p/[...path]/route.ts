@@ -11,7 +11,7 @@ import { notFoundResponse } from "../not-found-response";
 // and a project page reloaded the other handler (~0.7 s per click).
 // {{SITE_URL}} becomes the deployed origin so canonical, Open Graph and JSON-LD URLs are absolute.
 const PAGES = ["index", "work", "about", "freelance-graphic-designer-bangalore", "freelance-video-editor-bangalore",
-  "freelance-graphic-designer", "freelance-logo-designer", "freelance-video-editor"];
+  "freelance-graphic-designer", "freelance-logo-designer", "freelance-video-editor", "ai-ugc-ads"];
 const SLUGS = work.map((item) => item.slug);
 const SLUG_SET = new Set(SLUGS);
 
