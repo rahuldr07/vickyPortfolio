@@ -55,7 +55,10 @@ def shared(d, n_footer_name=1):
           'font-size:0.95rem;letter-spacing:-0.02em;line-height:1;color:#fff}'
           '.gk-nw{display:inline-block;white-space:nowrap}'
           '.brand-logo,.brand-logo-desk{transform:none!important}.nav-link,.brand{border-radius:8px;transition:background-color .3s ease,box-shadow .3s ease,opacity .3s ease}@media (min-width:480px){.nav-links:has(.w--current) .nav-link:not(.w--current){opacity:.62}.nav-links .nav-link:hover{opacity:1}.nav-link.w--current,.brand.w--current{background-color:rgba(255,255,255,.16);box-shadow:inset 0 0 0 1px rgba(255,255,255,.22)}}@media (max-width:479px){.nav-links:has(.w--current) .nav-link:not(.w--current){opacity:.45}.nav-link.w--current .hover-link-mask::before{content:"";position:absolute;left:-.6em;top:50%;width:.16em;height:.16em;border-radius:50%;background:#a78bfa;transform:translateY(-50%)}}'
-          '@media (max-width:479px){.footer-mail-link{font-size:clamp(1.15rem,5.6vw,2rem);overflow-wrap:anywhere}}'
+          '@media (max-width:479px){.page-wrapper{overflow-x:clip}.gk-wordmark{font-size:14px}'
+          '.footer-mail-link{font-size:clamp(15px,4.9vw,22px);overflow-wrap:anywhere}'
+          '.name-tag.view-p{top:auto;bottom:calc(100% - 4.9rem)}'
+          '.footer-policy-links{flex-wrap:wrap;gap:8px 20px}.footer-down-block{padding-bottom:60px}.about-headline-p .about-line-span.s1{display:block;text-align:center}}'
           '</style></head>')
     # Nav links
     d.rep('href="/#how-it-works"', 'href="/#work"')
