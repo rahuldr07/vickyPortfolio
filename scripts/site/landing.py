@@ -271,6 +271,84 @@ PAGES += [
               f'Use the Let’s Talk form on this page, message me on WhatsApp, or email {EMAIL} with your product, '
               'brief and deadline.')],
     ),
+    # "freelancer in Bangalore" / "individual freelancer in Bangalore": one person, every creative skill
+    dict(
+        slug='freelancer-bangalore',
+        title='Individual Freelancer in Bangalore: Designer, Video Editor & UI | Geetha Krishna',
+        desc=('Geetha Krishna is an individual freelancer in Bangalore (Bengaluru): graphic design, logos, social '
+              'media, video editing, AI UGC ads and UI design. One person, direct communication, no agency.'),
+        eyebrow='Individual freelancer · Bangalore (Bengaluru)',
+        h1='Individual Freelancer in Bangalore',
+        lede=('Looking for a freelancer in Bangalore? I’m Geetha Krishna, an individual freelance graphic designer, '
+              'video editor and UI designer based in Bengaluru with 5+ years and 100+ projects. One person for your '
+              'logo, social media, posters, print, videos, AI UGC ads and web or app screens, working with you '
+              'directly, in Bangalore or remotely.'),
+        service='Freelance design and editing',
+        place='in Bangalore',
+        services=[('Graphic design', 'Logos, brand identity, posters, social media creatives and print.'),
+                  ('Video editing', 'Reels, YouTube videos, product films and motion graphics.'),
+                  ('AI video & AI UGC ads', 'AI-generated product commercials and UGC-style ads, edited and captioned.'),
+                  ('UI & web design', 'App and website screens in Figma and Adobe XD, and Wix website updates.'),
+                  ('Editorial & print', 'Magazines, brochures, flyers, standees and menu cards.'),
+                  ('Banners & hoardings', 'Web banners, billboards and hoardings in every size.')],
+        tools='Photoshop, Illustrator, Figma, Adobe XD, Wix, Premiere Pro, After Effects and DaVinci Resolve',
+        cats=['Brand Identity', 'Posters & Campaigns', 'Video & Motion', 'Editorial & Print', 'Digital & Outdoor'],
+        mix=True,
+        max_cards=9,
+        why=WHY_FREELANCER, process=PROCESS,
+        faq=[('Are you an individual freelancer in Bangalore?',
+              'Yes. I’m an individual freelancer based in Bengaluru (Bangalore), not an agency. You work with me '
+              'directly, in person in Bangalore or remotely.'),
+             ('What can I hire you for?',
+              'Graphic design (logos, branding, posters, social media, print), video editing (reels, YouTube, product '
+              'films, motion graphics), AI video and AI UGC ads, and UI and web design.'),
+             ('Why hire an individual freelancer instead of an agency?',
+              'You talk to the person doing the work, feedback is faster, and one freelancer can cover design, video '
+              'and UI so your brand looks consistent everywhere.'),
+             ('Do you take small one-off projects?',
+              'Yes. A single logo, poster or reel is fine, and so is ongoing monthly work.'),
+             ('Are you open to full-time or part-time roles in Bangalore?',
+              'Yes. Alongside freelance projects, I’m open to full-time, part-time and contract roles, on-site in '
+              'Bengaluru or remote.'),
+             ('How do I contact you?',
+              f'Use the Let’s Talk form on this page, message me on WhatsApp, or email {EMAIL} with your brief and deadline.')],
+    ),
+    dict(
+        slug='ui-designer-bangalore',
+        title='Freelance UI Designer & Web Designer in Bangalore | Geetha Krishna',
+        desc=('Hire Geetha Krishna, a freelance UI designer and web designer in Bangalore (Bengaluru): app and website '
+              'screens in Figma and Adobe XD, Wix websites, web banners and visual design.'),
+        eyebrow='Freelance UI & web designer · Bangalore',
+        h1='Freelance UI Designer in Bangalore',
+        lede=('I’m Geetha Krishna, a graphic and web designer in Bengaluru who also designs UI. I’ve designed UI '
+              'screens for GreenMonk Energy Drink and handle web design updates for Buddha-CEO Quantum Foundation. '
+              'With a strong visual design background, I design app and website screens, landing pages and web '
+              'banners that look on-brand and are easy to use.'),
+        service='Freelance UI and web design',
+        place='in Bangalore',
+        services=[('App & website UI', 'Clean, on-brand screens for apps and websites, designed in Figma or Adobe XD.'),
+                  ('Landing pages', 'Single-page layouts for launches, campaigns and lead generation.'),
+                  ('Wix websites', 'Website updates, new pages and layouts built on Wix.'),
+                  ('Prototypes', 'Clickable Figma and Adobe XD prototypes to test flows before building.'),
+                  ('Web banners & ads', 'Web banners, leaderboards and display ads in every size.'),
+                  ('Visual design', 'Icons, illustrations and graphics that match your brand.')],
+        tools='Figma, Adobe XD, Wix, Photoshop and Illustrator',
+        cats=['Digital & Outdoor'],
+        max_cards=4,
+        faq=[('Are you a freelance UI designer in Bangalore?',
+              'Yes. I’m a freelance designer in Bengaluru (Bangalore) who designs UI and websites alongside graphic '
+              'design and video, in person or remotely.'),
+             ('Which UI design tools do you use?',
+              'Figma and Adobe XD for UI design and prototypes, Wix for websites, and Photoshop and Illustrator for graphics.'),
+             ('What UI and web work have you done?',
+              'UI screens for GreenMonk Energy Drink, ongoing web design updates for Buddha-CEO Quantum Foundation, '
+              'and web banners for campaigns such as Klay admissions.'),
+             ('Can you design both the UI and the graphics for my brand?',
+              'Yes. Because I’m also a graphic designer, the screens, logo, social media and ads can all match.'),
+             ('How do I start a UI project?',
+              f'Use the Let’s Talk form on this page, message me on WhatsApp, or email {EMAIL} with your app or '
+              'website idea, references and deadline.')],
+    ),
 ]
 
 CSS = """<style>
@@ -321,6 +399,9 @@ CARDS = card_html()
 def build(p):
     h = shell
     items = [w for w in work if w['category'] in p['cats']]
+    if p.get('mix'):  # round-robin across categories so every skill shows
+        pools = [[w for w in items if w['category'] == c] for c in p['cats']]
+        items = [pool[i] for i in range(max(map(len, pools))) for pool in pools if i < len(pool)]
     if p.get('ai_first'):
         items.sort(key=lambda w: not w.get('ai'))
     items = items[:p['max_cards']]
@@ -419,15 +500,15 @@ for p in PAGES:
     print(f'landing: /{p["slug"]} ({n} project cards, {len(p["faq"])} FAQs)')
 
 # footer links to the landing pages on every page (internal links help them rank)
-FOOTER = [('freelance-graphic-designer', 'Hire a Freelance Designer'),
-          ('freelance-graphic-designer-bangalore', 'Freelance Graphic Designer, Bangalore'),
+FOOTER = [('freelancer-bangalore', 'Freelancer in Bangalore'),
+          ('freelance-graphic-designer', 'Hire a Freelance Designer'),
           ('freelance-video-editor', 'Freelance Video Editor'),
           ('ai-ugc-ads', 'AI UGC Ads')]
 LINKS = ''.join(f'<a href="/{slug}" class="policy-link">{esc(label)}</a>' for slug, label in FOOTER)
 n = 0
 for f in glob.glob(os.path.join(SP, '*.html')) + glob.glob(os.path.join(SP, 'work', '*.html')):
     h = open(f, encoding='utf-8').read()
-    if 'href="/ai-ugc-ads" class="policy-link"' in h:
+    if 'href="/freelancer-bangalore" class="policy-link"' in h:
         continue
     # replace any older set of landing-page footer links
     h = re.sub(r'(<div class="footer-policy-links">)(?:<a href="/(?:freelance|ai)-[a-z-]+" class="policy-link">[^<]*</a>)+',

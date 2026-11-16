@@ -30,24 +30,30 @@ def esc(s):
 ABOUT = ('I’m Geetha Krishna, an independent senior graphic designer and video editor based in Bengaluru (Bangalore), '
          'India, with 5+ years and 100+ projects. I design logos and brand identities, posters, social media creatives, '
          'magazines, menu cards, hoardings and web banners, and as a freelance video editor I edit reels, product films '
-         'and motion graphics and create AI UGC ads and AI video ads. I work directly with startups, small businesses, creators and brands in Bangalore, across India '
+         'and motion graphics and create AI UGC ads and AI video ads. I also design UI and web screens in Figma, Adobe XD and Wix. I work directly with startups, small businesses, creators and brands in Bangalore, across India '
          'and worldwide. Available for freelance projects, and open to full-time and part-time roles.')
-LINKS = [('freelance-graphic-designer', 'Hire a freelance graphic designer'),
+LINKS = [('freelancer-bangalore', 'Individual freelancer in Bangalore'),
+         ('freelance-graphic-designer', 'Hire a freelance graphic designer'),
          ('freelance-logo-designer', 'Freelance logo designer'),
          ('freelance-video-editor', 'Freelance video editor'),
          ('ai-ugc-ads', 'AI UGC ads & AI video editing'),
          ('freelance-graphic-designer-bangalore', 'Graphic designer in Bangalore'),
-         ('freelance-video-editor-bangalore', 'Video editor in Bangalore')]
+         ('freelance-video-editor-bangalore', 'Video editor in Bangalore'),
+         ('ui-designer-bangalore', 'UI designer in Bangalore')]
 SKILLS = ['Logo design', 'Brand identity', 'Poster design', 'Social media creatives', 'Magazine & editorial design',
           'Menu cards & print', 'Hoardings & web banners', 'Video editing', 'Reels & shorts', 'Motion graphics',
           'AI video editing', 'AI UGC ads', 'AI product commercials', 'Photoshop', 'Illustrator', 'Premiere Pro', 'After Effects', 'DaVinci Resolve',
-          'Figma', 'Adobe XD', 'Wix']
+          'UI design', 'Web design', 'Figma', 'Adobe XD', 'Wix']
 FAQ = [
     ('Are you a freelance graphic designer in Bangalore available for new projects?',
      'Yes. I’m a freelance graphic designer and video editor based in Bengaluru (Bangalore) and available for new '
      'projects, in person in Bangalore or remotely.'),
     ('Are you an individual freelancer or an agency?',
-     'I’m an individual, independent freelancer. You work with me directly, from brief to final files.'),
+     'I’m an individual, independent freelancer in Bangalore, not an agency. You work with me directly, from brief '
+     'to final files.'),
+    ('Do you also do UI design?',
+     'Yes. I design app and website screens in Figma and Adobe XD, and update and build Wix websites, alongside '
+     'graphic design and video.'),
     ('What services do you offer?',
      'Logo design and brand identity, posters and campaign visuals, social media creatives, magazine and editorial '
      'design, menu cards and print, hoardings and web banners, and video editing: product films, reels, motion '
@@ -119,7 +125,8 @@ LD = '<script type="application/ld+json" id="gk-home-seo-ld">' + json.dumps(ld, 
 KEYWORDS = ('freelance graphic designer, freelance graphic designer Bangalore, freelance graphic designer Bengaluru, '
             'graphic designer for hire, independent graphic designer, freelance logo designer, brand identity designer, '
             'freelance video editor, freelance video editor Bangalore, AI UGC ads, AI UGC ad creator, AI video ads, AI video editing, social media designer, poster designer, '
-            'AI video editor, UGC ad editor, Geetha Krishna')
+            'AI video editor, UGC ad editor, freelancer in Bangalore, individual freelancer Bangalore, '
+            'UI designer Bangalore, web designer Bangalore, Geetha Krishna')
 
 # idempotent: drop anything a previous run added
 h = re.sub(r'<style id="gk-home-seo-css">.*?</style>', '', h, flags=re.S)
