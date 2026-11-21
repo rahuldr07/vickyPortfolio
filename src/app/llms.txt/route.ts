@@ -64,6 +64,7 @@ Photoshop, Illustrator, Premiere Pro, After Effects, DaVinci Resolve, Figma, Ado
 - [Freelance Video Editor & AI Video Editor for Hire](${site}/freelance-video-editor): hire an independent freelance video editor and AI video editor, remote worldwide: reels, YouTube videos, product films, motion graphics, AI video ads, UGC ads
 - [AI UGC Ads & AI Video Editing](${site}/ai-ugc-ads): AI UGC ads, AI-generated product commercials and AI ad variants for brands, edited and captioned; freelance, remote worldwide
 - [Individual Freelancer in Bangalore](${site}/freelancer-bangalore): an individual freelancer in Bangalore (Bengaluru), not an agency, for graphic design, video editing, AI UGC ads and UI design
+- [Remote Graphic Designer from Bangalore](${site}/remote-graphic-designer): remote freelance graphic designer and video editor based in Bangalore, India (IST), working online with clients across India and worldwide
 - [Freelance UI Designer in Bangalore](${site}/ui-designer-bangalore): UI and web design in Bangalore: app and website screens in Figma and Adobe XD, Wix websites, web banners
 - [Freelance Graphic Designer in Bangalore](${site}/freelance-graphic-designer-bangalore): hire a senior freelance graphic designer in Bangalore (Bengaluru) for logos, branding, posters, social media and print
 - [Freelance Video Editor in Bangalore](${site}/freelance-video-editor-bangalore): hire a freelance video editor in Bangalore (Bengaluru) for product films, reels, motion graphics, AI video and UGC ads

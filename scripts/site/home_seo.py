@@ -33,6 +33,7 @@ ABOUT = ('I’m Geetha Krishna, an independent senior graphic designer and video
          'and motion graphics and create AI UGC ads and AI video ads. I also design UI and web screens in Figma, Adobe XD and Wix. I work directly with startups, small businesses, creators and brands in Bangalore, across India '
          'and worldwide. Available for freelance projects, and open to full-time and part-time roles.')
 LINKS = [('freelancer-bangalore', 'Individual freelancer in Bangalore'),
+         ('remote-graphic-designer', 'Remote graphic designer'),
          ('freelance-graphic-designer', 'Hire a freelance graphic designer'),
          ('freelance-logo-designer', 'Freelance logo designer'),
          ('freelance-video-editor', 'Freelance video editor'),
@@ -109,7 +110,7 @@ section = (
 videos = [w for w in work if w['type'] == 'video']
 ld = {'@context': 'https://schema.org', '@graph': [
     {'@type': 'WebPage', '@id': SITE + '/#webpage', 'url': SITE + '/',
-     'name': 'Freelance Graphic Designer, Video Editor & AI UGC Ads | Geetha Krishna',
+     'name': 'Graphic Designer & Video Editor in Bangalore | Freelance & Remote | Geetha Krishna',
      'description': re.search(r'<meta name="description" content="([^"]*)"', h).group(1).replace('&amp;', '&'),
      'inLanguage': 'en-IN', 'isPartOf': {'@id': SITE + '/#website'}, 'about': {'@id': SITE + '/#person'},
      'primaryImageOfPage': {'@type': 'ImageObject', 'url': SITE + '/gk/og.jpg', 'width': 1200, 'height': 630}},
@@ -125,7 +126,7 @@ LD = '<script type="application/ld+json" id="gk-home-seo-ld">' + json.dumps(ld, 
 KEYWORDS = ('freelance graphic designer, freelance graphic designer Bangalore, freelance graphic designer Bengaluru, '
             'graphic designer for hire, independent graphic designer, freelance logo designer, brand identity designer, '
             'freelance video editor, freelance video editor Bangalore, AI UGC ads, AI UGC ad creator, AI video ads, AI video editing, social media designer, poster designer, '
-            'AI video editor, UGC ad editor, freelancer in Bangalore, individual freelancer Bangalore, '
+            'AI video editor, UGC ad editor, freelancer in Bangalore, individual freelancer Bangalore, remote graphic designer, remote freelance designer India, '
             'UI designer Bangalore, web designer Bangalore, Geetha Krishna')
 
 # idempotent: drop anything a previous run added

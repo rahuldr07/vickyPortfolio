@@ -47,6 +47,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       { slug: "ai-ugc-ads", cats: ["Video & Motion"] },
       { slug: "freelancer-bangalore", cats: ["Brand Identity", "Posters & Campaigns", "Video & Motion"] },
       { slug: "ui-designer-bangalore", cats: ["Digital & Outdoor"] },
+      { slug: "remote-graphic-designer", cats: ["Brand Identity", "Posters & Campaigns", "Video & Motion"] },
     ].map(({ slug, cats }) => ({
       url: `${SITE_META.siteUrl}/${slug}`,
       lastModified: modified(`${slug}.html`),

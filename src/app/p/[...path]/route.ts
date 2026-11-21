@@ -12,7 +12,7 @@ import { notFoundResponse } from "../not-found-response";
 // {{SITE_URL}} becomes the deployed origin so canonical, Open Graph and JSON-LD URLs are absolute.
 const PAGES = ["index", "work", "about", "freelance-graphic-designer-bangalore", "freelance-video-editor-bangalore",
   "freelance-graphic-designer", "freelance-logo-designer", "freelance-video-editor", "ai-ugc-ads",
-  "freelancer-bangalore", "ui-designer-bangalore"];
+  "freelancer-bangalore", "ui-designer-bangalore", "remote-graphic-designer"];
 const SLUGS = work.map((item) => item.slug);
 const SLUG_SET = new Set(SLUGS);
 

@@ -349,6 +349,52 @@ PAGES += [
               f'Use the Let’s Talk form on this page, message me on WhatsApp, or email {EMAIL} with your app or '
               'website idea, references and deadline.')],
     ),
+    # "remote graphic designer" / "remote freelance designer Bangalore / India"
+    dict(
+        slug='remote-graphic-designer',
+        title='Remote Graphic Designer & Video Editor from Bangalore, India | Geetha Krishna',
+        desc=('Hire Geetha Krishna, a remote freelance graphic designer and video editor based in Bangalore, India: '
+              'logos, branding, social media, reels and AI UGC ads for clients anywhere, delivered online.'),
+        eyebrow='Remote freelance designer · Bangalore, India · Worldwide',
+        h1='Remote Graphic Designer from Bangalore',
+        lede=('Need a remote graphic designer? I’m Geetha Krishna, a freelance graphic designer and video editor based '
+              'in Bengaluru (Bangalore), India, with 5+ years and 100+ projects. I work remotely with startups, small '
+              'businesses, agencies and brands across India and worldwide: brief, feedback and final files all happen '
+              'online.'),
+        service='Remote graphic design and video editing',
+        place='for clients anywhere',
+        services=[('Logo design & branding', 'Logos and brand identities, delivered as ready-to-use files.'),
+                  ('Social media creatives', 'Posts, stories and ad creatives, one-off or every month.'),
+                  ('Posters, print & editorial', 'Posters, brochures, magazines and menus, print-ready.'),
+                  ('Video editing', 'Reels, YouTube videos, product films and motion graphics.'),
+                  ('AI video & AI UGC ads', 'AI-generated product commercials and UGC-style ads.'),
+                  ('UI & web design', 'App and website screens in Figma and Adobe XD, and Wix updates.')],
+        tools='Photoshop, Illustrator, Figma, Adobe XD, Wix, Premiere Pro, After Effects and DaVinci Resolve',
+        cats=['Brand Identity', 'Posters & Campaigns', 'Video & Motion', 'Editorial & Print', 'Digital & Outdoor'],
+        mix=True,
+        max_cards=9,
+        why=WHY_FREELANCER,
+        process=[('Share your brief online', 'Send your brief, references and deadline by email, WhatsApp or the form.'),
+                 ('Concepts', 'I share first directions online for your feedback.'),
+                 ('Refine', 'We polish the chosen direction together over chat or calls.'),
+                 ('Final files', 'You get production-ready files by link, in every format you need.')],
+        faq=[('Do you work as a remote graphic designer?',
+              'Yes. I’m a freelance graphic designer and video editor based in Bangalore, India, and most of my projects '
+              'are remote, for clients across India and worldwide.'),
+             ('Which time zone are you in?',
+              'India Standard Time (IST, UTC+5:30). I share updates by email and WhatsApp, and we can schedule calls '
+              'that suit your time zone.'),
+             ('Can I hire you remotely from outside India?',
+              'Yes. Briefs, feedback, calls and file delivery all happen online, so I can work with you from anywhere.'),
+             ('Are you open to remote full-time or part-time roles?',
+              'Yes. Alongside freelance projects, I’m open to remote full-time, part-time and contract roles, or on-site '
+              'in Bengaluru.'),
+             ('What can I hire you for remotely?',
+              'Logos and branding, social media creatives, posters and print, video editing, AI video and AI UGC ads, '
+              'and UI and web design.'),
+             ('How do I start a remote project?',
+              f'Use the Let’s Talk form on this page, message me on WhatsApp, or email {EMAIL} with your brief and deadline.')],
+    ),
 ]
 
 CSS = """<style>
