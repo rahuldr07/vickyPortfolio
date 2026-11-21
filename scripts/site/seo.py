@@ -130,17 +130,16 @@ for name, cfg in PAGES.items():
 
     if name == "index":
         # one meaningful h1: the name lockup; tagline becomes a paragraph
+        # the h1 is the visible hero label "Freelance Graphic Designer in Bangalore"; the name lockup is a div
         h = h.replace('<div class="gk-lockup gk-in"><span class="gk-lock-mark">GK</span>'
                       '<span class="gk-lock-name">Geetha<br/>Krishna</span></div>',
-                      '<h1 class="gk-lockup gk-in"><span class="gk-lock-mark" aria-hidden="true">GK</span>'
+                      '<div class="gk-lockup gk-in"><span class="gk-lock-mark" aria-hidden="true">GK</span>'
                       '<span class="gk-lock-name">Geetha<br/>Krishna</span>'
-                      + LOCK_ROLES +
-                      '<span class="gk-sr">, freelance graphic designer and video editor in Bengaluru</span></h1>', 1)
-        assert 'h1 class="gk-lockup' in h
+                      + LOCK_ROLES + '</div>', 1)
+        assert 'div class="gk-lockup gk-in"><span class="gk-lock-mark" aria-hidden' in h
         # fill the lockup's spare space with the pen-tool curve art
         h = h.replace('</head>', LOCK_ROLES_CSS + '</head>', 1).replace('</body>', LOCK_ROLES_JS + '</body>', 1)
-        h = h.replace('<h1 class="gk-tagline gk-in">Senior Graphic Designer</h1>',
-                      '<p class="gk-tagline gk-in">Senior Graphic Designer</p>', 1)
+        assert '<h1 class="gk-tagline gk-in">Freelance Graphic Designer in Bangalore</h1>' in h
         # open-to-work signal above the lockup
         # availability now lives in the pinned top-right badge (polish.py), not in the hero
         h = h.replace('</head>', '<style>.gk-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}'

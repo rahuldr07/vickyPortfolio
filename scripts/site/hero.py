@@ -45,7 +45,7 @@ HERO = f"""<section id="home" class="gk-hero">
 <div class="gk-hero-grid">
   <div class="gk-hero-copy">
     <div class="gk-lockup gk-in"><span class="gk-lock-mark">GK</span><span class="gk-lock-name">Geetha<br/>Krishna</span></div>
-    <h1 class="gk-tagline gk-in">Senior Graphic Designer</h1>
+    <h1 class="gk-tagline gk-in">Freelance Graphic Designer in Bangalore</h1>
     <p class="gk-subtitle gk-in">Visual Designer <span aria-hidden="true">|</span> UI Designer <span aria-hidden="true">|</span> Video Editor</p>
     <p class="gk-bio gk-in">I’m Geetha Krishna, a creative professional with <b>5+ years</b> of experience in graphic design and visual communication. I specialize in <em>branding</em>, <em>digital design</em>, <em>UI interfaces</em>, <em>editorial design</em> and <em>video editing</em>, transforming ideas into impactful visual experiences.</p>
     <p class="gk-open gk-in"><span class="gk-open-dot" aria-hidden="true"></span>Open to Full-time Opportunities &amp; Freelance Projects</p>

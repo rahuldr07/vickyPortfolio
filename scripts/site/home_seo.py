@@ -110,7 +110,7 @@ section = (
 videos = [w for w in work if w['type'] == 'video']
 ld = {'@context': 'https://schema.org', '@graph': [
     {'@type': 'WebPage', '@id': SITE + '/#webpage', 'url': SITE + '/',
-     'name': 'Graphic Designer & Video Editor in Bangalore | Freelance & Remote | Geetha Krishna',
+     'name': 'Geetha Krishna | Freelance Graphic Designer in Bangalore',
      'description': re.search(r'<meta name="description" content="([^"]*)"', h).group(1).replace('&amp;', '&'),
      'inLanguage': 'en-IN', 'isPartOf': {'@id': SITE + '/#website'}, 'about': {'@id': SITE + '/#person'},
      'primaryImageOfPage': {'@type': 'ImageObject', 'url': SITE + '/gk/og.jpg', 'width': 1200, 'height': 630}},
