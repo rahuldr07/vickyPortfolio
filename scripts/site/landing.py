@@ -13,6 +13,7 @@ import json
 import os
 import re
 import sys
+from urllib.parse import quote
 
 ROOT = sys.argv[1]
 SP = os.path.join(ROOT, 'site-pages')
@@ -27,33 +28,45 @@ PAGES = [
     dict(
         slug='freelance-graphic-designer-bangalore',
         title='Freelance Graphic Designer in Bangalore | Geetha Krishna',
-        desc=('Hire Geetha Krishna, a senior freelance graphic designer in Bangalore (Bengaluru): logos, brand '
-              'identity, posters, social media creatives and print. Remote worldwide too.'),
-        eyebrow='Freelance graphic designer · Bangalore',
+        desc=('Looking for an individual freelance graphic designer in Bangalore? Work with Geetha Krishna for branding, '
+              'digital campaigns, social media graphics and creative design services. Available for remote projects.'),
+        eyebrow='Independent graphic designer · Bangalore, India',
         h1='Freelance Graphic Designer in Bangalore',
-        lede=('I’m Geetha Krishna, a senior graphic designer based in Bengaluru with 5+ years and 100+ projects. '
-              'I design logos and brand identities, campaign posters, social media creatives, magazines, menu cards, '
-              'hoardings and web banners for brands in Bangalore, across India and worldwide.'),
+        lede=('I’m Geetha Krishna, an independent freelance graphic designer in Bengaluru (Bangalore). I help businesses '
+              'and brands with branding, social media graphics, digital campaigns and print design, working with you '
+              'directly, in Bangalore or remotely.'),
         service='Freelance graphic design',
         place='in Bangalore',
-        services=[('Logo design & brand identity', 'Logos, marks and identity systems that are easy to remember.'),
-                  ('Posters & campaign key visuals', 'Product posters and campaigns built to stop the scroll.'),
-                  ('Social media creatives', 'Post and story designs for consistent, on-brand feeds.'),
-                  ('Magazine & editorial design', 'Covers and inner layouts for print and digital issues.'),
-                  ('Menu cards & print', 'Restaurant menus, brochures and print-ready artwork.'),
-                  ('Hoardings & web banners', 'Billboards, hoardings and ad banners in every size.')],
+        long=True,
+        services=[('Branding & logo design', 'Logos, marks and identity systems that are easy to remember.'),
+                  ('Social media graphics', 'Post, story and ad designs that keep your feed consistent and on-brand.'),
+                  ('Digital campaigns', 'Key visuals adapted into posts, web banners and display ads.'),
+                  ('Posters & flyers', 'Product, event and campaign posters built to stop the scroll.'),
+                  ('Brochures, magazines & print', 'Brochures, standees, menu cards, magazine covers and layouts.'),
+                  ('Hoardings & outdoor', 'Billboards and hoardings prepared at full print size.')],
         tools='Photoshop, Illustrator, Figma, Adobe XD and Wix',
         cats=['Brand Identity', 'Posters & Campaigns', 'Editorial & Print', 'Digital & Outdoor'],
+        mix=True,
         max_cards=9,
-        faq=[('Are you a freelance graphic designer based in Bangalore?',
-              'Yes. I’m based in Bengaluru (Bangalore), Karnataka, and work with clients in person in Bangalore and remotely across India and worldwide.'),
+        why=[('One designer, start to finish', 'The person you brief is the person designing. No account managers.'),
+             ('5+ years, 100+ projects', 'Experience across branding, campaigns, editorial and video.'),
+             ('In Bangalore or remote', 'Meet in Bengaluru, or work fully online from anywhere.'),
+             ('Ready-to-use files', 'Final files prepared for print, web and every social platform.')],
+        faq=[('Are you an individual freelance graphic designer in Bangalore?',
+              'Yes. I’m an independent graphic designer based in Bengaluru (Bangalore), Karnataka, not an agency. You '
+              'work with me directly, in person in Bangalore or remotely.'),
+             ('Can I hire you as a remote graphic designer?',
+              'Yes. Most of my projects are remote. Briefs, feedback and final files all happen online, for clients in '
+              'Bangalore, across India and abroad.'),
              ('What graphic design services do you offer?',
-              'Logo design and brand identity, posters and campaign visuals, social media creatives, magazine and editorial layouts, menu cards and print, and hoardings and web banners.'),
-             ('Do you work with clients outside Bangalore or outside India?',
-              'Yes. Most projects run remotely, so I work with brands anywhere. Files are delivered ready for print, web and social.'),
-             ('Are you available for full-time or part-time roles?',
-              'Yes. Alongside freelance projects, I’m open to full-time, part-time and contract roles, remote or on-site in Bengaluru.'),
-             ('How do I start a project with you?',
+              'Branding and logo design, social media graphics, digital campaign creatives, posters and flyers, '
+              'brochures, magazines and other print, and hoardings and web banners.'),
+             ('Do you design social media creatives every month?',
+              'Yes. I take on one-off designs as well as ongoing monthly social media and campaign work.'),
+             ('How much experience do you have?',
+              'More than 5 years and over 100 projects, including work for GreenMonk Energy Drink and Buddha-CEO '
+              'Quantum Foundation.'),
+             ('How do I hire you?',
               f'Use the Let’s Talk form on this page, message me on WhatsApp, or email {EMAIL} with your brief and deadline.')],
     ),
     dict(
@@ -117,7 +130,7 @@ PAGES += [
               'branding, posters, social media and print. Remote for clients worldwide, based in India.'),
         eyebrow='Independent freelance graphic designer · Remote worldwide',
         h1='Freelance Graphic Designer for Hire',
-        lede=('Looking for a freelance graphic designer? I’m Geetha Krishna, an independent senior designer with 5+ years '
+        lede=('Looking for a freelance graphic designer? I’m Geetha Krishna, an independent graphic designer with 5+ years '
               'and 100+ projects. I design logos, brand identities, posters, social media creatives, magazines and print '
               'for startups, small businesses and brands across India and worldwide, working with you directly.'),
         service='Freelance graphic design',
@@ -421,6 +434,7 @@ CSS = """<style>
 .gk-lp-steps{counter-reset:s}.gk-lp-steps li{counter-increment:s}
 .gk-lp-steps h3::before{content:counter(s,decimal-leading-zero) "  ";color:#a78bfa}
 .gk-lp-related{display:flex;flex-wrap:wrap;gap:10px;margin:0;padding:0;list-style:none}
+.gk-lp-related li{max-width:100%}.gk-lp-related a{white-space:normal;max-width:100%;text-align:left;height:auto}
 @media (max-width:479px){.gk-lp{padding:0 20px 24px}}
 </style>"""
 
@@ -440,6 +454,104 @@ def card_html():
 
 
 CARDS = card_html()
+
+
+def cat_link(cat, label):
+    return f'<a href="/work?category={quote(cat)}" style="color:#a78bfa">{esc(label)}</a>'
+
+
+def bangalore_main(p, grid, faq, related):
+    """Long-form page for /freelance-graphic-designer-bangalore, sections in the order the brief asks for.
+    Facts only from the site: 5+ years, 100+ projects, real employers/clients and tools."""
+    def sec(title, body):
+        return f'<section class="gk-lp-sec"><h2>{esc(title)}</h2>{body}</section>'
+
+    def text(*paras):
+        gap = ' style="margin-top:14px"'
+        return ''.join('<p class="gk-lp-text"' + (gap if i else '') + f'>{x}</p>' for i, x in enumerate(paras))
+
+    def cards(items):
+        return '<ul class="gk-lp-services">' + ''.join(f'<li><h3>{esc(t)}</h3><p>{esc(d)}</p></li>' for t, d in items) + '</ul>'
+
+    cta = ('<div class="gk-lp-ctas" style="margin-top:18px">'
+           f'<a class="gk-btn gk-btn-primary" data-gk-talk href="mailto:{EMAIL}?subject=Project%20enquiry">Let’s Talk</a>'
+           f'<a class="gk-btn gk-btn-ghost" href="{WA}" target="_blank" rel="noopener">WhatsApp</a>'
+           f'<a class="gk-btn gk-btn-ghost" href="mailto:{EMAIL}">Email</a>'
+           f'<a class="gk-btn gk-btn-ghost" href="{LINKEDIN}" target="_blank" rel="noopener noreferrer">LinkedIn</a></div>')
+    link = 'style="color:#a78bfa"'
+    return (
+        '<main class="main gk-work-main">'
+        # 1. Freelance Graphic Designer in Bangalore (hero)
+        '<section class="gk-work-head">'
+        f'<p class="gk-lp-eyebrow">{esc(p["eyebrow"])}</p>'
+        f'<h1 class="gk-work-h1" style="font-size:clamp(44px,6.4vw,96px)">{esc(p["h1"])}</h1>'
+        f'<p class="gk-work-lede">{esc(p["lede"])}</p>'
+        '<div class="gk-lp-ctas">'
+        f'<a class="gk-btn gk-btn-primary" data-gk-talk href="mailto:{EMAIL}?subject=Project%20enquiry">Hire me</a>'
+        f'<a class="gk-btn gk-btn-ghost" href="{WA}" target="_blank" rel="noopener">WhatsApp</a>'
+        '<a class="gk-btn gk-btn-ghost" href="/work">See all work</a></div></section>'
+        '<div class="gk-lp">'
+        '<section class="gk-lp-sec"><ul class="gk-lp-facts">'
+        '<li><b>5+</b>years</li><li><b>100+</b>projects</li><li><b>Bengaluru</b>Bangalore based</li>'
+        '<li><b>Remote</b>India and worldwide</li></ul></section>'
+        # 2. About
+        + sec('About Geetha Krishna', text(
+            'I’m Geetha Krishna, an independent graphic designer based in Bengaluru (Bangalore), Karnataka. I’ve spent '
+            'the last 5+ years designing brand identities, campaign posters, social media creatives, magazines and '
+            'video content, across more than 100 projects.',
+            'I started as a graphic designer intern at Pixel Scoop Studios in 2021, then worked as graphic designer and '
+            'content creator for GreenMonk Energy Drink, designing product posters, creatives and UI screens. Since '
+            '2023 I’ve been the graphic and web designer for Buddha-CEO Quantum Foundation, creating flyers, brochures, '
+            f'standees, banners, magazines and books. <a href="/about" {link}>More about me</a>.'))
+        # 3. Independent services
+        + sec('Independent Graphic Design Services', text(
+            'When you hire me you work with one designer from the first brief to the final files, not an agency team. '
+            'That keeps communication simple, feedback quick and your brand consistent everywhere it appears.')
+            + '<div style="margin-top:22px">' + cards(p['services']) + '</div>')
+        # 4. Remote
+        + sec('Remote Graphic Design Services', text(
+            'Most of my projects run remotely. Briefs, feedback and file delivery all happen online, so I can work with '
+            'businesses across Bangalore, the rest of India and abroad. I’m on India Standard Time (IST) and share '
+            'progress by email and WhatsApp, with calls planned around your schedule.',
+            f'Read more about <a href="/remote-graphic-designer" {link}>working with me remotely</a>.'))
+        # 5. Branding
+        + sec('Branding and Visual Identity', text(
+            'A brand needs a mark that is easy to remember and a look that stays consistent. I design logos, emblems and '
+            'identity systems, from the leaping-fish mark for the seafood brand Coastal Cravings to crest logos for '
+            'GK Constructions and marks for BeSuperMind and Brand Visit, then carry them onto signage, menus and social '
+            'media.',
+            f'See the {cat_link("Brand Identity", "brand identity projects")} or the '
+            f'<a href="/freelance-logo-designer" {link}>freelance logo design</a> page.'))
+        # 6. Social & digital campaigns
+        + sec('Social Media and Digital Campaign Design', text(
+            'For campaigns I design the key visual first, then adapt it into posts, stories, web banners and '
+            'leaderboards so every placement feels like one campaign. My work here includes the GreenMonk Energy Drink '
+            'poster series, event and club-night flyers, and a school admissions campaign that ran across a hoarding, '
+            'web banners and a leaderboard.',
+            f'See the {cat_link("Posters & Campaigns", "poster and campaign projects")} and '
+            f'{cat_link("Digital & Outdoor", "digital and outdoor work")}.'))
+        # 7. Print
+        + sec('Posters, Brochures and Print Design', text(
+            'Print has to look right at full size, so I prepare every file with correct dimensions, bleed and colour. '
+            'I design posters, brochures, flyers, standees, menu cards and magazines, including covers and inner '
+            'layouts for the Buddha-CEO magazines and print-ready menus for Coastal Cravings.',
+            f'See the {cat_link("Editorial & Print", "editorial and print projects")}.'))
+        # 8. Selected portfolio
+        + sec('Selected Portfolio Projects', '') + '</div>'
+        f'<section class="gk-work-grid-wrap"><ul class="gk-work-grid">{grid}</ul>'
+        '<p class="gk-lp-more"><a class="gk-btn gk-btn-ghost" href="/work">See all projects</a></p></section>'
+        '<div class="gk-lp">'
+        # 9. Why
+        + sec('Why Work With Me', cards(p['why']))
+        # 10. FAQ
+        + sec('Frequently Asked Questions', f'<div class="gk-lp-faq">{faq}</div>')
+        # 11. Contact
+        + sec('Contact and Hire Me', text(
+            'Tell me what you need, who it is for and when you need it. Send a brief by email, message me on WhatsApp, '
+            f'or use the Let’s Talk form and I’ll reply with next steps. Email: <a href="mailto:{EMAIL}" {link}>{EMAIL}</a>.')
+            + cta)
+        + f'<section class="gk-lp-sec"><h2>Related services</h2><ul class="gk-lp-related">{related}</ul></section>'
+        '</div></main>')
 
 
 def build(p):
@@ -500,6 +612,11 @@ def build(p):
         '</div></section>'
         f'<section class="gk-lp-sec"><h2>Related services</h2><ul class="gk-lp-related">{related}</ul></section>'
         '</div></main>')
+    if p.get('long'):
+        main = bangalore_main(p, grid, faq, related)
+    # project card titles sit under a section h2 here, so they are h3 (styled by class, looks the same)
+    main = main.replace('<h2 class="gk-w-title">', '<h3 class="gk-w-title">').replace(
+        '</a></h2><p class="gk-w-meta">', '</a></h3><p class="gk-w-meta">')
     a, b = h.index('<main class="main gk-work-main">'), h.index('</main>') + len('</main>')
     h = h[:a] + main + h[b:]
     # drop the Work page's filter/lightbox script and dialog (not on this page)
@@ -524,7 +641,7 @@ def build(p):
          'hasOfferCatalog': {'@type': 'OfferCatalog', 'name': p['service'], 'itemListElement': [
              {'@type': 'Offer', 'itemOffered': {'@type': 'Service', 'name': t, 'description': d}} for t, d in p['services']]}},
         {'@type': 'Person', '@id': SITE + '/#person', 'name': 'Geetha Krishna',
-         'jobTitle': 'Senior Graphic Designer & Video Editor', 'url': SITE + '/', 'email': EMAIL,
+         'jobTitle': 'Independent Freelance Graphic Designer', 'url': SITE + '/', 'email': EMAIL,
          'sameAs': [LINKEDIN], 'address': {'@type': 'PostalAddress', 'addressLocality': 'Bengaluru',
                                            'addressRegion': 'Karnataka', 'addressCountry': 'IN'}},
         {'@type': 'FAQPage', '@id': url + '#faq', 'mainEntity': [
@@ -546,7 +663,8 @@ for p in PAGES:
     print(f'landing: /{p["slug"]} ({n} project cards, {len(p["faq"])} FAQs)')
 
 # footer links to the landing pages on every page (internal links help them rank)
-FOOTER = [('freelancer-bangalore', 'Freelancer in Bangalore'),
+FOOTER = [('freelance-graphic-designer-bangalore', 'Freelance Graphic Designer, Bangalore'),
+          ('freelancer-bangalore', 'Freelancer in Bangalore'),
           ('freelance-graphic-designer', 'Hire a Freelance Designer'),
           ('freelance-video-editor', 'Freelance Video Editor'),
           ('ai-ugc-ads', 'AI UGC Ads')]
@@ -554,7 +672,7 @@ LINKS = ''.join(f'<a href="/{slug}" class="policy-link">{esc(label)}</a>' for sl
 n = 0
 for f in glob.glob(os.path.join(SP, '*.html')) + glob.glob(os.path.join(SP, 'work', '*.html')):
     h = open(f, encoding='utf-8').read()
-    if 'href="/freelancer-bangalore" class="policy-link"' in h:
+    if 'policy-link">Freelance Graphic Designer, Bangalore</a><a href="/freelancer-bangalore"' in h:
         continue
     # replace any older set of landing-page footer links
     h = re.sub(r'(<div class="footer-policy-links">)(?:<a href="/(?:freelance|ai)-[a-z-]+" class="policy-link">[^<]*</a>)+',

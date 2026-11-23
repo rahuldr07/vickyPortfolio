@@ -27,7 +27,7 @@ def esc(s):
     return html.escape(s, quote=True)
 
 
-ABOUT = ('I’m Geetha Krishna, an independent senior graphic designer and video editor based in Bengaluru (Bangalore), '
+ABOUT = ('I’m Geetha Krishna, an independent freelance graphic designer and video editor based in Bengaluru (Bangalore), '
          'India, with 5+ years and 100+ projects. I design logos and brand identities, posters, social media creatives, '
          'magazines, menu cards, hoardings and web banners, and as a freelance video editor I edit reels, product films '
          'and motion graphics and create AI UGC ads and AI video ads. I also design UI and web screens in Figma, Adobe XD and Wix. I work directly with startups, small businesses, creators and brands in Bangalore, across India '

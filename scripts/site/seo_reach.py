@@ -23,9 +23,9 @@ LINKEDIN = 'https://www.linkedin.com/in/krishnadezyner'
 PAGES = {
     'index.html': (
         'Geetha Krishna | Freelance Graphic Designer in Bangalore',
-        'Looking for a freelance graphic designer in Bangalore? I’m Geetha Krishna, an independent graphic '
-        'designer with 5+ years of experience creating brand identities, social media creatives, digital '
-        'campaigns and print designs. Available for remote freelance projects.'),
+        'Geetha Krishna is an independent freelance graphic designer based in Bangalore, India. Specialising in '
+        'branding, social media creatives, digital campaigns, print design and visual communication. Available '
+        'for remote freelance projects.'),
     'about.html': (
         'About Geetha Krishna | Senior Graphic Designer & Video Editor',
         'Geetha Krishna, senior graphic designer & video editor (5+ years, 100+ projects). Open to freelance, '
@@ -36,8 +36,8 @@ PAGES = {
 }
 
 PERSON_EXTRA = {
-    'jobTitle': 'Senior Graphic Designer & Video Editor',
-    'description': ('Senior graphic designer and video editor based in Bengaluru, India, with 5+ years and 100+ '
+    'jobTitle': 'Independent Freelance Graphic Designer',
+    'description': ('Independent freelance graphic designer and video editor based in Bengaluru, India, with 5+ years and 100+ '
                     'projects in brand identity, logo design, posters, social media creatives, editorial design and '
                     'video editing. Open to freelance, full-time and part-time work, remote worldwide or on-site in '
                     'Bengaluru.'),
@@ -54,7 +54,7 @@ PERSON_EXTRA = {
     'seeks': {'@type': 'Demand', 'name': 'Freelance, full-time or part-time graphic design and video editing work',
               'description': 'Freelance projects and full-time or part-time roles, remote worldwide or on-site in Bengaluru, India.'},
 }
-SERVICE_DESC = ('Graphic design and video editing by Geetha Krishna, a senior designer in Bengaluru, India, '
+SERVICE_DESC = ('Graphic design and video editing by Geetha Krishna, an independent designer in Bengaluru, India, '
                 'working with clients worldwide.')
 WORLDWIDE = {'@type': 'Place', 'name': 'Worldwide'}
 
@@ -107,7 +107,7 @@ VISIBLE = [  # About page CTA + screen-reader heading
     ('Based in Bengaluru, working with clients across India.',
      'Based in Bengaluru, working with clients across India and worldwide, remote or on-site.'),
     ('<span class="gk-sr">Geetha Krishna, freelance graphic designer in Bengaluru</span>',
-     '<span class="gk-sr">Geetha Krishna, senior graphic designer and video editor in Bengaluru, available worldwide</span>'),
+     '<span class="gk-sr">Geetha Krishna, independent freelance graphic designer and video editor in Bengaluru, available worldwide</span>'),
 ]
 
 work = json.load(open(os.path.join(SP, 'work.json'), encoding='utf-8'))
