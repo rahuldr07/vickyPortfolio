@@ -20,4 +20,4 @@ jobs:
           node-version: 22
 
       - name: Ping IndexNow
-        run: node scripts/indexnow.mjs https://www.krshna.me
+        run: node scripts/indexnow.mjs https://krshna.me
