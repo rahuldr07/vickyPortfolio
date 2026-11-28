@@ -1,5 +1,12 @@
 import "@testing-library/jest-dom/vitest";
-import { vi } from "vitest";
+import { cleanup } from "@testing-library/react";
+import { afterEach, vi } from "vitest";
+
+// Vitest runs without globals, so Testing Library cannot register its own auto-cleanup.
+// Unmount after every test so component timers (e.g. the Hero role scramble) stop before jsdom is torn down.
+afterEach(() => {
+  cleanup();
+});
 
 Object.defineProperty(window, "matchMedia", {
   writable: true,
