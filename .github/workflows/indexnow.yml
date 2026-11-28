@@ -1,0 +1,23 @@
+name: IndexNow
+
+# Vercel reports each deploy to GitHub. When a production deploy is live,
+# tell Bing (and other IndexNow engines) to recrawl every URL in the sitemap.
+on:
+  deployment_status:
+
+jobs:
+  ping:
+    if: github.event.deployment_status.state == 'success' && github.event.deployment.environment == 'Production'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Ping IndexNow
+        run: node scripts/indexnow.mjs https://www.krshna.me
